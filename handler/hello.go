@@ -1,5 +1,5 @@
 /*
-Package handler
+Package handler - Hello,World!
 */
 package handler
 
@@ -10,7 +10,8 @@ import (
 )
 
 /*
-Hello, World!
+HelloWorld - Hello,World!を表示する
+@author kotatanaka
 */
 func HelloWorld() echo.HandlerFunc {
 	return func(c echo.Context) error {
