@@ -19,6 +19,7 @@ func main() {
 
 	// ルーティング
 	e.GET("/", handler.HelloWorld())
+	e.GET("/shops", handler.GetShopsListClient())
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
