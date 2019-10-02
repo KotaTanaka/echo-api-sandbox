@@ -1,0 +1,36 @@
+version: '3.6'
+services:
+  # ------------------------------
+  # Go App
+  # ------------------------------
+  findwifi:
+    build: .
+    depends_on:
+      - mysql
+    ports:
+      - 1323:1323
+    container_name: find_wifi_api
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_DB: find_wifi_db
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+  # ------------------------------
+  # MySQL
+  # ------------------------------
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+    container_name: find_wifi_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: find_wifi_db
+      TZ: Asiz/Tokyo
+
+volumes:
+  mysql_data:
