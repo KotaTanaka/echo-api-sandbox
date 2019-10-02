@@ -27,11 +27,14 @@ $ source ~/.bashrc
 export GOPATH=$(pwd)
 ```
 
-* 依存関係のインストール
+* ソースコードのクローン・依存関係のインストール
+
+*※ 本環境構築手順に則る場合、プロジェクトの展開場所はどこでもOKです。*
 
 ```
+$ git clone git@github.com:KotaTanaka/find-wifi-api.git
 $ cd src/find-wifi-api
-& dep ensure
+$ dep ensure
 ```
 
 * アプリケーションの起動
