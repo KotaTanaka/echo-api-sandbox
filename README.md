@@ -1,44 +1,45 @@
 # find-wifi-api
 Find Wi-Fi バックエンド [Echo]
 
-## 開発環境構築
+## 技術要素
 
-* direnv のインストール
+* 言語 `Go`
+* フレームワーク `Echo`
+* データベース `MySQL`
+* ORマッパー `Gorm`
+* 仮想環境 `Docker` `docker-compose`
+* API仕様書 `OpenAPI` `ReDoc`
 
-```
-$ brew install direnv
-```
+## ローカル開発環境構築
 
-* `~/.bashrc` に下記を追記
-
-```
-eval "$(direnv hook bash)"
-```
-
-* 上記変更を反映
-
-```
-$ source ~/.bashrc
-```
-
-* プロジェクトルートに下記内容の `.envrc` を作成する。
-
-```
-export GOPATH=$(pwd)
-```
-
-* ソースコードのクローン・依存関係のインストール
-
-*※ 本環境構築手順に則る場合、プロジェクトの展開場所はどこでもOKです。*
+* ソースコードのクローン
 
 ```
 $ git clone git@github.com:KotaTanaka/find-wifi-api.git
-$ cd src/find-wifi-api
-$ dep ensure
+$ cd find-wifi-api
 ```
 
-* アプリケーションの起動
+* コンテナの起動 (docker-compose up)
 
 ```
-$ go run main.go
+$ ./start-docker.sh
+```
+
+* コンテナの停止 (docker-compose down)
+
+```
+$ ./stop-docker.sh
+```
+
+* MySQLログイン
+
+```
+$ ./mysqh.sh
+```
+
+* API仕様書の書き出し
+
+```
+$ npm i -g redoc-cli
+$ redoc-cli bundle openapi.yml
 ```
