@@ -1,7 +1,27 @@
 /*
-Package data - Hello,World!
+Package data - Shop関連の構造体
 */
 package data
+
+import (
+	"github.com/jinzhu/gorm"
+)
+
+/*
+Shop Model
+*/
+type Shop struct {
+	gorm.Model
+	ServiceID    int
+	SSID         string `gorm:"size:255"`
+	Name         string `gorm:"size:255"`
+	Descripttion string `gorm:"size:255"`
+	Address      string `gorm:"size:255"`
+	ShopType     string `gorm:"size:255"`
+	OpeningHours string `gorm:"size:255"`
+	SeatsNum     int
+	hasPower     bool
+}
 
 /*
 ShopListingResponseElement - 店舗一覧取得レスポンス要素
