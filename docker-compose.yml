@@ -10,6 +10,7 @@ services:
     ports:
       - 1323:1323
     container_name: find_wifi_api
+    command: go run main.go
     environment:
       MYSQL_HOST: mysql
       MYSQL_DB: find_wifi_db
@@ -27,6 +28,7 @@ services:
     ports:
       - 3306:3306
     container_name: find_wifi_mysql
+    hostname: mysql
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: find_wifi_db
