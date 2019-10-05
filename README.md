@@ -34,7 +34,7 @@ $ ./stop-docker.sh
 * MySQLログイン
 
 ```
-$ ./mysqh.sh
+$ ./mysql.sh
 ```
 
 * API仕様書の書き出し
