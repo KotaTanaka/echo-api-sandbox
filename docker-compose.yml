@@ -1,16 +1,18 @@
 version: '3.6'
 services:
   # ------------------------------
-  # Go App
+  # Find Wi-Fi App (Golang)
   # ------------------------------
-  findwifi:
+  app:
     build: .
+    tty: true
     depends_on:
       - mysql
     ports:
       - 1323:1323
     container_name: find_wifi_api
-    command: go run main.go
+    volumes:
+      - .:/go/app
     environment:
       MYSQL_HOST: mysql
       MYSQL_DB: find_wifi_db
