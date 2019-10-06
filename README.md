@@ -31,10 +31,20 @@ $ ./start-docker.sh
 $ ./stop-docker.sh
 ```
 
-* MySQLログイン
+* アプリケーションサーバー起動
+
+```
+$ ./start-server.sh
+```
+
+→ http://localhost:1323 でサーバーが起動します。
+
+* データベースログイン
 
 ```
 $ ./mysql.sh
+Enter password: password
+mysql> use find_wifi_db;
 ```
 
 * API仕様書の書き出し
