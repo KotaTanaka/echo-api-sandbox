@@ -1,7 +1,6 @@
 FROM golang:1.13-alpine AS build
 
 WORKDIR /go
-COPY . /go
 RUN apk update \
   && apk add --no-cache git \
   && go get github.com/labstack/echo/... \
