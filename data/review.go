@@ -12,7 +12,7 @@ Review Model
 */
 type Review struct {
 	gorm.Model
-	ShopID        int
+	ShopID        uint
 	Comment       string `gorm:"size:1000"`
 	Evaluation    int
 	PuplishStatus bool

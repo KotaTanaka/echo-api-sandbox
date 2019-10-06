@@ -12,15 +12,16 @@ Shop Model
 */
 type Shop struct {
 	gorm.Model
-	ServiceID    int
+	ServiceID    uint
 	SSID         string `gorm:"size:255"`
-	Name         string `gorm:"size:255"`
-	Descripttion string `gorm:"size:255"`
+	ShopName     string `gorm:"size:255"`
+	Description  string `gorm:"size:255"`
 	Address      string `gorm:"size:255"`
 	ShopType     string `gorm:"size:255"`
 	OpeningHours string `gorm:"size:255"`
 	SeatsNum     int
-	hasPower     bool
+	HasPower     bool
+	Reviews      []Review
 }
 
 /*

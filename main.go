@@ -41,7 +41,10 @@ func main() {
 	e := echo.New()
 	db := connectGorm()
 	defer db.Close()
-	db.Set("gorm:table_options", "ENGINE = InnoDB").AutoMigrate(&data.Service{}, &data.Shop{}, &data.Review{})
+	db.Set("gorm:table_options", "ENGINE = InnoDB")
+	db.AutoMigrate(&data.Service{})
+	db.AutoMigrate(&data.Shop{}).AddForeignKey("service_id", "services(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&data.Review{}).AddForeignKey("shop_id", "shops(id)", "RESTRICT", "RESTRICT")
 
 	// リクエスト共通処理
 	e.Use(middleware.Logger())

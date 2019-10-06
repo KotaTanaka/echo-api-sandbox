@@ -10,6 +10,7 @@ Service Model
 */
 type Service struct {
 	gorm.Model
-	Name string `gorm:"size:255"`
-	Link string `gorm:"size:255"`
+	WifiName string `gorm:"size:255"`
+	Link     string `gorm:"size:255"`
+	Shops    []Shop
 }
