@@ -53,3 +53,59 @@ mysql> use find_wifi_db;
 $ npm i -g redoc-cli
 $ redoc-cli bundle openapi.yml
 ```
+
+## テーブル定義
+
+* Wi-Fiサービステーブル
+
+```
++------------+------------------+------+-----+
+| Field      | Type             | Null | Key |
++------------+------------------+------+-----+
+| id         | int(10) unsigned | NO   | PRI | auto_increment
+| created_at | timestamp        | YES  |     |
+| updated_at | timestamp        | YES  |     |
+| deleted_at | timestamp        | YES  | MUL |
+| wifi_name  | varchar(255)     | YES  |     |
+| link       | varchar(255)     | YES  |     |
++------------+------------------+------+-----+
+```
+
+* Wi-Fi提供店舗テーブル
+
+```
++---------------+------------------+------+-----+
+| Field         | Type             | Null | Key |
++---------------+------------------+------+-----+
+| id            | int(10) unsigned | NO   | PRI | auto_increment
+| created_at    | timestamp        | YES  |     |
+| updated_at    | timestamp        | YES  |     |
+| deleted_at    | timestamp        | YES  | MUL |
+| service_id    | int(10) unsigned | YES  | MUL |
+| ss_id         | varchar(255)     | YES  |     |
+| shop_name     | varchar(255)     | YES  |     |
+| description   | varchar(255)     | YES  |     |
+| address       | varchar(255)     | YES  |     |
+| shop_type     | varchar(255)     | YES  |     |
+| opening_hours | varchar(255)     | YES  |     |
+| seats_num     | int(11)          | YES  |     |
+| has_power     | tinyint(1)       | YES  |     |
++---------------+------------------+------+-----+
+```
+
+* 店舗レビューテーブル
+
+```
++----------------+------------------+------+-----+
+| Field          | Type             | Null | Key |
++----------------+------------------+------+-----+
+| id             | int(10) unsigned | NO   | PRI | auto_increment
+| created_at     | timestamp        | YES  |     |
+| updated_at     | timestamp        | YES  |     |
+| deleted_at     | timestamp        | YES  | MUL |
+| shop_id        | int(10) unsigned | YES  | MUL |
+| comment        | varchar(1000)    | YES  |     |
+| evaluation     | int(11)          | YES  |     |
+| puplish_status | tinyint(1)       | YES  |     |
++----------------+------------------+------+-----+
+```
