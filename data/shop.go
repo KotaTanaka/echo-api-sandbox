@@ -53,6 +53,7 @@ type ShopListingResponseElement struct {
 	ShopID       uint     `json:"shopId"`
 	ShopName     string   `json:"shopName"`
 	WifiName     string   `json:"wifiName"`
+	ServiceLink  string   `json:"serviceLink"`
 	Ssid         []string `json:"ssid"`
 	Address      string   `json:"address"`
 	Acceess      string   `json:"access"`

@@ -14,10 +14,10 @@ import (
 )
 
 /*
-GetShopsListClient --- 店舗一覧取得
+GetShopListClient --- 店舗一覧取得
 @author kotatanaka
 */
-func GetShopsListClient(db *gorm.DB) echo.HandlerFunc {
+func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		shops := []data.Shop{}
 		db.Find(&shops)
@@ -36,6 +36,7 @@ func GetShopsListClient(db *gorm.DB) echo.HandlerFunc {
 					ShopID:       shop.ID,
 					ShopName:     shop.ShopName,
 					WifiName:     service.WifiName,
+					ServiceLink:  service.Link,
 					Ssid:         []string{shop.SSID},
 					Address:      shop.Address,
 					Acceess:      "",
