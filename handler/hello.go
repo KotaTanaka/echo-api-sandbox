@@ -1,20 +1,23 @@
 /*
-Package handler --- Hello,World!
+Package handler --- Hello, Find Wi-Fi!
 */
 package handler
 
 import (
 	"net/http"
 
+	"../data"
 	"github.com/labstack/echo"
 )
 
 /*
-HelloWorld --- Hello,World!文字列を表示する
+Hello --- Hello, Find Wi-Fi! 文字列を表示する
 @author kotatanaka
 */
-func HelloWorld() echo.HandlerFunc {
+func Hello() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
+		return c.JSON(
+			http.StatusOK,
+			data.MessageResponse{Message: "Hello, Find Wi-Fi!"})
 	}
 }

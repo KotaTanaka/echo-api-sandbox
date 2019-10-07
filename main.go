@@ -72,7 +72,7 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// ルーティング
-	e.GET("/", handler.HelloWorld())
+	e.GET("/", handler.Hello())
 	e.GET("/shops", handler.GetShopListClient(db))
 	e.GET("/admin/services", handler.GetServiceListAdmin(db))
 	e.POST("/admin/services", handler.RegisterServiceAdmin(db))
