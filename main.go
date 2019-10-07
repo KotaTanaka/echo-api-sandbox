@@ -15,7 +15,7 @@ import (
 )
 
 /*
-ConnectGorm --- DBに接続する
+ConnectGorm --- DBのセットアップ
 */
 func ConnectGorm() *gorm.DB {
 	// TODO 設定ファイルに書く
@@ -55,8 +55,11 @@ Main
 */
 func main() {
 	e := echo.New()
+
+	// バリデーターのセットアップ
 	e.Validator = &Validator{validator: validator.New()}
 
+	// DBのセットアップ
 	db := ConnectGorm()
 	defer db.Close()
 	db.Set("gorm:table_options", "ENGINE = InnoDB")
