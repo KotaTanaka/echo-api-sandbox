@@ -50,7 +50,7 @@ type RegisterShopRequestBody struct {
 ShopListingResponseElement --- 店舗一覧取得レスポンス要素
 */
 type ShopListingResponseElement struct {
-	ShopID       string   `json:"shopId"`
+	ShopID       uint     `json:"shopId"`
 	ShopName     string   `json:"shopName"`
 	WifiName     string   `json:"wifiName"`
 	Ssid         []string `json:"ssid"`
@@ -70,5 +70,5 @@ ShopListingResponse --- 店舗一覧取得レスポンス
 */
 type ShopListingResponse struct {
 	ShopList []ShopListingResponseElement `json:"shopList"`
-	Total    int                          `json:"total"`
+	Total    int64                        `json:"total"`
 }

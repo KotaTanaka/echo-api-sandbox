@@ -19,26 +19,31 @@ GetShopsListClient --- 店舗一覧取得
 */
 func GetShopsListClient(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		shops := []data.Shop{}
-		allShops := db.Find(&shops)
-		// response := data.ShopListingResponse{
-		// 	ShopList: []data.ShopListingResponseElement{
-		// 		{
-		// 			ShopID:       "6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2",
-		// 			ShopName:     "スターバックス渋谷店",
-		// 			WifiName:     "スターバックスWi-Fi",
-		// 			Ssid:         []string{},
-		// 			Address:      "東京都渋谷区道玄坂1-1-1",
-		// 			Acceess:      "JR渋谷駅から徒歩1分",
-		// 			Description:  "Wi-Fi・電源完備で、平日の昼間は比較的落ち着いています。",
-		// 			ShopType:     "cafe",
-		// 			OpeningHours: "9:00-22:00",
-		// 			SeatsNum:     100,
-		// 			Power:        true,
-		// 			ReviewCount:  10,
-		// 			Average:      3.5}},
-		// 	Total: 50}
-		return c.JSON(http.StatusOK, allShops)
+		gormShopsFindData := db.Find(&[]data.Shop{})
+		shops := gormShopsFindData.Value.(*[]data.Shop)
+
+		response := data.ShopListingResponse{}
+		response.Total = gormShopsFindData.RowsAffected
+
+		for _, shop := range *shops {
+			response.ShopList = append(
+				response.ShopList, data.ShopListingResponseElement{
+					ShopID:       shop.ID,
+					ShopName:     shop.ShopName,
+					WifiName:     "",
+					Ssid:         []string{shop.SSID},
+					Address:      shop.Address,
+					Acceess:      "",
+					Description:  shop.Description,
+					ShopType:     shop.ShopType,
+					OpeningHours: shop.OpeningHours,
+					SeatsNum:     shop.SeatsNum,
+					Power:        shop.HasPower,
+					ReviewCount:  0,
+					Average:      0})
+		}
+
+		return c.JSON(http.StatusOK, response)
 	}
 }
 
