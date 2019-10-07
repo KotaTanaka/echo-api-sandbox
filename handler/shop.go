@@ -19,13 +19,13 @@ GetShopsListClient --- 店舗一覧取得
 */
 func GetShopsListClient(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		gormShopsFindData := db.Find(&[]data.Shop{})
-		shops := gormShopsFindData.Value.(*[]data.Shop)
+		shops := []data.Shop{}
+		db.Find(&shops)
 
 		response := data.ShopListingResponse{}
-		response.Total = gormShopsFindData.RowsAffected
+		response.Total = len(shops)
 
-		for _, shop := range *shops {
+		for _, shop := range shops {
 			response.ShopList = append(
 				response.ShopList, data.ShopListingResponseElement{
 					ShopID:       shop.ID,

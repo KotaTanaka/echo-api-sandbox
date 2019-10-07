@@ -70,5 +70,5 @@ ShopListingResponse --- 店舗一覧取得レスポンス
 */
 type ShopListingResponse struct {
 	ShopList []ShopListingResponseElement `json:"shopList"`
-	Total    int64                        `json:"total"`
+	Total    int                          `json:"total"`
 }
