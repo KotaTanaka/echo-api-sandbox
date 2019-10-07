@@ -24,8 +24,9 @@ func ConnectGorm() *gorm.DB {
 	PASS := "password"
 	PROTOCOL := "tcp(mysql:3306)"
 	DBNAME := "find_wifi_db"
+	OPTION := "parseTime=true"
 
-	CONNECT := USER + ":" + PASS + "@" + PROTOCOL + "/" + DBNAME
+	CONNECT := USER + ":" + PASS + "@" + PROTOCOL + "/" + DBNAME + "?" + OPTION
 	db, err := gorm.Open(DBMS, CONNECT)
 
 	if err != nil {
