@@ -8,15 +8,16 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"gopkg.in/go-playground/validator.v9"
 
 	"./data"
 	"./handler"
 )
 
 /*
-connectGorm DBに接続する
+ConnectGorm --- DBに接続する
 */
-func connectGorm() *gorm.DB {
+func ConnectGorm() *gorm.DB {
 	// TODO 設定ファイルに書く
 	DBMS := "mysql"
 	USER := "root"
@@ -35,11 +36,27 @@ func connectGorm() *gorm.DB {
 }
 
 /*
+Validator --- バリデーターのセットアップのためのラッピング
+*/
+type Validator struct {
+	validator *validator.Validate
+}
+
+/*
+Validate --- バリデーターのセットアップ
+*/
+func (v *Validator) Validate(i interface{}) error {
+	return v.validator.Struct(i)
+}
+
+/*
 Main
 */
 func main() {
 	e := echo.New()
-	db := connectGorm()
+	e.Validator = &Validator{validator: validator.New()}
+
+	db := ConnectGorm()
 	defer db.Close()
 	db.Set("gorm:table_options", "ENGINE = InnoDB")
 	db.AutoMigrate(&data.Service{})
@@ -52,7 +69,9 @@ func main() {
 
 	// ルーティング
 	e.GET("/", handler.HelloWorld())
-	e.GET("/shops", handler.GetShopsListClient())
+	e.GET("/shops", handler.GetShopsListClient(db))
+	e.POST("/admin/services", handler.RegisterServiceAdmin(db))
+	e.POST("/admin/shops", handler.RegisterShopAdmin(db))
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
