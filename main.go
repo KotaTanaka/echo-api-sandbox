@@ -73,7 +73,8 @@ func main() {
 
 	// ルーティング
 	e.GET("/", handler.HelloWorld())
-	e.GET("/shops", handler.GetShopsListClient(db))
+	e.GET("/shops", handler.GetShopListClient(db))
+	e.GET("/admin/services", handler.GetServiceListAdmin(db))
 	e.POST("/admin/services", handler.RegisterServiceAdmin(db))
 	e.POST("/admin/shops", handler.RegisterShopAdmin(db))
 

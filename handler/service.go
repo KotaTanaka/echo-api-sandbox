@@ -14,6 +14,31 @@ import (
 )
 
 /*
+GetServiceListAdmin --- Wi-Fiサービス一覧取得
+@author kotatanaka
+*/
+func GetServiceListAdmin(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		services := []data.Service{}
+		db.Find(&services)
+
+		response := data.ServiceListingResponse{}
+		response.Total = len(services)
+
+		for _, service := range services {
+			response.ServiceList = append(
+				response.ServiceList, data.ServiceListingResponseElement{
+					ServiceID: service.ID,
+					WifiName:  service.WifiName,
+					Link:      service.Link,
+					ShopCount: len(service.Shops)})
+		}
+
+		return c.JSON(http.StatusOK, response)
+	}
+}
+
+/*
 RegisterServiceAdmin --- Wi-Fiサービス登録
 @author kotatanaka
 */

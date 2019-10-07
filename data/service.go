@@ -29,3 +29,21 @@ type RegisterServiceRequestBody struct {
 	WifiName string `json:"wifiName" validate:"required"`
 	Link     string `json:"link" validate:"required"`
 }
+
+/*
+ServiceListingResponseElement ---  Wi-Fiサービス一覧取得レスポンス要素
+*/
+type ServiceListingResponseElement struct {
+	ServiceID uint   `json:"serviceId"`
+	WifiName  string `json:"wifiName"`
+	Link      string `json:"Link"`
+	ShopCount int    `json:"shopCount"`
+}
+
+/*
+ServiceListingResponse ---  Wi-Fiサービス一覧取得レスポンス
+*/
+type ServiceListingResponse struct {
+	ServiceList []ServiceListingResponseElement `json:"serviceList"`
+	Total       int                             `json:"total"`
+}
