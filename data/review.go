@@ -1,5 +1,5 @@
 /*
-Package data - Review関連の構造体
+Package data --- 店舗レビュー関連の構造体
 */
 package data
 
@@ -8,7 +8,7 @@ import (
 )
 
 /*
-Review Model
+Review --- Model 店舗レビューテーブル
 */
 type Review struct {
 	gorm.Model
@@ -16,4 +16,11 @@ type Review struct {
 	Comment       string `gorm:"size:1000"`
 	Evaluation    int
 	PuplishStatus bool
+}
+
+/*
+ReviewIDResponse --- レビューIDのみのレスポンス
+*/
+type ReviewIDResponse struct {
+	ReviewID uint `json:"reviewId"`
 }

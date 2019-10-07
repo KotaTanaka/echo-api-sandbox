@@ -1,5 +1,5 @@
 /*
-Package handler - Hello,World!
+Package handler --- Hello,World!
 */
 package handler
 
@@ -10,7 +10,7 @@ import (
 )
 
 /*
-HelloWorld - Hello,World!を表示する
+HelloWorld --- Hello,World!文字列を表示する
 @author kotatanaka
 */
 func HelloWorld() echo.HandlerFunc {
