@@ -26,11 +26,16 @@ func GetShopsListClient(db *gorm.DB) echo.HandlerFunc {
 		response.Total = len(shops)
 
 		for _, shop := range shops {
+			service := data.Service{}
+			db.First(&service, shop.ServiceID)
+
 			response.ShopList = append(
+				// TODO SSID: 文字列を配列に変換
+				// TODO Average: 評価の平均値の計算
 				response.ShopList, data.ShopListingResponseElement{
 					ShopID:       shop.ID,
 					ShopName:     shop.ShopName,
-					WifiName:     "",
+					WifiName:     service.WifiName,
 					Ssid:         []string{shop.SSID},
 					Address:      shop.Address,
 					Acceess:      "",
@@ -39,7 +44,7 @@ func GetShopsListClient(db *gorm.DB) echo.HandlerFunc {
 					OpeningHours: shop.OpeningHours,
 					SeatsNum:     shop.SeatsNum,
 					Power:        shop.HasPower,
-					ReviewCount:  0,
+					ReviewCount:  len(shop.Reviews),
 					Average:      0})
 		}
 
