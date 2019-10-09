@@ -70,6 +70,7 @@ func main() {
 	// リクエスト共通処理
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	e.Use(middleware.CORS())
 
 	// ルーティング
 	e.GET("/", handler.Hello())
