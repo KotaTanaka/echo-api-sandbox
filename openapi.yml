@@ -91,13 +91,15 @@ paths:
       summary: 店舗一覧取得
       operationId: getShopListClient
       description: |-
-        Wi-Fi利用可能店舗一覧を取得する。
+        指定地域のWi-Fi利用可能店舗一覧を取得する。
       x-code-samples:
         - lang: Shell
           label: cURL
           source: |
-            curl 'http://localhost:1323/shops?position=xxx&power=true&limit=10&offset=10'
+            curl 'http://localhost:1323/shops?area=dogenzaka&hasPower=true&limit=10&offset=10'
       parameters:
+        - $ref: "#/components/parameters/Area"
+        - $ref: "#/components/parameters/HasPowerQuery"
         - $ref: "#/components/parameters/Limit"
         - $ref: "#/components/parameters/Offset"
         - $ref: "#/components/parameters/Sort"
@@ -124,6 +126,12 @@ paths:
                         - wifiName
                         - ssid
                         - address
+                        - access
+                        - description
+                        - shopType
+                        - openingHours
+                        - seatsNum
+                        - hasPower
                         - reviewCount
                         - average
                       properties:
@@ -147,8 +155,8 @@ paths:
                           $ref: "#/components/schemas/OpeningHours"
                         seatsNum:
                           $ref: "#/components/schemas/SeatsNum"
-                        power:
-                          $ref: "#/components/schemas/Power"
+                        hasPower:
+                          $ref: "#/components/schemas/HasPower"
                         reviewCount:
                           $ref: "#/components/schemas/ReviewCount"
                         average:
@@ -233,6 +241,82 @@ paths:
           description: システムエラー
 
   /reviews:
+    # ------------------------------
+    # GET /reviews レビュー一覧取得
+    # ------------------------------
+    get:
+      tags:
+        - Review
+      summary: レビュー一覧取得
+      operationId: getReviewListClient
+      description: |-
+        店舗に紐付くレビューの一覧を取得する。
+      x-code-samples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl 'http://localhost:1323/admin/reviews?shop_id=6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2&limit=10&offset=10&sort=desc'
+      parameters:
+        - $ref: "#/components/parameters/ShopIdQuery"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+        - $ref: "#/components/parameters/Sort"
+      responses:
+        200:
+          description: 成功時のレスポンス
+          content:
+            application/json:
+              schema:
+                description: レビュー一覧取得レスポンス
+                type: object
+                required:
+                  - shopId
+                  - shopName
+                  - serviceId
+                  - wifiName
+                  - average
+                  - reviewList
+                  - total
+                properties:
+                  shopId:
+                    $ref: "#/components/schemas/ShopID"
+                  shopName:
+                    $ref: "#/components/schemas/ShopName"
+                  serviceId:
+                    $ref: "#/components/schemas/ServiceID"
+                  wifiName:
+                    $ref: "#/components/schemas/WifiName"
+                  average:
+                    $ref: "#/components/schemas/Average"
+                  reviewList:
+                    type: array
+                    description: レビューリスト
+                    items:
+                      type: object
+                      required:
+                        - reviewId
+                        - comment
+                        - evaluation
+                        - status
+                        - createdAt
+                      properties:
+                        reviewId:
+                          $ref: "#/components/schemas/ReviewID"
+                        comment:
+                          $ref: "#/components/schemas/Comment"
+                        evaluation:
+                          $ref: "#/components/schemas/Evaluation"
+                        status:
+                          $ref: "#/components/schemas/Status"
+                        createdAt:
+                          $ref: "#/components/schemas/CreatedAt"
+                  total:
+                    $ref: "#/components/schemas/Total"
+        400:
+          description: パラメータ不正
+        500:
+          description: システムエラー
+
     # ------------------------------
     # POST /reviews レビュー投稿
     # ------------------------------
@@ -467,6 +551,12 @@ paths:
                         - shopName
                         - ssid
                         - address
+                        - access
+                        - description
+                        - shopType
+                        - openingHours
+                        - seatsNum
+                        - hasPower
                         - reviewCount
                         - average
                       properties:
@@ -488,8 +578,8 @@ paths:
                           $ref: "#/components/schemas/OpeningHours"
                         seatsNum:
                           $ref: "#/components/schemas/SeatsNum"
-                        power:
-                          $ref: "#/components/schemas/Power"
+                        hasPower:
+                          $ref: "#/components/schemas/HasPower"
                         reviewCount:
                           $ref: "#/components/schemas/ReviewCount"
                         average:
@@ -627,6 +717,12 @@ paths:
                         - shopName
                         - ssid
                         - address
+                        - access
+                        - description
+                        - shopType
+                        - openingHours
+                        - seatsNum
+                        - hasPower
                         - reviewCount
                         - average
                       properties:
@@ -652,8 +748,8 @@ paths:
                           $ref: "#/components/schemas/OpeningHours"
                         seatsNum:
                           $ref: "#/components/schemas/SeatsNum"
-                        power:
-                          $ref: "#/components/schemas/Power"
+                        hasPower:
+                          $ref: "#/components/schemas/HasPower"
                         reviewCount:
                           $ref: "#/components/schemas/ReviewCount"
                         average:
@@ -1150,6 +1246,28 @@ components:
         type: string
         format: asc / desc
         example: asc
+    Area:
+      in: query
+      name: area
+      description: 検索エリア
+      required: true
+      schema:
+        type: string
+        format: 半角英数字
+        example: "dogenzaka"
+    ShopIdQuery:
+      in: query
+      name: shopId
+      description: 店舗ID
+      required: true
+      schema:
+        $ref: "#/components/schemas/ShopID"
+    HasPowerQuery:
+      in: query
+      name: hasPower
+      description: 電源の有無
+      schema:
+        $ref: "#/components/schemas/HasPower"
     ServiceIdPath:
       in: path
       name: serviceId
@@ -1263,7 +1381,7 @@ components:
       type: number
       format: 数字
       example: 100
-    Power:
+    HasPower:
       description: 電源の有無
       type: boolean
       format: 真理値
