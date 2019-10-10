@@ -365,6 +365,9 @@ paths:
                   - serviceId
                   - wifiName
                   - link
+                  - createdAt
+                  - updatedAt
+                  - deletedAt
                   - shopCount
                   - shopList
                 properties:
@@ -374,6 +377,12 @@ paths:
                     $ref: "#/components/schemas/WifiName"
                   link:
                     $ref: "#/components/schemas/Link"
+                  createdAt:
+                    $ref: "#/components/schemas/CreatedAt"
+                  updatedAt:
+                    $ref: "#/components/schemas/UpdatedAt"
+                  deletedAt:
+                    $ref: "#/components/schemas/DeletedAt"
                   shopCount:
                     $ref: "#/components/schemas/ShopCount"
                   shopList:
@@ -759,6 +768,73 @@ paths:
         500:
           description: システムエラー
 
+  /admin/reviews:
+    # ------------------------------
+    # GET /admins/reviews レビュー一覧取得(管理用)
+    # ------------------------------
+    get:
+      tags:
+        - Admin Review
+      summary: レビュー一覧取得(管理用)
+      operationId: getReviewListAdmin
+      description: |-
+        レビューの一覧を取得する。
+      x-code-samples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl 'http://localhost:1323/admin/reviews?limit=10&offset=10&sort=desc'
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+        - $ref: "#/components/parameters/Sort"
+      responses:
+        200:
+          description: 成功時のレスポンス
+          content:
+            application/json:
+              schema:
+                description: レビュー一覧レスポンス
+                type: object
+                required:
+                  - reviewList
+                  - total
+                properties:
+                  reviewList:
+                    type: array
+                    description: レビューリスト
+                    items:
+                      type: object
+                      required:
+                        - reviewId
+                        - comment
+                        - evaluation
+                        - status
+                        - createdAt
+                        - updatedAt
+                        - deletedAt
+                      properties:
+                        reviewId:
+                          $ref: "#/components/schemas/ReviewID"
+                        comment:
+                          $ref: "#/components/schemas/Comment"
+                        evaluation:
+                          $ref: "#/components/schemas/Evaluation"
+                        status:
+                          $ref: "#/components/schemas/Status"
+                        createdAt:
+                          $ref: "#/components/schemas/CreatedAt"
+                        updatedAt:
+                          $ref: "#/components/schemas/UpdatedAt"
+                        deletedAt:
+                          $ref: "#/components/schemas/DeletedAt"
+                  total:
+                    $ref: "#/components/schemas/Total"
+        400:
+          description: パラメータ不正
+        500:
+          description: システムエラー
+
 components:
   # ------------------------------
   # Query or Path Parameters
@@ -814,6 +890,21 @@ components:
       type: number
       format: 数字
       example: 50
+    CreatedAt:
+      description: 作成日時(登録日時)
+      type: string
+      format: YYYY-MM-DD HH:mm:ss
+      example: 2019-01-01 12:00:00
+    UpdatedAt:
+      description: 更新日時
+      type: string
+      format: YYYY-MM-DD HH:mm:ss
+      example: 2019-01-01 12:00:00
+    DeletedAt:
+      description: 削除日時
+      type: string
+      format: YYYY-MM-DD HH:mm:ss
+      example: 2019-01-01 12:00:00
     ServiceID:
       description: Wi-FiサービスID
       type: string
@@ -913,3 +1004,12 @@ components:
       format: 数値
       enum: [1,2,3,4,5]
       example: 3
+    Status:
+      description: |-
+        レビューの公開/非公開ステータス
+        - 公開 `public`
+        - 非公開 `hidden`
+      type: string
+      format: string
+      enum: ["public", "hidden"]
+      example: public
