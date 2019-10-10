@@ -216,6 +216,119 @@ paths:
         500:
           description: システムエラー
 
+  /admin/services:
+    # ------------------------------
+    # GET /admins/services Wi-Fiサービス一覧取得
+    # ------------------------------
+    get:
+      tags:
+        - Admin Service
+      summary: Wi-Fiサービス一覧取得
+      operationId: getServceListAdmin
+      description: |-
+        Wi-Fiサービス一覧を取得する。
+      x-code-samples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl 'http://localhost:1323/admin/services?limit=10&offset=10&sort=desc'
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+        - $ref: "#/components/parameters/Sort"
+      responses:
+        200:
+          description: 成功時のレスポンス
+          content:
+            application/json:
+              schema:
+                description: Wi-Fiサービス一覧レスポンス
+                type: object
+                required:
+                  - serviceList
+                  - total
+                properties:
+                  serviceList:
+                    type: array
+                    description: Wi-Fiサービスリスト
+                    items:
+                      type: object
+                      required:
+                        - serviceId
+                        - wifiName
+                        - link
+                        - shopCount
+                      properties:
+                        serviceId:
+                          $ref: "#/components/schemas/ServiceID"
+                        wifiName:
+                          $ref: "#/components/schemas/WifiName"
+                        link:
+                          $ref: "#/components/schemas/Link"
+                        shopCount:
+                          $ref: "#/components/schemas/ShopCount"
+                  total:
+                    $ref: "#/components/schemas/Total"
+        400:
+          description: パラメータ不正
+        500:
+          description: システムエラー
+
+    # ------------------------------
+    # POST /admin/services Wi-Fiサービス登録
+    # ------------------------------
+    post:
+      tags:
+        - Admin Service
+      summary: Wi-Fiサービス登録
+      operationId: postServiceAdmin
+      description: |-
+        Wi-Fiサービスを登録する。
+      x-code-samples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl -X POST 'http://localhost:1323/admin/services' \
+              -H 'Contents-Type: application/json' \
+              -d \
+                '{
+                  "serviceId": "starbacks_wifi",
+                  "wifiName": "スターバックスWi-Fi",
+                  "link": "https://www.starbucks.co.jp"
+                }'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - serviceId
+                - wifiName
+                - link
+              properties:
+                serviceId:
+                  $ref: "#/components/schemas/ServiceID"
+                wifiName:
+                  $ref: "#/components/schemas/WifiName"
+                link:
+                  $ref: "#/components/schemas/Link"
+      responses:
+        200:
+          description: 成功時のレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - serviceId
+                properties:
+                  serviceId:
+                    $ref: "#/components/schemas/ServiceID"
+        400:
+          description: パラメータ不正
+        500:
+          description: システムエラー
+
 components:
   # ------------------------------
   # Query Parameters
@@ -257,6 +370,26 @@ components:
       type: number
       format: 数字
       example: 50
+    ServiceID:
+      description: Wi-FiサービスID
+      type: string
+      format: 半角英数記号
+      example: starbacks_wifi
+    WifiName:
+      description: Wi-Fiサービス名
+      type: string
+      format: 半角英数字
+      example: スターバックスWi-Fi
+    Link:
+      description: 公式サイトへのリンク
+      type: string
+      format: URL
+      example: https://www.starbucks.co.jp
+    ShopCount:
+      description: 店舗数
+      type: number
+      format: 数値
+      example: 10
     ShopID:
       description: 店舗ID
       type: string
@@ -267,11 +400,6 @@ components:
       type: string
       format: 文字列
       example: スターバックス渋谷店
-    WifiName:
-      description: Wi-Fiサービス名
-      type: string
-      format: 半角英数字
-      example: スターバックスWi-Fi
     SSID:
       description: SSID
       type: array
