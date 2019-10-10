@@ -584,13 +584,14 @@ paths:
         500:
           description: システムエラー
 
+  /admin/shops/{shopId}:
     # ------------------------------
     # POST /admin/shops 店舗登録
     # ------------------------------
     post:
       tags:
         - Admin Shop
-      summary: Wi-Fiサービス登録
+      summary: 店舗登録
       operationId: postShopAdmin
       description: |-
         Wi-Fi利用可能店舗を登録する。
@@ -598,7 +599,7 @@ paths:
         - lang: Shell
           label: cURL
           source: |
-            curl -X POST 'http://localhost:1323/admin/services' \
+            curl -X POST 'http://localhost:1323/admin/shops/' \
               -H 'Contents-Type: application/json' \
               -d \
                 '{
@@ -611,6 +612,8 @@ paths:
                   "openingHours": "9:00-22:00",
                   "seatsNum": 100
                 }'
+      parameters:
+        - $ref: "#/components/parameters/ServiceIdPath"
       requestBody:
         content:
           application/json:
@@ -654,6 +657,108 @@ paths:
         500:
           description: システムエラー
 
+    # ------------------------------
+    # PUT /admin/shops/:shopId 店舗編集
+    # ------------------------------
+    put:
+      tags:
+        - Admin Shop
+      summary: 店舗編集
+      operationId: putShopAdmin
+      description: |-
+        Wi-Fi利用可能店舗の情報を編集する。
+      x-code-samples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl -X POST 'http://localhost:1323/admin/services/6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2' \
+              -H 'Contents-Type: application/json' \
+              -d \
+                '{
+                  "shopName": "starbacks_wifi",
+                  "ssid": "スターバックスWi-Fi",
+                  "address": "https://www.starbucks.co.jp",
+                  "access": "JR渋谷駅から徒歩1分"
+                  "description": "Wi-Fi・電源完備で、平日の昼間は比較的落ち着いています。",
+                  "shopType": "cafe",
+                  "openingHours": "9:00-22:00",
+                  "seatsNum": 100
+                }'
+      parameters:
+        - $ref: "#/components/parameters/ShopIdPath"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shopName:
+                  $ref: "#/components/schemas/ShopName"
+                ssid:
+                  $ref: "#/components/schemas/SSID"
+                address:
+                  $ref: "#/components/schemas/Address"
+                acceess:
+                  $ref: "#/components/schemas/Acceess"
+                description:
+                  $ref: "#/components/schemas/Description"
+                shopType:
+                  $ref: "#/components/schemas/ShopType"
+                openingHours:
+                  $ref: "#/components/schemas/OpeningHours"
+                seatsNum:
+                  $ref: "#/components/schemas/SeatsNum"
+      responses:
+        200:
+          description: 成功時のレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - serviceId
+                properties:
+                  serviceId:
+                    $ref: "#/components/schemas/ServiceID"
+        400:
+          description: パラメータ不正
+        500:
+          description: システムエラー
+
+    # ------------------------------
+    # DELETE /admin/shops/:shopId 店舗削除
+    # ------------------------------
+    delete:
+      tags:
+        - Admin Shop
+      summary: 店舗削除
+      operationId: deleteShopAdmin
+      description: |-
+        Wi-Fi利用可能店舗を削除する。
+      x-code-samples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl -X POST 'http://localhost:1323/admin/shops/6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2'
+      parameters:
+        - $ref: "#/components/parameters/ShopIdPath"
+      responses:
+        200:
+          description: 成功時のレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - serviceId
+                properties:
+                  serviceId:
+                    $ref: "#/components/schemas/ShopID"
+        400:
+          description: パラメータ不正
+        500:
+          description: システムエラー
+
 components:
   # ------------------------------
   # Query or Path Parameters
@@ -690,8 +795,16 @@ components:
       in: path
       name: serviceId
       description: Wi-FiサービスID
+      required: true
       schema:
         $ref: "#/components/schemas/ServiceID"
+    ShopIdPath:
+      in: path
+      name: shopId
+      description: 店舗スID
+      required: true
+      schema:
+        $ref: "#/components/schemas/ShopID"
   # ------------------------------
   # Request Body Parameters / Response Body Fields
   # ------------------------------
