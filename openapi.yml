@@ -393,7 +393,6 @@ paths:
                       required:
                         - shopId
                         - shopName
-                        - wifiName
                         - ssid
                         - address
                         - reviewCount
@@ -403,8 +402,6 @@ paths:
                           $ref: "#/components/schemas/ShopID"
                         shopName:
                           $ref: "#/components/schemas/ShopName"
-                        wifiName:
-                          $ref: "#/components/schemas/WifiName"
                         ssid:
                           $ref: "#/components/schemas/SSID"
                         address:
@@ -444,7 +441,7 @@ paths:
         - lang: Shell
           label: cURL
           source: |
-            curl -X POST 'http://localhost:1323/admin/services/starbacks_wifi' \
+            curl -X PUT 'http://localhost:1323/admin/services/starbacks_wifi' \
               -H 'Contents-Type: application/json' \
               -d \
                 '{
@@ -494,7 +491,7 @@ paths:
         - lang: Shell
           label: cURL
           source: |
-            curl -X POST 'http://localhost:1323/admin/services/starbacks_wifi'
+            curl -X DELETE 'http://localhost:1323/admin/services/starbacks_wifi'
       parameters:
         - $ref: "#/components/parameters/ServiceIdPath"
       responses:
@@ -553,8 +550,9 @@ paths:
                       type: object
                       required:
                         - shopId
-                        - shopName
+                        - serviceId
                         - wifiName
+                        - shopName
                         - ssid
                         - address
                         - reviewCount
@@ -562,10 +560,12 @@ paths:
                       properties:
                         shopId:
                           $ref: "#/components/schemas/ShopID"
-                        shopName:
-                          $ref: "#/components/schemas/ShopName"
+                        serviceId:
+                          $ref: "#/components/schemas/ServiceID"
                         wifiName:
                           $ref: "#/components/schemas/WifiName"
+                        shopName:
+                          $ref: "#/components/schemas/ShopName"
                         ssid:
                           $ref: "#/components/schemas/SSID"
                         address:
@@ -786,7 +786,7 @@ paths:
         - lang: Shell
           label: cURL
           source: |
-            curl -X POST 'http://localhost:1323/admin/services/6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2' \
+            curl -X PUT 'http://localhost:1323/admin/services/6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2' \
               -H 'Contents-Type: application/json' \
               -d \
                 '{
@@ -833,7 +833,7 @@ paths:
                 required:
                   - serviceId
                 properties:
-                  serviceId:
+                  shopId:
                     $ref: "#/components/schemas/ServiceID"
         400:
           description: パラメータ不正
@@ -854,7 +854,7 @@ paths:
         - lang: Shell
           label: cURL
           source: |
-            curl -X POST 'http://localhost:1323/admin/shops/6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2'
+            curl -X DELETE 'http://localhost:1323/admin/shops/6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2'
       parameters:
         - $ref: "#/components/parameters/ShopIdPath"
       responses:
@@ -867,7 +867,7 @@ paths:
                 required:
                   - serviceId
                 properties:
-                  serviceId:
+                  shopId:
                     $ref: "#/components/schemas/ShopID"
         400:
           description: パラメータ不正
@@ -913,6 +913,10 @@ paths:
                       type: object
                       required:
                         - reviewId
+                        - shopId
+                        - shopName
+                        - serviceId
+                        - wifiName
                         - comment
                         - evaluation
                         - status
@@ -922,6 +926,14 @@ paths:
                       properties:
                         reviewId:
                           $ref: "#/components/schemas/ReviewID"
+                        shopId:
+                          $ref: "#/components/schemas/ShopID"
+                        shopName:
+                          $ref: "#/components/schemas/ShopName"
+                        serviceId:
+                          $ref: "#/components/schemas/ServiceID"
+                        wifiName:
+                          $ref: "#/components/schemas/WifiName"
                         comment:
                           $ref: "#/components/schemas/Comment"
                         evaluation:
@@ -936,6 +948,90 @@ paths:
                           $ref: "#/components/schemas/DeletedAt"
                   total:
                     $ref: "#/components/schemas/Total"
+        400:
+          description: パラメータ不正
+        500:
+          description: システムエラー
+
+  /admin/reviews/{reviewId}:
+    # ------------------------------
+    # PUT /admin/reviews/:reviewId/status レビューステータス変更
+    # ------------------------------
+    put:
+      tags:
+        - Admin Review
+      summary: レビューステータス変更
+      operationId: putShopAdminStatus
+      description: |-
+        レビューの公開/非公開ステータスを変更する。
+      x-code-samples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl -X PUT 'http://localhost:1323/admin/reviews/875c1d576d44e47a38c5b74ece39a709' \
+              -H 'Contents-Type: application/json' \
+              -d \
+                '{
+                  "status": "hidden"
+                }'
+      parameters:
+        - $ref: "#/components/parameters/ReviewIdPath"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  $ref: "#/components/schemas/Status"
+      responses:
+        200:
+          description: 成功時のレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - reviewId
+                properties:
+                  reviewId:
+                    $ref: "#/components/schemas/ReviewID"
+        400:
+          description: パラメータ不正
+        500:
+          description: システムエラー
+
+    # ------------------------------
+    # DELETE /admin/reviews/:reviewId レビュー削除
+    # ------------------------------
+    delete:
+      tags:
+        - Admin Review
+      summary: レビュー削除
+      operationId: deleteShopAdmin
+      description: |-
+        レビューを削除する。
+      x-code-samples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl -X DELETE 'http://localhost:1323/admin/reviews/875c1d576d44e47a38c5b74ece39a709'
+      parameters:
+        - $ref: "#/components/parameters/ReviewIdPath"
+      responses:
+        200:
+          description: 成功時のレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - reviewId
+                properties:
+                  reviewId:
+                    $ref: "#/components/schemas/ReviewID"
         400:
           description: パラメータ不正
         500:
@@ -983,10 +1079,17 @@ components:
     ShopIdPath:
       in: path
       name: shopId
-      description: 店舗スID
+      description: 店舗ID
       required: true
       schema:
         $ref: "#/components/schemas/ShopID"
+    ReviewIdPath:
+      in: path
+      name: reviewId
+      description: レビューID
+      required: true
+      schema:
+        $ref: "#/components/schemas/ReviewID"
   # ------------------------------
   # Request Body Parameters / Response Body Fields
   # ------------------------------
