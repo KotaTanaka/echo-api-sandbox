@@ -107,7 +107,7 @@ paths:
           content:
             application/json:
               schema:
-                description: 店舗一覧レスポンス
+                description: 店舗一覧取得レスポンス
                 type: object
                 required:
                   - shopList
@@ -137,8 +137,8 @@ paths:
                           $ref: "#/components/schemas/SSID"
                         address:
                           $ref: "#/components/schemas/Address"
-                        acceess:
-                          $ref: "#/components/schemas/Acceess"
+                        access:
+                          $ref: "#/components/schemas/Access"
                         description:
                           $ref: "#/components/schemas/Description"
                         shopType:
@@ -242,7 +242,7 @@ paths:
           content:
             application/json:
               schema:
-                description: Wi-Fiサービス一覧レスポンス
+                description: Wi-Fiサービス一覧取得レスポンス
                 type: object
                 required:
                   - serviceList
@@ -409,8 +409,8 @@ paths:
                           $ref: "#/components/schemas/SSID"
                         address:
                           $ref: "#/components/schemas/Address"
-                        acceess:
-                          $ref: "#/components/schemas/Acceess"
+                        access:
+                          $ref: "#/components/schemas/Access"
                         description:
                           $ref: "#/components/schemas/Description"
                         shopType:
@@ -516,7 +516,7 @@ paths:
 
   /admin/shops:
     # ------------------------------
-    # GET /admin/shops 店舗一覧取得
+    # GET /admin/shops 店舗一覧取得(管理用)
     # ------------------------------
     get:
       tags:
@@ -524,7 +524,7 @@ paths:
       summary: 店舗一覧取得(管理用)
       operationId: getShopListAdmin
       description: |-
-        Wi-Fi利用可能店舗一覧を取得する。
+        全体のWi-Fi利用可能店舗一覧を取得する。
       x-code-samples:
         - lang: Shell
           label: cURL
@@ -540,7 +540,7 @@ paths:
           content:
             application/json:
               schema:
-                description: 店舗一覧レスポンス
+                description: 店舗一覧取得レスポンス
                 type: object
                 required:
                   - shopList
@@ -570,8 +570,8 @@ paths:
                           $ref: "#/components/schemas/SSID"
                         address:
                           $ref: "#/components/schemas/Address"
-                        acceess:
-                          $ref: "#/components/schemas/Acceess"
+                        access:
+                          $ref: "#/components/schemas/Access"
                         description:
                           $ref: "#/components/schemas/Description"
                         shopType:
@@ -593,7 +593,6 @@ paths:
         500:
           description: システムエラー
 
-  /admin/shops/{shopId}:
     # ------------------------------
     # POST /admin/shops 店舗登録
     # ------------------------------
@@ -639,8 +638,8 @@ paths:
                   $ref: "#/components/schemas/SSID"
                 address:
                   $ref: "#/components/schemas/Address"
-                acceess:
-                  $ref: "#/components/schemas/Acceess"
+                access:
+                  $ref: "#/components/schemas/Access"
                 description:
                   $ref: "#/components/schemas/Description"
                 shopType:
@@ -661,6 +660,113 @@ paths:
                 properties:
                   serviceId:
                     $ref: "#/components/schemas/ServiceID"
+        400:
+          description: パラメータ不正
+        500:
+          description: システムエラー
+
+  /admin/shops/{shopId}:
+    # ------------------------------
+    # GET /admins/shops/:shopId 店舗詳細取得(管理用)
+    # ------------------------------
+    get:
+      tags:
+        - Admin Shop
+      summary: 店舗詳細取得(管理用)
+      operationId: getShopAdmin
+      description: |-
+        Wi-Fi利用可能店舗の情報および紐付くレビューの一覧を取得を取得する。
+      x-code-samples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl 'http://localhost:1323/admin/shops/6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2?ewviewLimit=10&reviewOffset=10'
+      parameters:
+        - $ref: "#/components/parameters/ShopIdPath"
+        - name: reviewLimit
+          $ref: "#/components/parameters/Limit"
+        - name: reviewOffset
+          $ref: "#/components/parameters/Offset"
+        - name: reviewSort
+          $ref: "#/components/parameters/Sort"
+      responses:
+        200:
+          description: 成功時のレスポンス
+          content:
+            application/json:
+              schema:
+                description: 店舗詳細取得レスポンス
+                type: object
+                required:
+                  - shopId
+                  - shopName
+                  - ssid
+                  - address
+                  - access
+                  - description
+                  - shopType
+                  - openingHours
+                  - seatsNum
+                  - createdAt
+                  - updatedAt
+                  - deletedAt
+                  - reviewCount
+                  - reviewList
+                properties:
+                  shopId:
+                    $ref: "#/components/schemas/ShopID"
+                  shopName:
+                    $ref: "#/components/schemas/ShopName"
+                  ssid:
+                    $ref: "#/components/schemas/SSID"
+                  address:
+                    $ref: "#/components/schemas/Address"
+                  access:
+                    $ref: "#/components/schemas/Access"
+                  description:
+                    $ref: "#/components/schemas/Description"
+                  shopType:
+                    $ref: "#/components/schemas/ShopType"
+                  openingHours:
+                    $ref: "#/components/schemas/OpeningHours"
+                  seatsNum:
+                    $ref: "#/components/schemas/SeatsNum"
+                  createdAt:
+                    $ref: "#/components/schemas/CreatedAt"
+                  updatedAt:
+                    $ref: "#/components/schemas/UpdatedAt"
+                  deletedAt:
+                    $ref: "#/components/schemas/DeletedAt"
+                  reviewCount:
+                    $ref: "#/components/schemas/ShopCount"
+                  reviewList:
+                    type: array
+                    description: レビューリスト
+                    items:
+                      type: object
+                      required:
+                        - reviewId
+                        - comment
+                        - evaluation
+                        - status
+                        - createdAt
+                        - updatedAt
+                        - deletedAt
+                      properties:
+                        reviewId:
+                          $ref: "#/components/schemas/ReviewID"
+                        comment:
+                          $ref: "#/components/schemas/Comment"
+                        evaluation:
+                          $ref: "#/components/schemas/Evaluation"
+                        status:
+                          $ref: "#/components/schemas/Status"
+                        createdAt:
+                          $ref: "#/components/schemas/CreatedAt"
+                        updatedAt:
+                          $ref: "#/components/schemas/UpdatedAt"
+                        deletedAt:
+                          $ref: "#/components/schemas/DeletedAt"
         400:
           description: パラメータ不正
         500:
@@ -707,8 +813,8 @@ paths:
                   $ref: "#/components/schemas/SSID"
                 address:
                   $ref: "#/components/schemas/Address"
-                acceess:
-                  $ref: "#/components/schemas/Acceess"
+                access:
+                  $ref: "#/components/schemas/Access"
                 description:
                   $ref: "#/components/schemas/Description"
                 shopType:
@@ -778,7 +884,7 @@ paths:
       summary: レビュー一覧取得(管理用)
       operationId: getReviewListAdmin
       description: |-
-        レビューの一覧を取得する。
+        全体のレビューの一覧を取得する。
       x-code-samples:
         - lang: Shell
           label: cURL
@@ -794,7 +900,7 @@ paths:
           content:
             application/json:
               schema:
-                description: レビュー一覧レスポンス
+                description: レビュー一覧取得レスポンス
                 type: object
                 required:
                   - reviewList
@@ -948,7 +1054,7 @@ components:
       type: string
       format: 文字列
       example: 東京都渋谷区道玄坂1-1-1
-    Acceess:
+    Access:
       description: 店舗アクセス
       type: string
       format: 文字列
