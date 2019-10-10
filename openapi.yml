@@ -160,6 +160,78 @@ paths:
         500:
           description: システムエラー
 
+  /shops/{shopId}:
+    # ------------------------------
+    # GET /shops/:shopId 店舗詳細取得
+    # ------------------------------
+    get:
+      tags:
+        - Shop
+      summary: 店舗詳細取得
+      operationId: getShopClinet
+      description: |-
+        Wi-Fi利用可能店舗の詳細情報を取得する。
+      x-code-samples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl 'http://localhost:1323/shops/6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2'
+      parameters:
+        - $ref: "#/components/parameters/ShopIdPath"
+      responses:
+        200:
+          description: 成功時のレスポンス
+          content:
+            application/json:
+              schema:
+                description: 店舗詳細取得レスポンス
+                type: object
+                required:
+                  - shopId
+                  - serviceId
+                  - wifiName
+                  - shopName
+                  - ssid
+                  - address
+                  - access
+                  - description
+                  - shopType
+                  - openingHours
+                  - seatsNum
+                  - reviewCount
+                  - average
+                properties:
+                  shopId:
+                    $ref: "#/components/schemas/ShopID"
+                  serviceId:
+                    $ref: "#/components/schemas/ServiceID"
+                  wifiName:
+                    $ref: "#/components/schemas/WifiName"
+                  shopName:
+                    $ref: "#/components/schemas/ShopName"
+                  ssid:
+                    $ref: "#/components/schemas/SSID"
+                  address:
+                    $ref: "#/components/schemas/Address"
+                  access:
+                    $ref: "#/components/schemas/Access"
+                  description:
+                    $ref: "#/components/schemas/Description"
+                  shopType:
+                    $ref: "#/components/schemas/ShopType"
+                  openingHours:
+                    $ref: "#/components/schemas/OpeningHours"
+                  seatsNum:
+                    $ref: "#/components/schemas/SeatsNum"
+                  reviewCount:
+                    $ref: "#/components/schemas/ShopCount"
+                  average:
+                    $ref: "#/components/schemas/Average"
+        400:
+          description: パラメータ不正
+        500:
+          description: システムエラー
+
   /reviews:
     # ------------------------------
     # POST /reviews レビュー投稿
@@ -680,7 +752,7 @@ paths:
         - lang: Shell
           label: cURL
           source: |
-            curl 'http://localhost:1323/admin/shops/6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2?ewviewLimit=10&reviewOffset=10'
+            curl 'http://localhost:1323/admin/shops/6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2?reviewLimit=10&reviewOffset=10'
       parameters:
         - $ref: "#/components/parameters/ShopIdPath"
         - name: reviewLimit
@@ -699,6 +771,8 @@ paths:
                 type: object
                 required:
                   - shopId
+                  - serviceId
+                  - wifiName
                   - shopName
                   - ssid
                   - address
@@ -712,9 +786,14 @@ paths:
                   - deletedAt
                   - reviewCount
                   - reviewList
+                  - average
                 properties:
                   shopId:
                     $ref: "#/components/schemas/ShopID"
+                  serviceId:
+                    $ref: "#/components/schemas/ServiceID"
+                  wifiName:
+                    $ref: "#/components/schemas/WifiName"
                   shopName:
                     $ref: "#/components/schemas/ShopName"
                   ssid:
@@ -767,6 +846,8 @@ paths:
                           $ref: "#/components/schemas/UpdatedAt"
                         deletedAt:
                           $ref: "#/components/schemas/DeletedAt"
+                  average:
+                    $ref: "#/components/schemas/Average"
         400:
           description: パラメータ不正
         500:
@@ -1110,7 +1191,7 @@ components:
       format: YYYY-MM-DD HH:mm:ss
       example: 2019-01-01 12:00:00
     DeletedAt:
-      description: 削除日時
+      description: 削除日時(削除されていなければ `null` )
       type: string
       format: YYYY-MM-DD HH:mm:ss
       example: 2019-01-01 12:00:00
