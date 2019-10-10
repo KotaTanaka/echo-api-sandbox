@@ -329,9 +329,93 @@ paths:
         500:
           description: システムエラー
 
+    # ------------------------------
+    # PUT /admin/services/:serviceId Wi-Fiサービス編集
+    # ------------------------------
+    put:
+      tags:
+        - Admin Service
+      summary: Wi-Fiサービス編集
+      operationId: putServiceAdmin
+      description: |-
+        Wi-Fiサービスの情報を編集する。
+      x-code-samples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl -X POST 'http://localhost:1323/admin/services/starbacks_wifi' \
+              -H 'Contents-Type: application/json' \
+              -d \
+                '{
+                  "wifiName": "スターバックスWi-Fi",
+                  "link": "https://www.starbucks.co.jp"
+                }'
+      parameters:
+        - $ref: "#/components/parameters/ServiceIdPath"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                wifiName:
+                  $ref: "#/components/schemas/WifiName"
+                link:
+                  $ref: "#/components/schemas/Link"
+      responses:
+        200:
+          description: 成功時のレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - serviceId
+                properties:
+                  serviceId:
+                    $ref: "#/components/schemas/ServiceID"
+        400:
+          description: パラメータ不正
+        500:
+          description: システムエラー
+
+    # ------------------------------
+    # DELETE /admin/services/:serviceId Wi-Fiサービス削除
+    # ------------------------------
+    delete:
+      tags:
+        - Admin Service
+      summary: Wi-Fiサービス削除
+      operationId: deleteServiceAdmin
+      description: |-
+        Wi-Fiサービスを削除する。
+      x-code-samples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl -X POST 'http://localhost:1323/admin/services/starbacks_wifi'
+      parameters:
+        - $ref: "#/components/parameters/ServiceIdPath"
+      responses:
+        200:
+          description: 成功時のレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - serviceId
+                properties:
+                  serviceId:
+                    $ref: "#/components/schemas/ServiceID"
+        400:
+          description: パラメータ不正
+        500:
+          description: システムエラー
+
 components:
   # ------------------------------
-  # Query Parameters
+  # Query or Path Parameters
   # ------------------------------
   parameters:
     Limit:
@@ -361,6 +445,12 @@ components:
         type: string
         format: asc / desc
         example: asc
+    ServiceIdPath:
+      in: path
+      name: serviceId
+      description: WiFiサービスID
+      schema:
+        $ref: "#/components/schemas/ServiceID"
   # ------------------------------
   # Request Body Parameters / Response Body Fields
   # ------------------------------
