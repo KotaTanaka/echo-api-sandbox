@@ -24,7 +24,7 @@ func ConnectGorm() *gorm.DB {
 	PASS := "password"
 	PROTOCOL := "tcp(mysql:3306)"
 	DBNAME := "find_wifi_db"
-	OPTION := "parseTime=true"
+	OPTION := "charset=utf8mb4&parseTime=true"
 
 	CONNECT := USER + ":" + PASS + "@" + PROTOCOL + "/" + DBNAME + "?" + OPTION
 	db, err := gorm.Open(DBMS, CONNECT)
@@ -62,7 +62,7 @@ func main() {
 	// DBのセットアップ
 	db := ConnectGorm()
 	defer db.Close()
-	db.Set("gorm:table_options", "ENGINE = InnoDB")
+	db.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8mb4")
 	db.AutoMigrate(&data.Service{})
 	db.AutoMigrate(&data.Shop{}).AddForeignKey("service_id", "services(id)", "RESTRICT", "RESTRICT")
 	db.AutoMigrate(&data.Review{}).AddForeignKey("shop_id", "shops(id)", "RESTRICT", "RESTRICT")
