@@ -35,4 +35,3 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: find_wifi_db
-      TZ: Asiz/Tokyo
