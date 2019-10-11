@@ -25,8 +25,9 @@ services:
   mysql:
     image: mysql:5.7
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+      - ./docker/db/mysql_data:/var/lib/mysql
+      - ./docker/db/init:/docker-entrypoint-initdb.d
+      - ./docker/db/config/my.cnf:/etc/mysql/conf.d/my.cnf
     ports:
       - 3306:3306
     container_name: find_wifi_mysql
@@ -35,6 +36,3 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: find_wifi_db
       TZ: Asiz/Tokyo
-
-volumes:
-  mysql_data:
