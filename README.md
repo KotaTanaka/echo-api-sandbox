@@ -47,12 +47,21 @@ Enter password: password
 mysql> use find_wifi_db;
 ```
 
+* データベース初期化
+
+```
+$ rm -rf docker/db/mysql_data
+$ ./stop-docker.sh && ./start-docker.sh
+```
+
 * API仕様書の書き出し
 
 ```
 $ npm i -g redoc-cli
 $ redoc-cli bundle openapi.yml
 ```
+
+→ コンテナ&サーバー再起動後 http://localhost:1323/doc で確認できます。
 
 ## テーブル定義
 
