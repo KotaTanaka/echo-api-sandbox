@@ -9,51 +9,36 @@ info:
     <h2>For クライアント</h2>
     <table>
       <thead>
-        <th>No.</th><th>Group</th><th>Method</th><th>Path</th><th>API名称</th><th>説明</th>
+        <th>No.</th><th>Group</th><th>Method</th><th>Path</th><th>API名称</th>
       </thead>
       <tbody>
-        <tr><td>CS-1</td><td>Shop</td><td>GET</td><td>/shops</td>
-        <td>店舗一覧取得</td><td>Wi-Fi利用可能店舗一覧を取得する。</td></tr>
-        <tr><td>CS-2</td><td>Shop</td><td>GET</td><td>/shops/:shopId</td>
-        <td>店舗詳細取得</td><td>Wi-Fi利用可能店舗の詳細情報を取得する。</td></tr>
-        <tr><td>CR-1</td><td>Review</td><td>GET</td><td>/reviews</td>
-        <td>レビュー一覧取得</td><td>店舗に投稿されたレビュー一覧を取得する。</td></tr>
-        <tr><td>CR-2</td><td>Review</td><td>POST</td><td>/reviews</td>
-        <td>レビュー投稿</td><td>店舗にレビューを投稿する。</td></tr>
+        <tr><td>CS01</td><td>Shop</td><td>GET</td><td>/shops</td><td>店舗一覧取得</td></tr>
+        <tr><td>CS02</td><td>Shop</td><td>GET</td><td>/shops/:shopId</td><td>店舗詳細取得</td></tr>
+        <tr><td>CR01</td><td>Review</td><td>GET</td><td>/reviews</td><td>レビュー一覧取得</td></tr>
+        <tr><td>CR02</td><td>Review</td><td>POST</td><td>/reviews</td><td>レビュー投稿</td></tr>
+      </tbody>
     </table>
 
     <h2>For 管理画面・スクレイピング</h2>
     <table>
       <thead>
-        <th>No.</th><th>Group</th><th>Method</th><th>Path</th><th>API名称</th><th>説明</th>
+        <th>No.</th><th>Group</th><th>Method</th><th>Path</th><th>API名称</th>
       </thead>
       <tbody>
-        <tr><td>AW-1</td><td>Service</td><td>GET</td><td>/admin/services</td>
-        <td>Wi-Fiサービス一覧取得</td><td>Wi-Fiサービス一覧を取得する。</td></tr>
-        <tr><td>AW-2</td><td>Service</td><td>GET</td><td>/admin/services/:service_id</td>
-        <td>Wi-Fiサービス詳細取得</td><td>Wi-Fiサービスの詳細情報を取得する。</td></tr>
-        <tr><td>AW-3</td><td>Service</td><td>POST</td><td>/admin/services</td>
-        <td>Wi-Fiサービス登録</td><td>Wi-Fiサービスを登録する。</td></tr>
-        <tr><td>AW-4</td><td>Service</td><td>PUT</td><td>/admin/services/:service_id</td>
-        <td>Wi-Fiサービス編集</td><td>Wi-Fiサービスの情報を編集する。</td></tr>
-        <tr><td>AW-5</td><td>Service</td><td>DELETE</td><td>/admin/services/:service_id</td>
-        <td>Wi-Fiサービス削除</td><td>Wi-Fiサービスを削除する。</td></tr>
-        <tr><td>AS-1</td><td>Shop</td><td>GET</td><td>/admin/shops</td>
-        <td>店舗一覧取得</td><td>Wi-Fi利用可能店舗一覧を取得する。</td></tr>
-        <tr><td>AS-2</td><td>Shop</td><td>GET</td><td>/admin/shops/:shopId</td>
-        <td>店舗詳細取得</td><td>Wi-Fi利用可能店舗の詳細情報を取得する。</td></tr>
-        <tr><td>AS-3</td><td>Shop</td><td>POST</td><td>/admin/shops</td>
-        <td>店舗登録</td><td>Wi-Fi利用可能店舗を登録する。</td></tr>
-        <tr><td>AS-4</td><td>Shop</td><td>PUT</td><td>/admin/shops/:shopId</td>
-        <td>店舗編集</td><td>Wi-Fi利用可能店舗の情報を編集する。</td></tr>
-        <tr><td>AS-5</td><td>Shop</td><td>DELETE</td><td>/admin/shops/:shopId</td>
-        <td>店舗削除</td><td>Wi-Fi利用可能店舗を削除する。</td></tr>
-        <tr><td>AR-1</td><td>Review</td><td>GET</td><td>/admin/reviews</td>
-        <td>レビュー一覧取得</td><td>店舗に投稿されたレビュー一覧を取得する。</td></tr>
-        <tr><td>AR-2</td><td>Review</td><td>PUT</td><td>/admin/reviews/:reviewId</td>
-        <td>レビューステータス変更</td><td>レビューの公開・非公開を変更する。</td></tr>
-        <tr><td>AR-3</td><td>Review</td><td>DELETE</td><td>/admin/reviews/:reviewId</td>
-        <td>レビュー削除</td><td>レビューを削除する。</td></tr>
+        <tr><td>AW01</td><td>Service</td><td>GET</td><td>/admin/services</td><td>Wi-Fiサービス一覧取得</td></tr>
+        <tr><td>AW02</td><td>Service</td><td>GET</td><td>/admin/services/:service_id</td><td>Wi-Fiサービス詳細取得</td></tr>
+        <tr><td>AW03</td><td>Service</td><td>POST</td><td>/admin/services</td><td>Wi-Fiサービス登録</td></tr>
+        <tr><td>AW04</td><td>Service</td><td>PUT</td><td>/admin/services/:service_id</td><td>Wi-Fiサービス編集</td></tr>
+        <tr><td>AW05</td><td>Service</td><td>DELETE</td><td>/admin/services/:service_id</td><td>Wi-Fiサービス削除</td></tr>
+        <tr><td>AS01</td><td>Shop</td><td>GET</td><td>/admin/shops</td><td>店舗一覧取得</td></tr>
+        <tr><td>AS02</td><td>Shop</td><td>GET</td><td>/admin/shops/:shopId</td><td>店舗詳細取得</td></tr>
+        <tr><td>AS03</td><td>Shop</td><td>POST</td><td>/admin/shops</td><td>店舗登録</td></tr>
+        <tr><td>AS04</td><td>Shop</td><td>PUT</td><td>/admin/shops/:shopId</td><td>店舗編集</td></tr>
+        <tr><td>AS05</td><td>Shop</td><td>DELETE</td><td>/admin/shops/:shopId</td><td>店舗削除</td></tr>
+        <tr><td>AR01</td><td>Review</td><td>GET</td><td>/admin/reviews</td><td>レビュー一覧取得</td></tr>
+        <tr><td>AR02</td><td>Review</td><td>PUT</td><td>/admin/reviews/:reviewId</td><td>レビューステータス変更</td></tr>
+        <tr><td>AR03</td><td>Review</td><td>DELETE</td><td>/admin/reviews/:reviewId</td><td>レビュー削除</td></tr>
+      </tbody>
     </table>
 servers:
   - url: http://localhost:1323
