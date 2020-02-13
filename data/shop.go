@@ -1,5 +1,5 @@
 /*
-Package data --- 店舗関連の構造体
+Package data | 店舗関連の構造体
 */
 package data
 
@@ -8,7 +8,7 @@ import (
 )
 
 /*
-Shop --- Model Wi-Fi提供店舗テーブル
+Shop | Model Wi-Fi提供店舗テーブル
 */
 type Shop struct {
 	gorm.Model
@@ -25,14 +25,14 @@ type Shop struct {
 }
 
 /*
-ShopIDResponse --- 店舗IDのみのレスポンス
+ShopIDResponse | 店舗IDのみのレスポンス
 */
 type ShopIDResponse struct {
 	ShopID uint `json:"shopId"`
 }
 
 /*
-RegisterShopRequestBody --- 店舗登録リクエストボディ
+RegisterShopRequestBody | 店舗登録リクエストボディ
 */
 type RegisterShopRequestBody struct {
 	ServiceID    uint   `json:"serviceId" validate:"required"`
@@ -47,7 +47,7 @@ type RegisterShopRequestBody struct {
 }
 
 /*
-ShopListingResponseElement --- 店舗一覧取得レスポンス要素
+ShopListingResponseElement | 店舗一覧取得レスポンス要素
 */
 type ShopListingResponseElement struct {
 	ShopID       uint     `json:"shopId"`
@@ -67,7 +67,7 @@ type ShopListingResponseElement struct {
 }
 
 /*
-ShopListingResponse --- 店舗一覧取得レスポンス
+ShopListingResponse | 店舗一覧取得レスポンス
 */
 type ShopListingResponse struct {
 	ShopList []ShopListingResponseElement `json:"shopList"`

@@ -1,12 +1,12 @@
 /*
-Package data --- Wi-Fiサービス関連の構造体
+Package data | Wi-Fiサービス関連の構造体
 */
 package data
 
 import "github.com/jinzhu/gorm"
 
 /*
-Service --- Model Wi-Fiサービステーブル
+Service Model | Wi-Fiサービステーブル
 */
 type Service struct {
 	gorm.Model
@@ -16,14 +16,14 @@ type Service struct {
 }
 
 /*
-ServiceIDResponse --- Wi-FiサービスIDのみのレスポンス
+ServiceIDResponse | Wi-FiサービスIDのみのレスポンス
 */
 type ServiceIDResponse struct {
 	ServiceID uint `json:"serviceId"`
 }
 
 /*
-RegisterServiceRequestBody --- Wi-Fiサービス登録リクエストボディ
+RegisterServiceRequestBody | Wi-Fiサービス登録リクエストボディ
 */
 type RegisterServiceRequestBody struct {
 	WifiName string `json:"wifiName" validate:"required"`
@@ -31,17 +31,17 @@ type RegisterServiceRequestBody struct {
 }
 
 /*
-ServiceListingResponseElement ---  Wi-Fiサービス一覧取得レスポンス要素
+ServiceListingResponseElement | Wi-Fiサービス一覧取得レスポンス要素
 */
 type ServiceListingResponseElement struct {
 	ServiceID uint   `json:"serviceId"`
 	WifiName  string `json:"wifiName"`
-	Link      string `json:"Link"`
+	Link      string `json:"link"`
 	ShopCount int    `json:"shopCount"`
 }
 
 /*
-ServiceListingResponse ---  Wi-Fiサービス一覧取得レスポンス
+ServiceListingResponse | Wi-Fiサービス一覧取得レスポンス
 */
 type ServiceListingResponse struct {
 	ServiceList []ServiceListingResponseElement `json:"serviceList"`

@@ -1,5 +1,5 @@
 /*
-Package handler --- Wi-Fi提供店舗関連ハンドラー
+Package handler | Wi-Fi提供店舗関連ハンドラー
 */
 package handler
 
@@ -15,8 +15,7 @@ import (
 )
 
 /*
-GetShopListClient --- 店舗一覧取得
-@author kotatanaka
+GetShopListClient | 店舗一覧取得
 */
 func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -55,8 +54,7 @@ func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 }
 
 /*
-RegisterShopAdmin --- 店舗登録
-@author kotatanaka
+RegisterShopAdmin | 店舗登録
 */
 func RegisterShopAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {

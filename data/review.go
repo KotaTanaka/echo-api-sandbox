@@ -1,5 +1,5 @@
 /*
-Package data --- 店舗レビュー関連の構造体
+Package data | 店舗レビュー関連の構造体
 */
 package data
 
@@ -8,7 +8,7 @@ import (
 )
 
 /*
-Review --- Model 店舗レビューテーブル
+Review | Model 店舗レビューテーブル
 */
 type Review struct {
 	gorm.Model
@@ -19,7 +19,7 @@ type Review struct {
 }
 
 /*
-ReviewIDResponse --- レビューIDのみのレスポンス
+ReviewIDResponse | レビューIDのみのレスポンス
 */
 type ReviewIDResponse struct {
 	ReviewID uint `json:"reviewId"`

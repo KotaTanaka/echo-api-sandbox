@@ -15,7 +15,7 @@ import (
 )
 
 /*
-ConnectGorm --- DBのセットアップ
+ConnectGorm | DBのセットアップ
 */
 func ConnectGorm() *gorm.DB {
 	// TODO 設定ファイルに書く
@@ -37,14 +37,14 @@ func ConnectGorm() *gorm.DB {
 }
 
 /*
-Validator --- バリデーターのセットアップのためのラッピング
+Validator | バリデーターのセットアップのためのラッピング
 */
 type Validator struct {
 	validator *validator.Validate
 }
 
 /*
-Validate --- バリデーターのセットアップ
+Validate | バリデーターのセットアップ
 */
 func (v *Validator) Validate(i interface{}) error {
 	return v.validator.Struct(i)

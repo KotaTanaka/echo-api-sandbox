@@ -1,5 +1,5 @@
 /*
-Package handler --- Hello, Find Wi-Fi!
+Package handler | Hello, Find Wi-Fi!
 */
 package handler
 
@@ -11,8 +11,7 @@ import (
 )
 
 /*
-Hello --- Hello, Find Wi-Fi! 文字列を表示する
-@author kotatanaka
+Hello | Hello, Find Wi-Fi! 文字列を表示する
 */
 func Hello() echo.HandlerFunc {
 	return func(c echo.Context) error {

@@ -1,5 +1,5 @@
 /*
-Package handler --- Wi-Fiサービス関連ハンドラー
+Package handler | Wi-Fiサービス関連ハンドラー
 */
 package handler
 
@@ -15,8 +15,7 @@ import (
 )
 
 /*
-GetServiceListAdmin --- Wi-Fiサービス一覧取得
-@author kotatanaka
+GetServiceListAdmin | Wi-Fiサービス一覧取得
 */
 func GetServiceListAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -40,8 +39,7 @@ func GetServiceListAdmin(db *gorm.DB) echo.HandlerFunc {
 }
 
 /*
-RegisterServiceAdmin --- Wi-Fiサービス登録
-@author kotatanaka
+RegisterServiceAdmin | Wi-Fiサービス登録
 */
 func RegisterServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
