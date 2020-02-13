@@ -12,6 +12,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 
 	"../data"
+	"../model"
 )
 
 /*
@@ -19,14 +20,14 @@ GetShopListClient | 店舗一覧取得
 */
 func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		shops := []data.Shop{}
+		shops := []model.Shop{}
 		db.Find(&shops)
 
 		response := data.ShopListingResponse{}
 		response.Total = len(shops)
 
 		for _, shop := range shops {
-			service := data.Service{}
+			service := model.Service{}
 			db.First(&service, shop.ServiceID)
 
 			response.ShopList = append(
@@ -76,7 +77,7 @@ func RegisterShopAdmin(db *gorm.DB) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		shop := new(data.Shop)
+		shop := new(model.Shop)
 		shop.ServiceID = body.ServiceID
 		shop.SSID = body.SSID
 		shop.ShopName = body.ShopName

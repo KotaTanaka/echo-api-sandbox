@@ -5,6 +5,7 @@ package data
 
 /*
 MessageResponse | メッセージを返却するレスポンス
+@type Response
 */
 type MessageResponse struct {
 	Message string `json:"message"`
@@ -12,6 +13,7 @@ type MessageResponse struct {
 
 /*
 ErrorResponse | エラーレスポンス
+@type Response
 */
 type ErrorResponse struct {
 	Code          int      `json:"code"`

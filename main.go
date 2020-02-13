@@ -10,8 +10,8 @@ import (
 	"github.com/labstack/echo/middleware"
 	"gopkg.in/go-playground/validator.v9"
 
-	"./data"
 	"./handler"
+	"./model"
 )
 
 /*
@@ -63,9 +63,9 @@ func main() {
 	db := ConnectGorm()
 	defer db.Close()
 	db.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8mb4")
-	db.AutoMigrate(&data.Service{})
-	db.AutoMigrate(&data.Shop{}).AddForeignKey("service_id", "services(id)", "RESTRICT", "RESTRICT")
-	db.AutoMigrate(&data.Review{}).AddForeignKey("shop_id", "shops(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.Service{})
+	db.AutoMigrate(&model.Shop{}).AddForeignKey("service_id", "services(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.Review{}).AddForeignKey("shop_id", "shops(id)", "RESTRICT", "RESTRICT")
 
 	// リクエスト共通処理
 	e.Use(middleware.Logger())

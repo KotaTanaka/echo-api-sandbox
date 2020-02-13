@@ -3,29 +3,9 @@ Package data | 店舗関連の構造体
 */
 package data
 
-import (
-	"github.com/jinzhu/gorm"
-)
-
-/*
-Shop | Model Wi-Fi提供店舗テーブル
-*/
-type Shop struct {
-	gorm.Model
-	ServiceID    uint
-	SSID         string `gorm:"size:255"`
-	ShopName     string `gorm:"size:255"`
-	Description  string `gorm:"size:255"`
-	Address      string `gorm:"size:255"`
-	ShopType     string `gorm:"size:255"`
-	OpeningHours string `gorm:"size:255"`
-	SeatsNum     int
-	HasPower     bool
-	Reviews      []Review
-}
-
 /*
 ShopIDResponse | 店舗IDのみのレスポンス
+@type Response
 */
 type ShopIDResponse struct {
 	ShopID uint `json:"shopId"`
@@ -33,6 +13,7 @@ type ShopIDResponse struct {
 
 /*
 RegisterShopRequestBody | 店舗登録リクエストボディ
+@type Request
 */
 type RegisterShopRequestBody struct {
 	ServiceID    uint   `json:"serviceId" validate:"required"`
@@ -48,6 +29,7 @@ type RegisterShopRequestBody struct {
 
 /*
 ShopListingResponseElement | 店舗一覧取得レスポンス要素
+@type Response
 */
 type ShopListingResponseElement struct {
 	ShopID       uint     `json:"shopId"`
@@ -68,6 +50,7 @@ type ShopListingResponseElement struct {
 
 /*
 ShopListingResponse | 店舗一覧取得レスポンス
+@type Response
 */
 type ShopListingResponse struct {
 	ShopList []ShopListingResponseElement `json:"shopList"`

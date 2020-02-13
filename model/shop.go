@@ -1,0 +1,23 @@
+/*
+Package model | 店舗モデル
+*/
+package model
+
+import "github.com/jinzhu/gorm"
+
+/*
+Shop | Wi-Fi提供店舗モデル
+*/
+type Shop struct {
+	gorm.Model
+	ServiceID    uint
+	SSID         string `gorm:"size:255"`
+	ShopName     string `gorm:"size:255"`
+	Description  string `gorm:"size:255"`
+	Address      string `gorm:"size:255"`
+	ShopType     string `gorm:"size:255"`
+	OpeningHours string `gorm:"size:255"`
+	SeatsNum     int
+	HasPower     bool
+	Reviews      []Review
+}

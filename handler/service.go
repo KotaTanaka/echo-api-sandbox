@@ -12,6 +12,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 
 	"../data"
+	"../model"
 )
 
 /*
@@ -19,7 +20,7 @@ GetServiceListAdmin | Wi-Fiサービス一覧取得
 */
 func GetServiceListAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		services := []data.Service{}
+		services := []model.Service{}
 		db.Find(&services)
 
 		response := data.ServiceListingResponse{}
@@ -61,7 +62,7 @@ func RegisterServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		service := new(data.Service)
+		service := new(model.Service)
 		service.WifiName = body.WifiName
 		service.Link = body.Link
 
