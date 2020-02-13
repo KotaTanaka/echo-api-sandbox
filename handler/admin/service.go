@@ -1,7 +1,7 @@
 /*
-Package handler | Wi-Fiサービス関連ハンドラー
+Package adminhandler | Admin Wi-Fiサービス関連ハンドラー
 */
-package handler
+package adminhandler
 
 import (
 	"net/http"
@@ -11,8 +11,8 @@ import (
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
-	"../data"
-	"../model"
+	"../../data"
+	"../../model"
 )
 
 /*

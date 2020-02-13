@@ -11,6 +11,8 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 
 	"./handler"
+	adminhandler "./handler/admin"
+	clienthandler "./handler/client"
 	"./model"
 )
 
@@ -77,10 +79,10 @@ func main() {
 
 	// ルーティング
 	e.GET("/", handler.Hello())
-	e.GET("/shops", handler.GetShopListClient(db))
-	e.GET("/admin/services", handler.GetServiceListAdmin(db))
-	e.POST("/admin/services", handler.RegisterServiceAdmin(db))
-	e.POST("/admin/shops", handler.RegisterShopAdmin(db))
+	e.GET("/shops", clienthandler.GetShopListClient(db))
+	e.GET("/admin/services", adminhandler.GetServiceListAdmin(db))
+	e.POST("/admin/services", adminhandler.RegisterServiceAdmin(db))
+	e.POST("/admin/shops", adminhandler.RegisterShopAdmin(db))
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
