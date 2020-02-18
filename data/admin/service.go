@@ -1,15 +1,7 @@
 /*
-Package data | サービス関連の構造体
+Package admindata 管理API関連構造体
 */
-package data
-
-/*
-ServiceIDResponse | Wi-FiサービスIDのみのレスポンス
-@type Response
-*/
-type ServiceIDResponse struct {
-	ServiceID uint `json:"serviceId"`
-}
+package admindata
 
 /*
 RegisterServiceRequestBody | Wi-Fiサービス登録リクエストボディ

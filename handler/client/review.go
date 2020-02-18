@@ -1,4 +1,4 @@
 /*
-Package clienthandler | Client 店舗レビュー関連ハンドラー
+Package clienthandler クライアントAPI関連ハンドラー
 */
 package clienthandler

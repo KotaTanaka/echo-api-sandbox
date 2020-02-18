@@ -1,5 +1,5 @@
 /*
-Package clienthandler | Client Wi-Fi提供店舗関連ハンドラー
+Package clienthandler クライアントAPI関連ハンドラー
 */
 package clienthandler
 
@@ -9,7 +9,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 
-	"../../data"
+	clientdata "../../data/client"
 	"../../model"
 )
 
@@ -21,7 +21,7 @@ func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 		shops := []model.Shop{}
 		db.Find(&shops)
 
-		response := data.ShopListingResponse{}
+		response := clientdata.ShopListingResponse{}
 		response.Total = len(shops)
 
 		for _, shop := range shops {
@@ -31,7 +31,7 @@ func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 			response.ShopList = append(
 				// TODO SSID: 文字列を配列に変換
 				// TODO Average: 評価の平均値の計算
-				response.ShopList, data.ShopListingResponseElement{
+				response.ShopList, clientdata.ShopListingResponseElement{
 					ShopID:       shop.ID,
 					ShopName:     shop.ShopName,
 					WifiName:     service.WifiName,

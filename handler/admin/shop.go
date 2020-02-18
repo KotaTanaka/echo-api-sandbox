@@ -1,5 +1,5 @@
 /*
-Package adminhandler | Admin Wi-Fi提供店舗関連ハンドラー
+Package adminhandler 管理API関連ハンドラー
 */
 package adminhandler
 
@@ -12,6 +12,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 
 	"../../data"
+	admindata "../../data/admin"
 	"../../model"
 )
 
@@ -21,7 +22,7 @@ RegisterShopAdmin | 店舗登録
 func RegisterShopAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		validator.New()
-		body := new(data.RegisterShopRequestBody)
+		body := new(admindata.RegisterShopRequestBody)
 		errorResponse := new(data.ErrorResponse)
 
 		if err := c.Bind(body); err != nil {

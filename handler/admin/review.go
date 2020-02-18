@@ -1,4 +1,4 @@
 /*
-Package adminhandler | Admin 店舗レビュー関連ハンドラー
+Package adminhandler 管理API関連ハンドラー
 */
 package adminhandler

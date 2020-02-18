@@ -1,5 +1,5 @@
 /*
-Package handler | Hello, Find Wi-Fi!
+Package handler Hello, Find Wi-Fi!
 */
 package handler
 
