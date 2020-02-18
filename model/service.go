@@ -1,5 +1,5 @@
 /*
-Package model | サービスモデル
+Package model モデル
 */
 package model
 

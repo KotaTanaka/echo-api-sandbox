@@ -41,6 +41,7 @@ func RegisterShopAdmin(db *gorm.DB) echo.HandlerFunc {
 
 		shop := new(model.Shop)
 		shop.ServiceID = body.ServiceID
+		shop.AreaKey = body.Area
 		shop.SSID = body.SSID
 		shop.ShopName = body.ShopName
 		shop.Description = body.Description

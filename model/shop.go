@@ -1,5 +1,5 @@
 /*
-Package model | 店舗モデル
+Package model モデル
 */
 package model
 
@@ -11,6 +11,7 @@ Shop | Wi-Fi提供店舗モデル
 type Shop struct {
 	gorm.Model
 	ServiceID    uint
+	AreaKey      string `gorm:"size:20"`
 	SSID         string `gorm:"size:255"`
 	ShopName     string `gorm:"size:255"`
 	Description  string `gorm:"size:255"`

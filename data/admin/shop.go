@@ -9,6 +9,7 @@ RegisterShopRequestBody | 店舗登録リクエストボディ
 */
 type RegisterShopRequestBody struct {
 	ServiceID    uint   `json:"serviceId" validate:"required"`
+	Area         string `json:"area" validate:"required"`
 	SSID         string `json:"ssid"`
 	ShopName     string `json:"shopName" validate:"required"`
 	Description  string `json:"description"`
