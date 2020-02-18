@@ -118,3 +118,18 @@ $ redoc-cli bundle openapi.yml
 | puplish_status | tinyint(1)       | YES  |     |
 +----------------+------------------+------+-----+
 ```
+
+* エリアマスタテーブル
+
+```
++------------+------------------+------+-----+---------+
+| Field      | Type             | Null | Key | Default |
++------------+------------------+------+-----+---------+
+| id         | int(10) unsigned | NO   | PRI | NULL    | auto_increment
+| created_at | datetime         | YES  |     | NULL    |
+| updated_at | datetime         | YES  |     | NULL    |
+| deleted_at | datetime         | YES  | MUL | NULL    |
+| area_key   | varchar(20)      | YES  |     | NULL    |
+| area_name  | varchar(255)     | YES  |     | NULL    |
++------------+------------------+------+-----+---------+
+```

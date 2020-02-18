@@ -65,6 +65,7 @@ func main() {
 	db := ConnectGorm()
 	defer db.Close()
 	db.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8mb4")
+	db.AutoMigrate(&model.Area{})
 	db.AutoMigrate(&model.Service{})
 	db.AutoMigrate(&model.Shop{}).AddForeignKey("service_id", "services(id)", "RESTRICT", "RESTRICT")
 	db.AutoMigrate(&model.Review{}).AddForeignKey("shop_id", "shops(id)", "RESTRICT", "RESTRICT")
