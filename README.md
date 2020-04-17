@@ -1,7 +1,12 @@
-# find-wifi-api
-Find Wi-Fi バックエンド [Echo]
+***find-wifi-backend***
 
-## 技術要素
+## About
+
+Find Wi-Fi バックエンド RESTful API
+
+*[Frontend - find-wifi-frontend](https://github.com/KotaTanaka/find-wifi-frontend)*
+
+## Technology
 
 * 言語 `Go`
 * フレームワーク `Echo`
@@ -10,38 +15,40 @@ Find Wi-Fi バックエンド [Echo]
 * 仮想環境 `Docker` `docker-compose`
 * API仕様書 `OpenAPI` `ReDoc`
 
-## ローカル開発環境構築
+## Getting Started
 
-* ソースコードのクローン
+* インストール
 
+```bash
+$ git clone git@github.com:KotaTanaka/find-wifi-backend.git
+$ cd find-wifi-backend
 ```
-$ git clone git@github.com:KotaTanaka/find-wifi-api.git
-$ cd find-wifi-api
-```
 
-* コンテナの起動 (docker-compose up)
+* サービスの起動
 
-```
+```bash
 $ ./start-docker.sh
 ```
 
-* コンテナの停止 (docker-compose down)
+* アプリケーションの起動
 
-```
-$ ./stop-docker.sh
-```
-
-* アプリケーションサーバー起動
-
-```
+```bash
 $ ./start-server.sh
 ```
 
-→ http://localhost:1323 でサーバーが起動します。
+→ http://localhost:1323
+
+* サービスの停止
+
+```bash
+$ ./stop-docker.sh
+```
+
+## Utility Commands
 
 * データベースログイン
 
-```
+```bash
 $ ./mysql.sh
 Enter password: password
 mysql> use find_wifi_db;
@@ -49,87 +56,33 @@ mysql> use find_wifi_db;
 
 * データベース初期化
 
-```
+```bash
+# DB削除
 $ rm -rf docker/db/mysql_data
+
+# サービス再起動(DB再生成)
 $ ./stop-docker.sh && ./start-docker.sh
 ```
 
-* API仕様書の書き出し
+* API定義書生成
 
-```
+```bash
+# Redoc CLI のインストール
 $ npm i -g redoc-cli
+
+# OpenAPI のHTML書き出し
 $ redoc-cli bundle openapi.yml
 ```
 
-→ コンテナ&サーバー再起動後 http://localhost:1323/doc で確認できます。
+→ http://localhost:1323/doc
 
-## テーブル定義
+## Database
 
-* Wi-Fiサービステーブル
+データベース名 `find_wifi_db`
 
-```
-+------------+------------------+------+-----+
-| Field      | Type             | Null | Key |
-+------------+------------------+------+-----+
-| id         | int(10) unsigned | NO   | PRI | auto_increment
-| created_at | timestamp        | YES  |     |
-| updated_at | timestamp        | YES  |     |
-| deleted_at | timestamp        | YES  | MUL |
-| wifi_name  | varchar(255)     | YES  |     |
-| link       | varchar(255)     | YES  |     |
-+------------+------------------+------+-----+
-```
-
-* Wi-Fi提供店舗テーブル
-
-```
-+---------------+------------------+------+-----+
-| Field         | Type             | Null | Key |
-+---------------+------------------+------+-----+
-| id            | int(10) unsigned | NO   | PRI | auto_increment
-| created_at    | timestamp        | YES  |     |
-| updated_at    | timestamp        | YES  |     |
-| deleted_at    | timestamp        | YES  | MUL |
-| service_id    | int(10) unsigned | YES  | MUL |
-| ss_id         | varchar(255)     | YES  |     |
-| shop_name     | varchar(255)     | YES  |     |
-| description   | varchar(255)     | YES  |     |
-| address       | varchar(255)     | YES  |     |
-| shop_type     | varchar(255)     | YES  |     |
-| opening_hours | varchar(255)     | YES  |     |
-| seats_num     | int(11)          | YES  |     |
-| has_power     | tinyint(1)       | YES  |     |
-+---------------+------------------+------+-----+
-```
-
-* 店舗レビューテーブル
-
-```
-+----------------+------------------+------+-----+
-| Field          | Type             | Null | Key |
-+----------------+------------------+------+-----+
-| id             | int(10) unsigned | NO   | PRI | auto_increment
-| created_at     | timestamp        | YES  |     |
-| updated_at     | timestamp        | YES  |     |
-| deleted_at     | timestamp        | YES  | MUL |
-| shop_id        | int(10) unsigned | YES  | MUL |
-| comment        | varchar(1000)    | YES  |     |
-| evaluation     | int(11)          | YES  |     |
-| puplish_status | tinyint(1)       | YES  |     |
-+----------------+------------------+------+-----+
-```
-
-* エリアマスタテーブル
-
-```
-+------------+------------------+------+-----+---------+
-| Field      | Type             | Null | Key | Default |
-+------------+------------------+------+-----+---------+
-| id         | int(10) unsigned | NO   | PRI | NULL    | auto_increment
-| created_at | datetime         | YES  |     | NULL    |
-| updated_at | datetime         | YES  |     | NULL    |
-| deleted_at | datetime         | YES  | MUL | NULL    |
-| area_key   | varchar(20)      | YES  |     | NULL    |
-| area_name  | varchar(255)     | YES  |     | NULL    |
-+------------+------------------+------+-----+---------+
-```
+| テーブル物理名 | 論理名 |
+|:---|:---|
+| `services` | Wi-Fiサービス |
+| `shops` | Wi-Fi提供店舗 |
+| `reviews` | 店舗レビュー |
+| `areas` | エリアマスタ |
