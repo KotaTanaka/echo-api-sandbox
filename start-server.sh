@@ -2,4 +2,4 @@
 # ------------------------------
 # サーバーを起動するスクリプト
 # ------------------------------
-docker-compose exec app go run app/main.go
+docker-compose exec app sh -c "go run app/main.go"
