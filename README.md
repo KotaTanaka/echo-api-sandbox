@@ -67,11 +67,8 @@ $ ./stop-docker.sh && ./start-docker.sh
 * API定義書生成
 
 ```bash
-# Redoc CLI のインストール
-$ npm i -g redoc-cli
-
-# OpenAPI のHTML書き出し
-$ redoc-cli bundle openapi.yml
+# OpenAPIからReDocへの書き出し
+$ ./redoc.sh
 ```
 
 → http://localhost:1323/doc
