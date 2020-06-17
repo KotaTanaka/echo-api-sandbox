@@ -4,7 +4,7 @@
 
 Find Wi-Fi バックエンド RESTful API
 
-*[Frontend - find-wifi-frontend](https://github.com/KotaTanaka/find-wifi-frontend)*
+*[管理コンソールUI - find-wifi-console-app](https://github.com/KotaTanaka/find-wifi-console-app)*
 
 ## Technology
 
@@ -27,7 +27,7 @@ $ cd find-wifi-backend
 * サービスの起動
 
 ```bash
-$ ./start-docker.sh
+$ docker-compose up -d
 ```
 
 * アプリケーションの起動
@@ -41,7 +41,7 @@ $ ./start-server.sh
 * サービスの停止
 
 ```bash
-$ ./stop-docker.sh
+$ docker-compose down
 ```
 
 ## Utility Commands
@@ -61,7 +61,7 @@ mysql> use find_wifi_db;
 $ rm -rf docker/db/mysql_data
 
 # サービス再起動(DB再生成)
-$ ./stop-docker.sh && ./start-docker.sh
+$ docker-compose down && docker-compose up -d
 ```
 
 * API定義書生成
