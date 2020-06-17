@@ -17,6 +17,46 @@ import (
 )
 
 /*
+GetShopListClient | 店舗一覧取得(管理用)
+*/
+func GetShopListAdmin(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		shops := []model.Shop{}
+		db.Find(&shops)
+
+		response := admindata.ShopListingResponse{}
+		response.Total = len(shops)
+
+		for _, shop := range shops {
+			service := model.Service{}
+			db.First(&service, shop.ServiceID)
+
+			response.ShopList = append(
+				// TODO SSID: 文字列を配列に変換
+				// TODO Average: 評価の平均値の計算
+				response.ShopList, admindata.ShopListingResponseElement{
+					ShopID:       shop.ID,
+					ServiceID:    service.ID,
+					WifiName:     service.WifiName,
+					ShopName:     shop.ShopName,
+					Area:         shop.AreaKey,
+					Description:  shop.Description,
+					Address:      shop.Address,
+					Access:       shop.Access,
+					SSID:         []string{shop.SSID},
+					ShopType:     shop.ShopType,
+					OpeningHours: shop.OpeningHours,
+					SeatsNum:     shop.SeatsNum,
+					HasPower:     shop.HasPower,
+					ReviewCount:  len(shop.Reviews),
+					Average:      0})
+		}
+
+		return c.JSON(http.StatusOK, response)
+	}
+}
+
+/*
 RegisterShopAdmin | 店舗登録
 */
 func RegisterShopAdmin(db *gorm.DB) echo.HandlerFunc {

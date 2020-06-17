@@ -83,6 +83,7 @@ func main() {
 	e.GET("/shops", clienthandler.GetShopListClient(db))
 	e.GET("/admin/services", adminhandler.GetServiceListAdmin(db))
 	e.POST("/admin/services", adminhandler.RegisterServiceAdmin(db))
+	e.GET("/admin/shops", adminhandler.GetShopListAdmin(db))
 	e.POST("/admin/shops", adminhandler.RegisterShopAdmin(db))
 
 	e.Logger.Fatal(e.Start(":1323"))
