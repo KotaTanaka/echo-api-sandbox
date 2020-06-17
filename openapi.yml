@@ -26,10 +26,10 @@ info:
       </thead>
       <tbody>
         <tr><td>AW01</td><td>Service</td><td>GET</td><td>/admin/services</td><td>Wi-Fiサービス一覧取得</td></tr>
-        <tr><td>AW02</td><td>Service</td><td>GET</td><td>/admin/services/:service_id</td><td>Wi-Fiサービス詳細取得</td></tr>
+        <tr><td>AW02</td><td>Service</td><td>GET</td><td>/admin/services/:serviceId</td><td>Wi-Fiサービス詳細取得</td></tr>
         <tr><td>AW03</td><td>Service</td><td>POST</td><td>/admin/services</td><td>Wi-Fiサービス登録</td></tr>
-        <tr><td>AW04</td><td>Service</td><td>PUT</td><td>/admin/services/:service_id</td><td>Wi-Fiサービス編集</td></tr>
-        <tr><td>AW05</td><td>Service</td><td>DELETE</td><td>/admin/services/:service_id</td><td>Wi-Fiサービス削除</td></tr>
+        <tr><td>AW04</td><td>Service</td><td>PUT</td><td>/admin/services/:serviceId</td><td>Wi-Fiサービス編集</td></tr>
+        <tr><td>AW05</td><td>Service</td><td>DELETE</td><td>/admin/services/:serviceId</td><td>Wi-Fiサービス削除</td></tr>
         <tr><td>AS01</td><td>Shop</td><td>GET</td><td>/admin/shops</td><td>店舗一覧取得</td></tr>
         <tr><td>AS02</td><td>Shop</td><td>GET</td><td>/admin/shops/:shopId</td><td>店舗詳細取得</td></tr>
         <tr><td>AS03</td><td>Shop</td><td>POST</td><td>/admin/shops</td><td>店舗登録</td></tr>
@@ -107,12 +107,13 @@ paths:
                       type: object
                       required:
                         - shopId
-                        - shopName
                         - wifiName
-                        - ssid
+                        - shopName
+                        - area
+                        - description
                         - address
                         - access
-                        - description
+                        - ssid
                         - shopType
                         - openingHours
                         - seatsNum
@@ -122,18 +123,20 @@ paths:
                       properties:
                         shopId:
                           $ref: "#/components/schemas/ShopID"
-                        shopName:
-                          $ref: "#/components/schemas/ShopName"
                         wifiName:
                           $ref: "#/components/schemas/WifiName"
-                        ssid:
-                          $ref: "#/components/schemas/SSID"
+                        shopName:
+                          $ref: "#/components/schemas/ShopName"
+                        area:
+                          $ref: "#/components/schemas/Area"
+                        description:
+                          $ref: "#/components/schemas/Description"
                         address:
                           $ref: "#/components/schemas/Address"
                         access:
                           $ref: "#/components/schemas/Access"
-                        description:
-                          $ref: "#/components/schemas/Description"
+                        ssid:
+                          $ref: "#/components/schemas/SSID"
                         shopType:
                           $ref: "#/components/schemas/ShopType"
                         openingHours:
@@ -170,7 +173,7 @@ paths:
           source: |
             curl 'http://localhost:1323/shops/6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2'
       parameters:
-        - $ref: "#/components/parameters/ShopIdPath"
+        - $ref: "#/components/parameters/ShopIDPath"
       responses:
         200:
           description: 成功時のレスポンス
@@ -184,10 +187,11 @@ paths:
                   - serviceId
                   - wifiName
                   - shopName
-                  - ssid
+                  - area
+                  - description
                   - address
                   - access
-                  - description
+                  - ssid
                   - shopType
                   - openingHours
                   - seatsNum
@@ -202,14 +206,16 @@ paths:
                     $ref: "#/components/schemas/WifiName"
                   shopName:
                     $ref: "#/components/schemas/ShopName"
-                  ssid:
-                    $ref: "#/components/schemas/SSID"
+                  area:
+                    $ref: "#/components/schemas/Area"
+                  description:
+                    $ref: "#/components/schemas/Description"
                   address:
                     $ref: "#/components/schemas/Address"
                   access:
                     $ref: "#/components/schemas/Access"
-                  description:
-                    $ref: "#/components/schemas/Description"
+                  ssid:
+                    $ref: "#/components/schemas/SSID"
                   shopType:
                     $ref: "#/components/schemas/ShopType"
                   openingHours:
@@ -240,9 +246,9 @@ paths:
         - lang: Shell
           label: cURL
           source: |
-            curl 'http://localhost:1323/admin/reviews?shop_id=6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2&limit=10&offset=10&sort=desc'
+            curl 'http://localhost:1323/admin/reviews?shopId=6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2&limit=10&offset=10&sort=desc'
       parameters:
-        - $ref: "#/components/parameters/ShopIdQuery"
+        - $ref: "#/components/parameters/ShopIDQuery"
         - $ref: "#/components/parameters/Limit"
         - $ref: "#/components/parameters/Offset"
         - $ref: "#/components/parameters/Sort"
@@ -433,7 +439,6 @@ paths:
               -H 'Contents-Type: application/json' \
               -d \
                 '{
-                  "serviceId": "starbacks_wifi",
                   "wifiName": "スターバックスWi-Fi",
                   "link": "https://www.starbucks.co.jp"
                 }'
@@ -443,12 +448,9 @@ paths:
             schema:
               type: object
               required:
-                - serviceId
                 - wifiName
                 - link
               properties:
-                serviceId:
-                  $ref: "#/components/schemas/ServiceID"
                 wifiName:
                   $ref: "#/components/schemas/WifiName"
                 link:
@@ -487,7 +489,7 @@ paths:
           source: |
             curl 'http://localhost:1323/admin/services/starbacks_wifi?shopLimit=10&shopOffset=10'
       parameters:
-        - $ref: "#/components/parameters/ServiceIdPath"
+        - $ref: "#/components/parameters/ServiceIDPath"
         - name: shopLimit
           $ref: "#/components/parameters/Limit"
         - name: shopOffset
@@ -534,10 +536,11 @@ paths:
                       required:
                         - shopId
                         - shopName
-                        - ssid
+                        - area
+                        - description
                         - address
                         - access
-                        - description
+                        - ssid
                         - shopType
                         - openingHours
                         - seatsNum
@@ -549,14 +552,16 @@ paths:
                           $ref: "#/components/schemas/ShopID"
                         shopName:
                           $ref: "#/components/schemas/ShopName"
-                        ssid:
-                          $ref: "#/components/schemas/SSID"
+                        area:
+                          $ref: "#/components/schemas/Area"
+                        description:
+                          $ref: "#/components/schemas/Description"
                         address:
                           $ref: "#/components/schemas/Address"
                         access:
                           $ref: "#/components/schemas/Access"
-                        description:
-                          $ref: "#/components/schemas/Description"
+                        ssid:
+                          $ref: "#/components/schemas/SSID"
                         shopType:
                           $ref: "#/components/schemas/ShopType"
                         openingHours:
@@ -588,7 +593,7 @@ paths:
         - lang: Shell
           label: cURL
           source: |
-            curl -X PUT 'http://localhost:1323/admin/services/starbacks_wifi' \
+            curl -X PUT 'http://localhost:1323/admin/services/1' \
               -H 'Contents-Type: application/json' \
               -d \
                 '{
@@ -596,7 +601,7 @@ paths:
                   "link": "https://www.starbucks.co.jp"
                 }'
       parameters:
-        - $ref: "#/components/parameters/ServiceIdPath"
+        - $ref: "#/components/parameters/ServiceIDPath"
       requestBody:
         content:
           application/json:
@@ -638,9 +643,9 @@ paths:
         - lang: Shell
           label: cURL
           source: |
-            curl -X DELETE 'http://localhost:1323/admin/services/starbacks_wifi'
+            curl -X DELETE 'http://localhost:1323/admin/services/1'
       parameters:
-        - $ref: "#/components/parameters/ServiceIdPath"
+        - $ref: "#/components/parameters/ServiceIDPath"
       responses:
         200:
           description: 成功時のレスポンス
@@ -700,10 +705,11 @@ paths:
                         - serviceId
                         - wifiName
                         - shopName
-                        - ssid
+                        - area
+                        - description
                         - address
                         - access
-                        - description
+                        - ssid
                         - shopType
                         - openingHours
                         - seatsNum
@@ -719,14 +725,16 @@ paths:
                           $ref: "#/components/schemas/WifiName"
                         shopName:
                           $ref: "#/components/schemas/ShopName"
-                        ssid:
-                          $ref: "#/components/schemas/SSID"
+                        area:
+                          $ref: "#/components/schemas/Area"
+                        description:
+                          $ref: "#/components/schemas/Description"
                         address:
                           $ref: "#/components/schemas/Address"
                         access:
                           $ref: "#/components/schemas/Access"
-                        description:
-                          $ref: "#/components/schemas/Description"
+                        ssid:
+                          $ref: "#/components/schemas/SSID"
                         shopType:
                           $ref: "#/components/schemas/ShopType"
                         openingHours:
@@ -760,47 +768,58 @@ paths:
         - lang: Shell
           label: cURL
           source: |
-            curl -X POST 'http://localhost:1323/admin/shops/' \
+            curl -X POST 'http://localhost:1323/admin/shops' \
               -H 'Contents-Type: application/json' \
               -d \
                 '{
-                  "shopName": "starbacks_wifi",
-                  "ssid": "スターバックスWi-Fi",
-                  "address": "https://www.starbucks.co.jp",
-                  "access": "JR渋谷駅から徒歩1分"
+                  "serviceId": 1,
+                  "shopName": "スターバックスWi-Fi",
+                  "area": "dogenzaka",
                   "description": "Wi-Fi・電源完備で、平日の昼間は比較的落ち着いています。",
+                  "address": "東京都渋谷区1-1-1",
+                  "access": "JR渋谷駅から徒歩1分"
+                  "ssid": [
+                    at_STARBUCKS_Wi2,
+                  ],
                   "shopType": "cafe",
                   "openingHours": "9:00-22:00",
-                  "seatsNum": 100
+                  "seatsNum": 100,
+                  "hasPower": true
                 }'
-      parameters:
-        - $ref: "#/components/parameters/ServiceIdPath"
       requestBody:
         content:
           application/json:
             schema:
               type: object
               required:
+                - serviceId
                 - shopName
-                - ssid
+                - area
                 - address
+                - ssid
               properties:
+                serviceId:
+                  $ref: "#/components/schemas/ServiceID"
                 shopName:
                   $ref: "#/components/schemas/ShopName"
-                ssid:
-                  $ref: "#/components/schemas/SSID"
+                area:
+                  $ref: "#/components/schemas/Area"
+                description:
+                  $ref: "#/components/schemas/Description"
                 address:
                   $ref: "#/components/schemas/Address"
                 access:
                   $ref: "#/components/schemas/Access"
-                description:
-                  $ref: "#/components/schemas/Description"
+                ssid:
+                  $ref: "#/components/schemas/SSID"
                 shopType:
                   $ref: "#/components/schemas/ShopType"
                 openingHours:
                   $ref: "#/components/schemas/OpeningHours"
                 seatsNum:
                   $ref: "#/components/schemas/SeatsNum"
+                hasPower:
+                  $ref: "#/components/schemas/HasPower"
       responses:
         200:
           description: 成功時のレスポンス
@@ -835,7 +854,7 @@ paths:
           source: |
             curl 'http://localhost:1323/admin/shops/6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2?reviewLimit=10&reviewOffset=10'
       parameters:
-        - $ref: "#/components/parameters/ShopIdPath"
+        - $ref: "#/components/parameters/ShopIDPath"
         - name: reviewLimit
           $ref: "#/components/parameters/Limit"
         - name: reviewOffset
@@ -855,10 +874,11 @@ paths:
                   - serviceId
                   - wifiName
                   - shopName
-                  - ssid
+                  - area
+                  - description
                   - address
                   - access
-                  - description
+                  - ssid
                   - shopType
                   - openingHours
                   - seatsNum
@@ -877,14 +897,16 @@ paths:
                     $ref: "#/components/schemas/WifiName"
                   shopName:
                     $ref: "#/components/schemas/ShopName"
-                  ssid:
-                    $ref: "#/components/schemas/SSID"
+                  area:
+                    $ref: "#/components/schemas/Area"
+                  description:
+                    $ref: "#/components/schemas/Description"
                   address:
                     $ref: "#/components/schemas/Address"
                   access:
                     $ref: "#/components/schemas/Access"
-                  description:
-                    $ref: "#/components/schemas/Description"
+                  ssid:
+                    $ref: "#/components/schemas/SSID"
                   shopType:
                     $ref: "#/components/schemas/ShopType"
                   openingHours:
@@ -952,17 +974,22 @@ paths:
               -H 'Contents-Type: application/json' \
               -d \
                 '{
-                  "shopName": "starbacks_wifi",
-                  "ssid": "スターバックスWi-Fi",
-                  "address": "https://www.starbucks.co.jp",
-                  "access": "JR渋谷駅から徒歩1分"
+                  "serviceId": 1,
+                  "shopName": "スターバックスWi-Fi",
+                  "area": "dogenzaka",
                   "description": "Wi-Fi・電源完備で、平日の昼間は比較的落ち着いています。",
+                  "address": "東京都渋谷区1-1-1",
+                  "access": "JR渋谷駅から徒歩1分",
+                  "ssid": [
+                    at_STARBUCKS_Wi2,
+                  ],
                   "shopType": "cafe",
                   "openingHours": "9:00-22:00",
-                  "seatsNum": 100
+                  "seatsNum": 100,
+                  "hasPower": true
                 }'
       parameters:
-        - $ref: "#/components/parameters/ShopIdPath"
+        - $ref: "#/components/parameters/ShopIDPath"
       requestBody:
         content:
           application/json:
@@ -971,14 +998,16 @@ paths:
               properties:
                 shopName:
                   $ref: "#/components/schemas/ShopName"
-                ssid:
-                  $ref: "#/components/schemas/SSID"
+                area:
+                  $ref: "#/components/schemas/Area"
+                description:
+                  $ref: "#/components/schemas/Description"
                 address:
                   $ref: "#/components/schemas/Address"
                 access:
                   $ref: "#/components/schemas/Access"
-                description:
-                  $ref: "#/components/schemas/Description"
+                ssid:
+                  $ref: "#/components/schemas/SSID"
                 shopType:
                   $ref: "#/components/schemas/ShopType"
                 openingHours:
@@ -1018,7 +1047,7 @@ paths:
           source: |
             curl -X DELETE 'http://localhost:1323/admin/shops/6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2'
       parameters:
-        - $ref: "#/components/parameters/ShopIdPath"
+        - $ref: "#/components/parameters/ShopIDPath"
       responses:
         200:
           description: 成功時のレスポンス
@@ -1137,7 +1166,7 @@ paths:
                   "status": "hidden"
                 }'
       parameters:
-        - $ref: "#/components/parameters/ReviewIdPath"
+        - $ref: "#/components/parameters/ReviewIDPath"
       requestBody:
         content:
           application/json:
@@ -1181,7 +1210,7 @@ paths:
           source: |
             curl -X DELETE 'http://localhost:1323/admin/reviews/875c1d576d44e47a38c5b74ece39a709'
       parameters:
-        - $ref: "#/components/parameters/ReviewIdPath"
+        - $ref: "#/components/parameters/ReviewIDPath"
       responses:
         200:
           description: 成功時のレスポンス
@@ -1240,7 +1269,7 @@ components:
         type: string
         format: 半角英数字
         example: "dogenzaka"
-    ShopIdQuery:
+    ShopIDQuery:
       in: query
       name: shopId
       description: 店舗ID
@@ -1253,21 +1282,21 @@ components:
       description: 電源の有無
       schema:
         $ref: "#/components/schemas/HasPower"
-    ServiceIdPath:
+    ServiceIDPath:
       in: path
       name: serviceId
       description: Wi-FiサービスID
       required: true
       schema:
         $ref: "#/components/schemas/ServiceID"
-    ShopIdPath:
+    ShopIDPath:
       in: path
       name: shopId
       description: 店舗ID
       required: true
       schema:
         $ref: "#/components/schemas/ShopID"
-    ReviewIdPath:
+    ReviewIDPath:
       in: path
       name: reviewId
       description: レビューID
@@ -1300,9 +1329,9 @@ components:
       example: 2019-01-01 12:00:00
     ServiceID:
       description: Wi-FiサービスID
-      type: string
-      format: 半角英数記号
-      example: starbacks_wifi
+      type: number
+      format: 整数(AutoIncrement)
+      example: 1
     WifiName:
       description: Wi-Fiサービス名
       type: string
@@ -1320,22 +1349,24 @@ components:
       example: 10
     ShopID:
       description: 店舗ID
-      type: string
-      format: UUID
-      example: 6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2
+      type: number
+      format: 整数(AutoIncrement)
+      example: 1
     ShopName:
       description: 店舗名
       type: string
       format: 文字列
       example: スターバックス渋谷店
-    SSID:
-      description: SSID
-      type: array
-      items:
-        type: string
-        format: 半角英数字
-      example:
-        - at_STARBUCKS_Wi2
+    Area:
+      description: 店舗エリア
+      type: string
+      format: 半角英数字
+      example: "dogenzaka"
+    Description:
+      description: 店舗説明
+      type: string
+      format: 文字列
+      example: Wi-Fi・電源完備で、平日の昼間は比較的落ち着いています。
     Address:
       description: 店舗住所
       type: string
@@ -1346,11 +1377,14 @@ components:
       type: string
       format: 文字列
       example: JR渋谷駅から徒歩1分
-    Description:
-      description: 店舗説明
-      type: string
-      format: 文字列
-      example: Wi-Fi・電源完備で、平日の昼間は比較的落ち着いています。
+    SSID:
+      description: SSID
+      type: array
+      items:
+        type: string
+        format: 半角英数字
+      example:
+        - at_STARBUCKS_Wi2
     ShopType:
       description: 店舗種別
       type: string
@@ -1383,9 +1417,9 @@ components:
       example: 3.50
     ReviewID:
       description: レビューID
-      type: string
-      format: 半角英数字
-      example: 875c1d576d44e47a38c5b74ece39a709
+      type: number
+      format: 整数(AutoIncrement)
+      example: 1
     Comment:
       description: レビュー本文
       type: string
