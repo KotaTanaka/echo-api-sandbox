@@ -13,5 +13,5 @@ type Review struct {
 	ShopID        uint
 	Comment       string `gorm:"size:1000"`
 	Evaluation    int
-	PuplishStatus bool
+	PublishStatus bool
 }

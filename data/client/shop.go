@@ -9,17 +9,18 @@ ShopListingResponseElement | 店舗一覧取得レスポンス要素
 */
 type ShopListingResponseElement struct {
 	ShopID       uint     `json:"shopId"`
-	ShopName     string   `json:"shopName"`
 	WifiName     string   `json:"wifiName"`
 	ServiceLink  string   `json:"serviceLink"`
-	Ssid         []string `json:"ssid"`
-	Address      string   `json:"address"`
-	Acceess      string   `json:"access"`
+	ShopName     string   `json:"shopName"`
+	Area         string   `json:"area"`
 	Description  string   `json:"description"`
+	Address      string   `json:"address"`
+	Access       string   `json:"access"`
+	SSID         []string `json:"SSID"`
 	ShopType     string   `json:"shoptype"`
 	OpeningHours string   `json:"openingHours"`
 	SeatsNum     int      `json:"seatsNum"`
-	Power        bool     `json:"power"`
+	HasPower     bool     `json:"hasPower"`
 	ReviewCount  int      `json:"reviewCount"`
 	Average      float32  `json:"average"`
 }

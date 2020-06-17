@@ -12,10 +12,11 @@ type Shop struct {
 	gorm.Model
 	ServiceID    uint
 	AreaKey      string `gorm:"size:20"`
-	SSID         string `gorm:"size:255"`
 	ShopName     string `gorm:"size:255"`
 	Description  string `gorm:"size:255"`
 	Address      string `gorm:"size:255"`
+	Access       string `gorm:"size:255"`
+	SSID         string `gorm:"size:255"`
 	ShopType     string `gorm:"size:255"`
 	OpeningHours string `gorm:"size:255"`
 	SeatsNum     int

@@ -33,17 +33,18 @@ func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 				// TODO Average: 評価の平均値の計算
 				response.ShopList, clientdata.ShopListingResponseElement{
 					ShopID:       shop.ID,
-					ShopName:     shop.ShopName,
 					WifiName:     service.WifiName,
 					ServiceLink:  service.Link,
-					Ssid:         []string{shop.SSID},
-					Address:      shop.Address,
-					Acceess:      "",
+					ShopName:     shop.ShopName,
+					Area:         shop.AreaKey,
 					Description:  shop.Description,
+					Address:      shop.Address,
+					Access:       shop.Access,
+					SSID:         []string{shop.SSID},
 					ShopType:     shop.ShopType,
 					OpeningHours: shop.OpeningHours,
 					SeatsNum:     shop.SeatsNum,
-					Power:        shop.HasPower,
+					HasPower:     shop.HasPower,
 					ReviewCount:  len(shop.Reviews),
 					Average:      0})
 		}

@@ -10,11 +10,12 @@ RegisterShopRequestBody | 店舗登録リクエストボディ
 type RegisterShopRequestBody struct {
 	ServiceID    uint   `json:"serviceId" validate:"required"`
 	Area         string `json:"area" validate:"required"`
-	SSID         string `json:"ssid"`
 	ShopName     string `json:"shopName" validate:"required"`
 	Description  string `json:"description"`
 	Address      string `json:"address" validate:"required"`
-	ShopType     string `json:"shopType" validate:"required"`
+	Access       string `json:"access"`
+	SSID         string `json:"ssid" validate:"required"`
+	ShopType     string `json:"shopType"`
 	OpeningHours string `json:"openingHours"`
 	SeatsNum     int    `json:"seatsNum"`
 	HasPower     bool   `json:"hasPower"`
