@@ -108,6 +108,7 @@ paths:
                       required:
                         - shopId
                         - wifiName
+                        - serviceLink
                         - shopName
                         - area
                         - description
@@ -125,6 +126,8 @@ paths:
                           $ref: "#/components/schemas/ShopID"
                         wifiName:
                           $ref: "#/components/schemas/WifiName"
+                        serviceLink:
+                          $ref: "#/components/schemas/Link"
                         shopName:
                           $ref: "#/components/schemas/ShopName"
                         area:
@@ -164,7 +167,7 @@ paths:
       tags:
         - Shop
       summary: 店舗詳細取得
-      operationId: getShopClinet
+      operationId: getShopClient
       description: |-
         Wi-Fi利用可能店舗の詳細情報を取得する。
       x-code-samples:
@@ -184,8 +187,8 @@ paths:
                 type: object
                 required:
                   - shopId
-                  - serviceId
                   - wifiName
+                  - serviceLink
                   - shopName
                   - area
                   - description
@@ -200,10 +203,10 @@ paths:
                 properties:
                   shopId:
                     $ref: "#/components/schemas/ShopID"
-                  serviceId:
-                    $ref: "#/components/schemas/ServiceID"
                   wifiName:
                     $ref: "#/components/schemas/WifiName"
+                  serviceLink:
+                    $ref: "#/components/schemas/Link"
                   shopName:
                     $ref: "#/components/schemas/ShopName"
                   area:
