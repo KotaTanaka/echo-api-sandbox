@@ -76,7 +76,7 @@ func main() {
 	e.Use(middleware.CORS())
 
 	// API仕様書の出力
-	e.File("/doc", "app/redoc-static.html")
+	e.File("/doc", "app/redoc.html")
 
 	// ルーティング
 	e.GET("/", handler.Hello())
