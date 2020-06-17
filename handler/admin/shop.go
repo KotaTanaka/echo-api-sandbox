@@ -17,7 +17,7 @@ import (
 )
 
 /*
-GetShopListClient | 店舗一覧取得(管理用)
+GetShopListAdmin | 店舗一覧取得(管理用)
 */
 func GetShopListAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
