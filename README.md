@@ -4,7 +4,7 @@
 
 Find Wi-Fi バックエンド RESTful API
 
-*[管理コンソールUI - find-wifi-console-app](https://github.com/KotaTanaka/find-wifi-console-app)*
+*[管理コンソールUI - find-wifi-console-ui](https://github.com/KotaTanaka/find-wifi-console-ui)*
 
 ## Technology
 
