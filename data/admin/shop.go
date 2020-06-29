@@ -35,7 +35,7 @@ type ShopListingResponseElement struct {
 	Address      string   `json:"address"`
 	Access       string   `json:"access"`
 	SSID         []string `json:"SSID"`
-	ShopType     string   `json:"shoptype"`
+	ShopType     string   `json:"shopType"`
 	OpeningHours string   `json:"openingHours"`
 	SeatsNum     int      `json:"seatsNum"`
 	HasPower     bool     `json:"hasPower"`
