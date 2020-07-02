@@ -12,10 +12,9 @@ info:
         <th>No.</th><th>Group</th><th>Method</th><th>Path</th><th>API名称</th>
       </thead>
       <tbody>
-        <tr><td>CS01</td><td>Shop</td><td>GET</td><td>/shops</td><td>店舗一覧取得</td></tr>
-        <tr><td>CS02</td><td>Shop</td><td>GET</td><td>/shops/:shopId</td><td>店舗詳細取得</td></tr>
-        <tr><td>CR01</td><td>Review</td><td>GET</td><td>/reviews</td><td>レビュー一覧取得</td></tr>
-        <tr><td>CR02</td><td>Review</td><td>POST</td><td>/reviews</td><td>レビュー投稿</td></tr>
+        <tr><td>CS01</td><td>Shop</td><td>GET</td><td>/shops</td><td>エリアに紐付く店舗一覧取得</td></tr>
+        <tr><td>CR01</td><td>Review</td><td>GET</td><td>/reviews</td><td>店舗に紐付くレビュー一覧取得</td></tr>
+        <tr><td>CR02</td><td>Review</td><td>POST</td><td>/reviews</td><td>店舗へのレビュー投稿</td></tr>
       </tbody>
     </table>
 
@@ -25,17 +24,17 @@ info:
         <th>No.</th><th>Group</th><th>Method</th><th>Path</th><th>API名称</th>
       </thead>
       <tbody>
-        <tr><td>AW01</td><td>Service</td><td>GET</td><td>/admin/services</td><td>Wi-Fiサービス一覧取得</td></tr>
+        <tr><td>AW01</td><td>Service</td><td>GET</td><td>/admin/services</td><td>Wi-Fiサービス一覧取得・検索</td></tr>
         <tr><td>AW02</td><td>Service</td><td>GET</td><td>/admin/services/:serviceId</td><td>Wi-Fiサービス詳細取得</td></tr>
         <tr><td>AW03</td><td>Service</td><td>POST</td><td>/admin/services</td><td>Wi-Fiサービス登録</td></tr>
         <tr><td>AW04</td><td>Service</td><td>PUT</td><td>/admin/services/:serviceId</td><td>Wi-Fiサービス編集</td></tr>
         <tr><td>AW05</td><td>Service</td><td>DELETE</td><td>/admin/services/:serviceId</td><td>Wi-Fiサービス削除</td></tr>
-        <tr><td>AS01</td><td>Shop</td><td>GET</td><td>/admin/shops</td><td>店舗一覧取得</td></tr>
+        <tr><td>AS01</td><td>Shop</td><td>GET</td><td>/admin/shops</td><td>店舗一覧取得・検索</td></tr>
         <tr><td>AS02</td><td>Shop</td><td>GET</td><td>/admin/shops/:shopId</td><td>店舗詳細取得</td></tr>
         <tr><td>AS03</td><td>Shop</td><td>POST</td><td>/admin/shops</td><td>店舗登録</td></tr>
         <tr><td>AS04</td><td>Shop</td><td>PUT</td><td>/admin/shops/:shopId</td><td>店舗編集</td></tr>
         <tr><td>AS05</td><td>Shop</td><td>DELETE</td><td>/admin/shops/:shopId</td><td>店舗削除</td></tr>
-        <tr><td>AR01</td><td>Review</td><td>GET</td><td>/admin/reviews</td><td>レビュー一覧取得</td></tr>
+        <tr><td>AR01</td><td>Review</td><td>GET</td><td>/admin/reviews</td><td>レビュー一覧取得・検索</td></tr>
         <tr><td>AR02</td><td>Review</td><td>PUT</td><td>/admin/reviews/:reviewId</td><td>レビューステータス変更</td></tr>
         <tr><td>AR03</td><td>Review</td><td>DELETE</td><td>/admin/reviews/:reviewId</td><td>レビュー削除</td></tr>
       </tbody>
@@ -68,12 +67,12 @@ x-tagGroups:
 paths:
   /shops:
     # ------------------------------
-    # GET /shops 店舗一覧取得
+    # GET /shops エリアに紐付く店舗一覧取得
     # ------------------------------
     get:
       tags:
         - Shop
-      summary: 店舗一覧取得
+      summary: エリアに紐付く店舗一覧取得
       operationId: getShopListClient
       description: |-
         指定地域のWi-Fi利用可能店舗一覧を取得する。
@@ -159,89 +158,14 @@ paths:
         500:
           description: システムエラー
 
-  /shops/{shopId}:
-    # ------------------------------
-    # GET /shops/:shopId 店舗詳細取得
-    # ------------------------------
-    get:
-      tags:
-        - Shop
-      summary: 店舗詳細取得
-      operationId: getShopClient
-      description: |-
-        Wi-Fi利用可能店舗の詳細情報を取得する。
-      x-code-samples:
-        - lang: Shell
-          label: cURL
-          source: |
-            curl 'http://localhost:1323/shops/6aa3b8b5-1b5c-40c7-85cc-1cde056eb4c2'
-      parameters:
-        - $ref: "#/components/parameters/ShopIDPath"
-      responses:
-        200:
-          description: 成功時のレスポンス
-          content:
-            application/json:
-              schema:
-                description: 店舗詳細取得レスポンス
-                type: object
-                required:
-                  - shopId
-                  - wifiName
-                  - serviceLink
-                  - shopName
-                  - area
-                  - description
-                  - address
-                  - access
-                  - ssid
-                  - shopType
-                  - openingHours
-                  - seatsNum
-                  - reviewCount
-                  - average
-                properties:
-                  shopId:
-                    $ref: "#/components/schemas/ShopID"
-                  wifiName:
-                    $ref: "#/components/schemas/WifiName"
-                  serviceLink:
-                    $ref: "#/components/schemas/Link"
-                  shopName:
-                    $ref: "#/components/schemas/ShopName"
-                  area:
-                    $ref: "#/components/schemas/Area"
-                  description:
-                    $ref: "#/components/schemas/Description"
-                  address:
-                    $ref: "#/components/schemas/Address"
-                  access:
-                    $ref: "#/components/schemas/Access"
-                  ssid:
-                    $ref: "#/components/schemas/SSID"
-                  shopType:
-                    $ref: "#/components/schemas/ShopType"
-                  openingHours:
-                    $ref: "#/components/schemas/OpeningHours"
-                  seatsNum:
-                    $ref: "#/components/schemas/SeatsNum"
-                  reviewCount:
-                    $ref: "#/components/schemas/ShopCount"
-                  average:
-                    $ref: "#/components/schemas/Average"
-        400:
-          description: パラメータ不正
-        500:
-          description: システムエラー
-
   /reviews:
     # ------------------------------
-    # GET /reviews レビュー一覧取得
+    # GET /reviews 店舗に紐付くレビュー一覧取得
     # ------------------------------
     get:
       tags:
         - Review
-      summary: レビュー一覧取得
+      summary: 店舗に紐付くレビュー一覧取得
       operationId: getReviewListClient
       description: |-
         店舗に紐付くレビューの一覧を取得する。
@@ -312,12 +236,12 @@ paths:
           description: システムエラー
 
     # ------------------------------
-    # POST /reviews レビュー投稿
+    # POST /reviews 店舗へのレビュー投稿
     # ------------------------------
     post:
       tags:
         - Review
-      summary: レビュー投稿
+      summary: 店舗へのレビュー投稿
       operationId: postReviewClient
       description: |-
         Wi-Fi利用可能店舗にレビューを投稿する。
@@ -368,13 +292,13 @@ paths:
 
   /admin/services:
     # ------------------------------
-    # GET /admins/services Wi-Fiサービス一覧取得
+    # GET /admins/services Wi-Fiサービス一覧取得・検索
     # ------------------------------
     get:
       tags:
         - Admin Service
-      summary: Wi-Fiサービス一覧取得
-      operationId: getServceListAdmin
+      summary: Wi-Fiサービス一覧取得・検索
+      operationId: getServiceListAdmin
       description: |-
         Wi-Fiサービス一覧を取得する。
       x-code-samples:
@@ -483,7 +407,7 @@ paths:
       tags:
         - Admin Service
       summary: Wi-Fiサービス詳細取得
-      operationId: getServceAdmin
+      operationId: getServiceAdmin
       description: |-
         Wi-Fiサービスの情報および紐付く店舗の一覧を取得を取得する。
       x-code-samples:
@@ -668,12 +592,12 @@ paths:
 
   /admin/shops:
     # ------------------------------
-    # GET /admin/shops 店舗一覧取得(管理用)
+    # GET /admin/shops 店舗一覧取得・検索
     # ------------------------------
     get:
       tags:
         - Admin Shop
-      summary: 店舗一覧取得(管理用)
+      summary: 店舗一覧取得・検索
       operationId: getShopListAdmin
       description: |-
         全体のWi-Fi利用可能店舗一覧を取得する。
@@ -842,12 +766,12 @@ paths:
 
   /admin/shops/{shopId}:
     # ------------------------------
-    # GET /admins/shops/:shopId 店舗詳細取得(管理用)
+    # GET /admins/shops/:shopId 店舗詳細取得
     # ------------------------------
     get:
       tags:
         - Admin Shop
-      summary: 店舗詳細取得(管理用)
+      summary: 店舗詳細取得
       operationId: getShopAdmin
       description: |-
         Wi-Fi利用可能店舗の情報および紐付くレビューの一覧を取得を取得する。
@@ -1070,12 +994,12 @@ paths:
 
   /admin/reviews:
     # ------------------------------
-    # GET /admins/reviews レビュー一覧取得(管理用)
+    # GET /admins/reviews レビュー一覧取得・検索
     # ------------------------------
     get:
       tags:
         - Admin Review
-      summary: レビュー一覧取得(管理用)
+      summary: レビュー一覧取得・検索
       operationId: getReviewListAdmin
       description: |-
         全体のレビューの一覧を取得する。
