@@ -12,10 +12,10 @@ info:
         <th>No.</th><th>Group</th><th>Method</th><th>Path</th><th>API名称</th>
       </thead>
       <tbody>
+        <tr><td>CA01</td><td>Area</td><td>GET</td><td>/areas</td><td>エリアマスタ取得</td></tr>
         <tr><td>CS01</td><td>Shop</td><td>GET</td><td>/shops</td><td>エリアに紐付く店舗一覧取得</td></tr>
         <tr><td>CR01</td><td>Review</td><td>GET</td><td>/reviews</td><td>店舗に紐付くレビュー一覧取得</td></tr>
         <tr><td>CR02</td><td>Review</td><td>POST</td><td>/reviews</td><td>店舗へのレビュー投稿</td></tr>
-        <tr><td>CA01</td><td>Area</td><td>POST</td><td>/areas</td><td>エリアマスタ取得</td></tr>
       </tbody>
     </table>
 
@@ -25,6 +25,8 @@ info:
         <th>No.</th><th>Group</th><th>Method</th><th>Path</th><th>API名称</th>
       </thead>
       <tbody>
+        <tr><td>AA01</td><td>Area</td><td>POST</td><td>/admin/areas</td><td>エリア登録</td></tr>
+        <tr><td>AA02</td><td>Area</td><td>DELETE</td><td>/admin/areas</td><td>エリア削除</td></tr>
         <tr><td>AW01</td><td>Service</td><td>GET</td><td>/admin/services</td><td>Wi-Fiサービス一覧取得・検索</td></tr>
         <tr><td>AW02</td><td>Service</td><td>GET</td><td>/admin/services/:serviceId</td><td>Wi-Fiサービス詳細取得</td></tr>
         <tr><td>AW03</td><td>Service</td><td>POST</td><td>/admin/services</td><td>Wi-Fiサービス登録</td></tr>
@@ -1208,6 +1210,93 @@ paths:
         500:
           description: システムエラー
 
+  /admin/areas:
+    # ------------------------------
+    # POST /admin/areas エリア登録
+    # ------------------------------
+    post:
+      tags:
+        - Admin Area
+      summary: エリア登録
+      operationId: postAreaAdmin
+      description: |-
+        エリアマスタにエリアを登録する。
+      x-code-samples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl -X PUT 'http://localhost:1323/admin/areas' \
+              -H 'Contents-Type: application/json' \
+              -d \
+                '{
+                  "areaKey": "dogenzaka",
+                  "areaName": "道玄坂"
+                }'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - areaKey
+                - areaName
+              properties:
+                areaKey:
+                  $ref: "#/components/schemas/AreaKey"
+                areaName:
+                  $ref: "#/components/schemas/AreaName"
+      responses:
+        200:
+          description: 成功時のレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - areaKey
+                properties:
+                  areaKey:
+                    $ref: "#/components/schemas/AreaKey"
+        400:
+          description: パラメータ不正
+        500:
+          description: システムエラー
+
+  /admin/areas/{areaKey}:
+    # ------------------------------
+    # DELETE /admin/areas/:areaKey エリア削除
+    # ------------------------------
+    delete:
+      tags:
+        - Admin Area
+      summary: エリア削除
+      operationId: putShopAdminStatus
+      description: |-
+        エリアマスタからエリアを削除する。
+      x-code-samples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl -X DELETE 'http://localhost:1323/admin/areas/dogenzaka'
+      parameters:
+        - $ref: "#/components/parameters/AreaKeyPath"
+      responses:
+        200:
+          description: 成功時のレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - areaKey
+                properties:
+                  areaKey:
+                    $ref: "#/components/schemas/AreaKey"
+        400:
+          description: パラメータ不正
+        500:
+          description: システムエラー
+
 components:
   # ------------------------------
   # Query or Path Parameters
@@ -1283,6 +1372,13 @@ components:
       required: true
       schema:
         $ref: "#/components/schemas/ReviewID"
+    AreaKeyPath:
+      in: path
+      name: areaKey
+      description: エリアキー
+      required: true
+      schema:
+        $ref: "#/components/schemas/AreaKey"
   # ------------------------------
   # Request Body Parameters / Response Body Fields
   # ------------------------------
