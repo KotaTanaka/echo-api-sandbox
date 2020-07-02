@@ -83,6 +83,7 @@ func main() {
 	e.GET("/areas", clienthandler.GetAreaMasterClient(db))
 	e.GET("/shops", clienthandler.GetShopListClient(db))
 	e.POST("/admin/areas", adminhandler.RegisterAreaAdmin(db))
+	e.DELETE("/admin/areas/:areaKey", adminhandler.DeleteAreaAdmin(db))
 	e.GET("/admin/services", adminhandler.GetServiceListAdmin(db))
 	e.POST("/admin/services", adminhandler.RegisterServiceAdmin(db))
 	e.GET("/admin/shops", adminhandler.GetShopListAdmin(db))

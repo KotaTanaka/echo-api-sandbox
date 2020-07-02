@@ -50,3 +50,20 @@ func RegisterAreaAdmin(db *gorm.DB) echo.HandlerFunc {
 			data.AreaKeyResponse{AreaKey: area.AreaKey})
 	}
 }
+
+/*
+DeleteAreaAdmin | エリア削除
+*/
+func DeleteAreaAdmin(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		areaKey := c.Param("areaKey")
+
+		area := model.Area{}
+		db.Where("area_key = ?", areaKey).Find(&area)
+		db.Delete(&area)
+
+		return c.JSON(
+			http.StatusOK,
+			data.AreaKeyResponse{AreaKey: area.AreaKey})
+	}
+}
