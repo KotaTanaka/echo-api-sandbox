@@ -15,6 +15,7 @@ info:
         <tr><td>CS01</td><td>Shop</td><td>GET</td><td>/shops</td><td>エリアに紐付く店舗一覧取得</td></tr>
         <tr><td>CR01</td><td>Review</td><td>GET</td><td>/reviews</td><td>店舗に紐付くレビュー一覧取得</td></tr>
         <tr><td>CR02</td><td>Review</td><td>POST</td><td>/reviews</td><td>店舗へのレビュー投稿</td></tr>
+        <tr><td>CA01</td><td>Area</td><td>POST</td><td>/areas</td><td>エリアマスタ取得</td></tr>
       </tbody>
     </table>
 
@@ -56,15 +57,67 @@ tags:
 x-tagGroups:
   - name: Client
     tags:
+      - Area
       - Shop
       - Review
   - name: Admin
     tags:
+      - Admin Area
       - Admin Service
       - Admin Shop
       - Admin Review
 
 paths:
+  /areas:
+    # ------------------------------
+    # GET /areas エリアマスタ取得
+    # ------------------------------
+    get:
+      tags:
+        - Area
+      summary: エリアマスタ取得
+      operationId: getAreaClient
+      description: |-
+        エリアマスタを取得する。
+      x-code-samples:
+        - lang: Shell
+          label: cURL
+          source: |
+            curl 'http://localhost:1323/areas'
+      responses:
+        200:
+          description: 成功時のレスポンス
+          content:
+            application/json:
+              schema:
+                description: エリアマスタレスポンス
+                type: object
+                required:
+                  - areaList
+                properties:
+                  areaList:
+                    type: array
+                    description: エリアリスト
+                    items:
+                      type: object
+                      required:
+                        - areaKey
+                        - areaName
+                        - shopCount
+                      properties:
+                        areaKey:
+                          $ref: "#/components/schemas/AreaKey"
+                        areaName:
+                          $ref: "#/components/schemas/AreaName"
+                        shopCount:
+                          $ref: "#/components/schemas/ShopCount"
+                  total:
+                    $ref: "#/components/schemas/Total"
+        400:
+          description: パラメータ不正
+        500:
+          description: システムエラー
+
   /shops:
     # ------------------------------
     # GET /shops エリアに紐付く店舗一覧取得
@@ -130,7 +183,7 @@ paths:
                         shopName:
                           $ref: "#/components/schemas/ShopName"
                         area:
-                          $ref: "#/components/schemas/Area"
+                          $ref: "#/components/schemas/AreaKey"
                         description:
                           $ref: "#/components/schemas/Description"
                         address:
@@ -480,7 +533,7 @@ paths:
                         shopName:
                           $ref: "#/components/schemas/ShopName"
                         area:
-                          $ref: "#/components/schemas/Area"
+                          $ref: "#/components/schemas/AreaKey"
                         description:
                           $ref: "#/components/schemas/Description"
                         address:
@@ -653,7 +706,7 @@ paths:
                         shopName:
                           $ref: "#/components/schemas/ShopName"
                         area:
-                          $ref: "#/components/schemas/Area"
+                          $ref: "#/components/schemas/AreaKey"
                         description:
                           $ref: "#/components/schemas/Description"
                         address:
@@ -730,7 +783,7 @@ paths:
                 shopName:
                   $ref: "#/components/schemas/ShopName"
                 area:
-                  $ref: "#/components/schemas/Area"
+                  $ref: "#/components/schemas/AreaKey"
                 description:
                   $ref: "#/components/schemas/Description"
                 address:
@@ -825,7 +878,7 @@ paths:
                   shopName:
                     $ref: "#/components/schemas/ShopName"
                   area:
-                    $ref: "#/components/schemas/Area"
+                    $ref: "#/components/schemas/AreaKey"
                   description:
                     $ref: "#/components/schemas/Description"
                   address:
@@ -926,7 +979,7 @@ paths:
                 shopName:
                   $ref: "#/components/schemas/ShopName"
                 area:
-                  $ref: "#/components/schemas/Area"
+                  $ref: "#/components/schemas/AreaKey"
                 description:
                   $ref: "#/components/schemas/Description"
                 address:
@@ -1190,12 +1243,12 @@ components:
     Area:
       in: query
       name: area
-      description: 検索エリア
+      description: 検索エリアキー
       required: true
       schema:
         type: string
         format: 半角英数字
-        example: "dogenzaka"
+        example: dogenzaka
     ShopIDQuery:
       in: query
       name: shopId
@@ -1284,11 +1337,16 @@ components:
       type: string
       format: 文字列
       example: スターバックス渋谷店
-    Area:
-      description: 店舗エリア
+    AreaKey:
+      description: エリアキー
       type: string
       format: 半角英数字
-      example: "dogenzaka"
+      example: dogenzaka
+    AreaName:
+      description: エリア名
+      type: string
+      format: 文字列
+      example: 道玄坂
     Description:
       description: 店舗説明
       type: string
