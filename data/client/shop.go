@@ -4,7 +4,7 @@ Package clientdata クライアントAPI関連構造体
 package clientdata
 
 /*
-ShopListingResponseElement | 店舗一覧取得レスポンス要素
+ShopListingResponseElement | エリアに紐付く店舗一覧取得レスポンス要素
 @type Response
 */
 type ShopListingResponseElement struct {
@@ -26,7 +26,7 @@ type ShopListingResponseElement struct {
 }
 
 /*
-ShopListingResponse | 店舗一覧取得レスポンス
+ShopListingResponse | エリアに紐付く店舗一覧取得レスポンス
 @type Response
 */
 type ShopListingResponse struct {

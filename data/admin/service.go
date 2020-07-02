@@ -13,7 +13,7 @@ type RegisterServiceRequestBody struct {
 }
 
 /*
-ServiceListingResponseElement | Wi-Fiサービス一覧取得レスポンス要素
+ServiceListingResponseElement | Wi-Fiサービス一覧取得・検索レスポンス要素
 @type Response
 */
 type ServiceListingResponseElement struct {

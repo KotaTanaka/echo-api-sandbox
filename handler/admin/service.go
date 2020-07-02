@@ -17,7 +17,7 @@ import (
 )
 
 /*
-GetServiceListAdmin | Wi-Fiサービス一覧取得
+GetServiceListAdmin | Wi-Fiサービス一覧取得・検索
 */
 func GetServiceListAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {

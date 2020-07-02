@@ -14,7 +14,7 @@ import (
 )
 
 /*
-GetShopListClient | 店舗一覧取得
+GetShopListClient | エリアに紐付く店舗一覧取得
 */
 func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {

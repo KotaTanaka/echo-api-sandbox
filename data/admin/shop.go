@@ -22,7 +22,7 @@ type RegisterShopRequestBody struct {
 }
 
 /*
-ShopListingResponseElement | 店舗一覧取得レスポンス要素
+ShopListingResponseElement | 店舗一覧取得・検索レスポンス要素
 @type Response
 */
 type ShopListingResponseElement struct {
@@ -44,7 +44,7 @@ type ShopListingResponseElement struct {
 }
 
 /*
-ShopListingResponse | 店舗一覧取得レスポンス
+ShopListingResponse | 店舗一覧取得・検索レスポンス
 @type Response
 */
 type ShopListingResponse struct {
