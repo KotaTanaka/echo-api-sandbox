@@ -22,6 +22,14 @@ type ErrorResponse struct {
 }
 
 /*
+AreaKeyResponse | エリアキーのみのレスポンス
+@type Response
+*/
+type AreaKeyResponse struct {
+	AreaKey string `json:"areaKey"`
+}
+
+/*
 ServiceIDResponse | Wi-FiサービスIDのみのレスポンス
 @type Response
 */
