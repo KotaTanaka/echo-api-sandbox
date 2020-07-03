@@ -29,7 +29,7 @@ services:
       - ./docker/db/init:/docker-entrypoint-initdb.d
       - ./docker/db/config/my.cnf:/etc/mysql/conf.d/my.cnf
     ports:
-      - 3306:3306
+      - 3309:3306
     container_name: find_wifi_mysql
     hostname: mysql
     environment:
