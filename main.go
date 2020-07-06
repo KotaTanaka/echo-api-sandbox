@@ -19,10 +19,23 @@ import (
 )
 
 /*
-ConnectGorm | DBのセットアップ
+Validator | バリデーターの構造体
+*/
+type Validator struct {
+	validator *validator.Validate
+}
+
+/*
+Validate | バリデーターのセットアップ
+*/
+func (v *Validator) Validate(i interface{}) error {
+	return v.validator.Struct(i)
+}
+
+/*
+ConnectGorm | Gormの接続
 */
 func ConnectGorm() *gorm.DB {
-	// TODO 設定ファイルに書く
 	DBMS := "mysql"
 	USER := os.Getenv("MYSQL_USER")
 	PASS := os.Getenv("MYSQL_PASSWORD")
@@ -41,17 +54,32 @@ func ConnectGorm() *gorm.DB {
 }
 
 /*
-Validator | バリデーターのセットアップのためのラッピング
+Migrate | DBの構築
 */
-type Validator struct {
-	validator *validator.Validate
+func Migrate(db *gorm.DB) {
+	db.AutoMigrate(&model.Area{})
+	db.AutoMigrate(&model.Service{})
+	db.AutoMigrate(&model.Shop{}).AddForeignKey("service_id", "services(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.Review{}).AddForeignKey("shop_id", "shops(id)", "RESTRICT", "RESTRICT")
 }
 
 /*
-Validate | バリデーターのセットアップ
+Router | ルーティング
 */
-func (v *Validator) Validate(i interface{}) error {
-	return v.validator.Struct(i)
+func Router(e *echo.Echo, db *gorm.DB) {
+	// API仕様書の出力
+	e.File("/doc", "app/redoc.html")
+
+	// ルーティング
+	e.GET("/", handler.Hello())
+	e.GET("/areas", clienthandler.GetAreaMasterClient(db))
+	e.GET("/shops", clienthandler.GetShopListClient(db))
+	e.POST("/admin/areas", adminhandler.RegisterAreaAdmin(db))
+	e.DELETE("/admin/areas/:areaKey", adminhandler.DeleteAreaAdmin(db))
+	e.GET("/admin/services", adminhandler.GetServiceListAdmin(db))
+	e.POST("/admin/services", adminhandler.RegisterServiceAdmin(db))
+	e.GET("/admin/shops", adminhandler.GetShopListAdmin(db))
+	e.POST("/admin/shops", adminhandler.RegisterShopAdmin(db))
 }
 
 /*
@@ -67,29 +95,15 @@ func main() {
 	db := ConnectGorm()
 	defer db.Close()
 	db.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8mb4")
-	db.AutoMigrate(&model.Area{})
-	db.AutoMigrate(&model.Service{})
-	db.AutoMigrate(&model.Shop{}).AddForeignKey("service_id", "services(id)", "RESTRICT", "RESTRICT")
-	db.AutoMigrate(&model.Review{}).AddForeignKey("shop_id", "shops(id)", "RESTRICT", "RESTRICT")
+	Migrate(db)
+
+	// ルーティング
+	Router(e, db)
 
 	// リクエスト共通処理
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
-
-	// API仕様書の出力
-	e.File("/doc", "app/redoc.html")
-
-	// ルーティング
-	e.GET("/", handler.Hello())
-	e.GET("/areas", clienthandler.GetAreaMasterClient(db))
-	e.GET("/shops", clienthandler.GetShopListClient(db))
-	e.POST("/admin/areas", adminhandler.RegisterAreaAdmin(db))
-	e.DELETE("/admin/areas/:areaKey", adminhandler.DeleteAreaAdmin(db))
-	e.GET("/admin/services", adminhandler.GetServiceListAdmin(db))
-	e.POST("/admin/services", adminhandler.RegisterServiceAdmin(db))
-	e.GET("/admin/shops", adminhandler.GetShopListAdmin(db))
-	e.POST("/admin/shops", adminhandler.RegisterShopAdmin(db))
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
