@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Find Wifi API
+  title: Find Wi-Fi API
   version: "0.01"
   description: |-
     # Introduction
@@ -12,10 +12,10 @@ info:
         <th>No.</th><th>Group</th><th>Method</th><th>Path</th><th>API名称</th>
       </thead>
       <tbody>
-        <tr><td>CA01</td><td>Area</td><td>GET</td><td>/areas</td><td>エリアマスタ取得</td></tr>
-        <tr><td>CS01</td><td>Shop</td><td>GET</td><td>/shops</td><td>エリアに紐付く店舗一覧取得</td></tr>
-        <tr><td>CR01</td><td>Review</td><td>GET</td><td>/reviews</td><td>店舗に紐付くレビュー一覧取得</td></tr>
-        <tr><td>CR02</td><td>Review</td><td>POST</td><td>/reviews</td><td>店舗へのレビュー投稿</td></tr>
+        <tr><td>CA-01</td><td>Area</td><td>GET</td><td>/areas</td><td>エリアマスタ取得</td></tr>
+        <tr><td>CS-01</td><td>Shop</td><td>GET</td><td>/shops</td><td>エリアに紐付く店舗一覧取得</td></tr>
+        <tr><td>CR-01</td><td>Review</td><td>GET</td><td>/reviews</td><td>店舗に紐付くレビュー一覧取得</td></tr>
+        <tr><td>CR-02</td><td>Review</td><td>POST</td><td>/reviews</td><td>店舗へのレビュー投稿</td></tr>
       </tbody>
     </table>
 
@@ -25,21 +25,21 @@ info:
         <th>No.</th><th>Group</th><th>Method</th><th>Path</th><th>API名称</th>
       </thead>
       <tbody>
-        <tr><td>AA01</td><td>Area</td><td>POST</td><td>/admin/areas</td><td>エリア登録</td></tr>
-        <tr><td>AA02</td><td>Area</td><td>DELETE</td><td>/admin/areas</td><td>エリア削除</td></tr>
-        <tr><td>AW01</td><td>Service</td><td>GET</td><td>/admin/services</td><td>Wi-Fiサービス一覧取得・検索</td></tr>
-        <tr><td>AW02</td><td>Service</td><td>GET</td><td>/admin/services/:serviceId</td><td>Wi-Fiサービス詳細取得</td></tr>
-        <tr><td>AW03</td><td>Service</td><td>POST</td><td>/admin/services</td><td>Wi-Fiサービス登録</td></tr>
-        <tr><td>AW04</td><td>Service</td><td>PUT</td><td>/admin/services/:serviceId</td><td>Wi-Fiサービス編集</td></tr>
-        <tr><td>AW05</td><td>Service</td><td>DELETE</td><td>/admin/services/:serviceId</td><td>Wi-Fiサービス削除</td></tr>
-        <tr><td>AS01</td><td>Shop</td><td>GET</td><td>/admin/shops</td><td>店舗一覧取得・検索</td></tr>
-        <tr><td>AS02</td><td>Shop</td><td>GET</td><td>/admin/shops/:shopId</td><td>店舗詳細取得</td></tr>
-        <tr><td>AS03</td><td>Shop</td><td>POST</td><td>/admin/shops</td><td>店舗登録</td></tr>
-        <tr><td>AS04</td><td>Shop</td><td>PUT</td><td>/admin/shops/:shopId</td><td>店舗編集</td></tr>
-        <tr><td>AS05</td><td>Shop</td><td>DELETE</td><td>/admin/shops/:shopId</td><td>店舗削除</td></tr>
-        <tr><td>AR01</td><td>Review</td><td>GET</td><td>/admin/reviews</td><td>レビュー一覧取得・検索</td></tr>
-        <tr><td>AR02</td><td>Review</td><td>PUT</td><td>/admin/reviews/:reviewId</td><td>レビューステータス変更</td></tr>
-        <tr><td>AR03</td><td>Review</td><td>DELETE</td><td>/admin/reviews/:reviewId</td><td>レビュー削除</td></tr>
+        <tr><td>AA-01</td><td>Area</td><td>POST</td><td>/admin/areas</td><td>エリア登録</td></tr>
+        <tr><td>AA-02</td><td>Area</td><td>DELETE</td><td>/admin/areas</td><td>エリア削除</td></tr>
+        <tr><td>AW-01</td><td>Service</td><td>GET</td><td>/admin/services</td><td>Wi-Fiサービス一覧取得・検索</td></tr>
+        <tr><td>AW-02</td><td>Service</td><td>GET</td><td>/admin/services/:serviceId</td><td>Wi-Fiサービス詳細取得</td></tr>
+        <tr><td>AW-03</td><td>Service</td><td>POST</td><td>/admin/services</td><td>Wi-Fiサービス登録</td></tr>
+        <tr><td>AW-04</td><td>Service</td><td>PUT</td><td>/admin/services/:serviceId</td><td>Wi-Fiサービス編集</td></tr>
+        <tr><td>AW-05</td><td>Service</td><td>DELETE</td><td>/admin/services/:serviceId</td><td>Wi-Fiサービス削除</td></tr>
+        <tr><td>AS-01</td><td>Shop</td><td>GET</td><td>/admin/shops</td><td>店舗一覧取得・検索</td></tr>
+        <tr><td>AS-02</td><td>Shop</td><td>GET</td><td>/admin/shops/:shopId</td><td>店舗詳細取得</td></tr>
+        <tr><td>AS-03</td><td>Shop</td><td>POST</td><td>/admin/shops</td><td>店舗登録</td></tr>
+        <tr><td>AS-04</td><td>Shop</td><td>PUT</td><td>/admin/shops/:shopId</td><td>店舗編集</td></tr>
+        <tr><td>AS-05</td><td>Shop</td><td>DELETE</td><td>/admin/shops/:shopId</td><td>店舗削除</td></tr>
+        <tr><td>AR-01</td><td>Review</td><td>GET</td><td>/admin/reviews</td><td>レビュー一覧取得・検索</td></tr>
+        <tr><td>AR-02</td><td>Review</td><td>PUT</td><td>/admin/reviews/:reviewId</td><td>レビューステータス変更</td></tr>
+        <tr><td>AR-03</td><td>Review</td><td>DELETE</td><td>/admin/reviews/:reviewId</td><td>レビュー削除</td></tr>
       </tbody>
     </table>
 servers:
