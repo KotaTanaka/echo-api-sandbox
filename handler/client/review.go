@@ -17,6 +17,50 @@ import (
 )
 
 /*
+GetReviewListClient | 店舗に紐づくレビュー一覧取得
+*/
+func GetReviewListClient(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		shopID := c.QueryParam("shopId")
+
+		var shop model.Shop
+		var service model.Service
+		var reviews []model.Review
+
+		if db.Where("id = ?", shopID).Find(&shop).Related(&reviews).RecordNotFound() {
+			errorResponse := new(data.ErrorResponse)
+			errorResponse.Code = http.StatusBadRequest
+			errorResponse.Message = "Invalid Request"
+			errorResponse.DetailMessage = []string{"Shop Not Found."}
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		db.First(&service, shop.ID)
+
+		response := clientdata.ReviewListingResponse{}
+		response.ShopID = shop.ID
+		response.ShopName = shop.ShopName
+		response.ServiceID = service.ID
+		response.WifiName = service.WifiName
+		// TODO レビューの平均値算出
+		response.Average = 0
+		response.Total = len(reviews)
+
+		for _, review := range reviews {
+			response.ReviewList = append(
+				response.ReviewList, clientdata.ReviewListingResponseElement{
+					ReviewID:   review.ID,
+					Comment:    review.Comment,
+					Evaluation: review.Evaluation,
+					Status:     review.PublishStatus,
+					CreatedAt:  review.CreatedAt})
+		}
+
+		return c.JSON(http.StatusOK, response)
+	}
+}
+
+/*
 CreateReviewClient | 店舗へのレビュー投稿
 */
 func CreateReviewClient(db *gorm.DB) echo.HandlerFunc {
