@@ -83,3 +83,40 @@ $ ./redoc.sh
 | `shops` | Wi-Fi提供店舗 |
 | `reviews` | 店舗レビュー |
 | `areas` | エリアマスタ |
+
+## Package Architecture
+
+```
+find-wifi-backend
+├── data
+│   ├── admin
+│   │   ├── area.go
+│   │   ├── review.go
+│   │   ├── service.go
+│   │   └── shop.go
+│   ├── client
+│   │   ├── area.go
+│   │   ├── review.go
+│   │   └── shop.go
+│   └── common.go
+├── handler
+│   ├── admin
+│   │   ├── area.go
+│   │   ├── review.go
+│   │   ├── service.go
+│   │   └── shop.go
+│   ├── client
+│   │   ├── area.go
+│   │   ├── review.go
+│   │   └── shop.go
+│   └── hello.go
+├── main.go
+├── model
+│   ├── area.go
+│   ├── review.go
+│   ├── service.go
+│   └── shop.go
+└── server
+    ├── database.go
+    └── router.go
+```
