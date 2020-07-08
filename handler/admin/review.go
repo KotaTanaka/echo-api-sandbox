@@ -32,6 +32,7 @@ func GetReviewListAdmin(db *gorm.DB) echo.HandlerFunc {
 
 			response.ReviewList = append(
 				response.ReviewList, admindata.ReviewListingResponseElement{
+					ReviewID:   review.ID,
 					ShopID:     shop.ID,
 					ShopName:   shop.ShopName,
 					ServiceID:  service.ID,

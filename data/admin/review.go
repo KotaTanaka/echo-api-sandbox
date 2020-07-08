@@ -10,6 +10,7 @@ ReviewListingResponseElement | レビュー一覧取得レスポンス要素
 @type Response
 */
 type ReviewListingResponseElement struct {
+	ReviewID   uint       `json:"reviewId"`
 	ShopID     uint       `json:"shopId"`
 	ShopName   string     `json:"shopName"`
 	ServiceID  uint       `json:"serviceId"`
