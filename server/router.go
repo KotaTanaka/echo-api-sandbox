@@ -38,4 +38,6 @@ func Router(e *echo.Echo, db *gorm.DB) {
 	e.GET("/admin/shops", adminhandler.GetShopListAdmin(db))
 	// AS-03 店舗登録
 	e.POST("/admin/shops", adminhandler.RegisterShopAdmin(db))
+	// AR-01 レビュー一覧取得・検索
+	e.GET("/admin/reviews", adminhandler.GetReviewListAdmin(db))
 }
