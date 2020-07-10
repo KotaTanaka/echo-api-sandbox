@@ -5,6 +5,7 @@ package adminhandler
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/jinzhu/gorm"
@@ -68,6 +69,40 @@ func RegisterServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 		service.Link = body.Link
 
 		db.Create(&service)
+
+		return c.JSON(
+			http.StatusOK,
+			data.ServiceIDResponse{ServiceID: service.ID})
+	}
+}
+
+/*
+DeleteServiceAdmin | Wi-Fiサービス削除
+*/
+func DeleteServiceAdmin(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		serviceIDParam := c.Param("serviceId")
+		serviceID, err := strconv.Atoi(serviceIDParam)
+
+		if err != nil {
+			errorResponse := new(data.ErrorResponse)
+			errorResponse.Code = http.StatusBadRequest
+			errorResponse.Message = "Invalid Request"
+			errorResponse.DetailMessage = []string{"Invalid ServiceID."}
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		var service model.Service
+
+		if db.Find(&service, serviceID).RecordNotFound() {
+			errorResponse := new(data.ErrorResponse)
+			errorResponse.Code = http.StatusBadRequest
+			errorResponse.Message = "Invalid Request"
+			errorResponse.DetailMessage = []string{"Service Not Found."}
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		db.Delete(&service, serviceID)
 
 		return c.JSON(
 			http.StatusOK,
