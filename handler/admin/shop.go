@@ -104,7 +104,7 @@ func DeleteShopAdmin(db *gorm.DB) echo.HandlerFunc {
 		shopID, err := strconv.Atoi(shopIDParam)
 
 		if err != nil {
-			errorResponse := data.InvalidParameterError([]string{"ShopID Must be Number."})
+			errorResponse := data.InvalidParameterError([]string{"ShopID must be number."})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 

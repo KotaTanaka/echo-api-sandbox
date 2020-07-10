@@ -80,7 +80,7 @@ func DeleteServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 		serviceID, err := strconv.Atoi(serviceIDParam)
 
 		if err != nil {
-			errorResponse := data.InvalidParameterError([]string{"ServiceID Must be Number."})
+			errorResponse := data.InvalidParameterError([]string{"ServiceID must be number."})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
