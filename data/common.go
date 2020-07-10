@@ -12,16 +12,6 @@ type MessageResponse struct {
 }
 
 /*
-ErrorResponse | エラーレスポンス
-@type Response
-*/
-type ErrorResponse struct {
-	Code          int      `json:"code"`
-	Message       string   `json:"message"`
-	DetailMessage []string `json:"detailMessage"`
-}
-
-/*
 AreaKeyResponse | エリアキーのみのレスポンス
 @type Response
 */
