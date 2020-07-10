@@ -28,10 +28,7 @@ func GetReviewListClient(db *gorm.DB) echo.HandlerFunc {
 		var reviews []model.Review
 
 		if db.Where("id = ?", shopID).Find(&shop).Related(&reviews).RecordNotFound() {
-			errorResponse := new(data.ErrorResponse)
-			errorResponse.Code = http.StatusBadRequest
-			errorResponse.Message = "Invalid Request"
-			errorResponse.DetailMessage = []string{"Shop Not Found."}
+			errorResponse := data.NotFoundError("Shop")
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -67,19 +64,14 @@ func CreateReviewClient(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		validator.New()
 		body := new(clientdata.CreateReviewRequestBody)
-		errorResponse := new(data.ErrorResponse)
 
 		if err := c.Bind(body); err != nil {
-			errorResponse.Code = http.StatusBadRequest
-			errorResponse.Message = "Invalid Request"
-			errorResponse.DetailMessage = []string{err.Error()}
+			errorResponse := data.InvalidRequestError([]string{err.Error()})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		if err := c.Validate(body); err != nil {
-			errorResponse.Code = http.StatusBadRequest
-			errorResponse.Message = "Invalid Parameter"
-			errorResponse.DetailMessage = strings.Split(err.(validator.ValidationErrors).Error(), "\n")
+			errorResponse := data.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 

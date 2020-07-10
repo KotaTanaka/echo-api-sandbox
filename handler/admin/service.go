@@ -48,19 +48,14 @@ func RegisterServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		validator.New()
 		body := new(admindata.RegisterServiceRequestBody)
-		errorResponse := new(data.ErrorResponse)
 
 		if err := c.Bind(body); err != nil {
-			errorResponse.Code = http.StatusBadRequest
-			errorResponse.Message = "Invalid Request"
-			errorResponse.DetailMessage = []string{err.Error()}
+			errorResponse := data.InvalidRequestError([]string{err.Error()})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		if err := c.Validate(body); err != nil {
-			errorResponse.Code = http.StatusBadRequest
-			errorResponse.Message = "Invalid Parameter"
-			errorResponse.DetailMessage = strings.Split(err.(validator.ValidationErrors).Error(), "\n")
+			errorResponse := data.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -85,20 +80,14 @@ func DeleteServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 		serviceID, err := strconv.Atoi(serviceIDParam)
 
 		if err != nil {
-			errorResponse := new(data.ErrorResponse)
-			errorResponse.Code = http.StatusBadRequest
-			errorResponse.Message = "Invalid Request"
-			errorResponse.DetailMessage = []string{"Invalid ServiceID."}
+			errorResponse := data.InvalidParameterError([]string{"ServiceID Must be Number."})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		var service model.Service
 
 		if db.Find(&service, serviceID).RecordNotFound() {
-			errorResponse := new(data.ErrorResponse)
-			errorResponse.Code = http.StatusBadRequest
-			errorResponse.Message = "Invalid Request"
-			errorResponse.DetailMessage = []string{"Service Not Found."}
+			errorResponse := data.NotFoundError("Service")
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
