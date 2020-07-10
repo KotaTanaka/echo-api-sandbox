@@ -6,10 +6,11 @@ package clienthandler
 import (
 	"net/http"
 
-	clientdata "../../data/client"
-	"../../model"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
+
+	clientdata "../../data/client"
+	"../../model"
 )
 
 /*
