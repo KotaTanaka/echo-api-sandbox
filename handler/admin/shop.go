@@ -5,6 +5,7 @@ package adminhandler
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/jinzhu/gorm"
@@ -87,6 +88,34 @@ func RegisterShopAdmin(db *gorm.DB) echo.HandlerFunc {
 		shop.HasPower = body.HasPower
 
 		db.Create(&shop)
+
+		return c.JSON(
+			http.StatusOK,
+			data.ShopIDResponse{ShopID: shop.ID})
+	}
+}
+
+/*
+DeleteShopAdmin | 店舗削除
+*/
+func DeleteShopAdmin(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		shopIDParam := c.Param("shopId")
+		shopID, err := strconv.Atoi(shopIDParam)
+
+		if err != nil {
+			errorResponse := data.InvalidParameterError([]string{"ShopID Must be Number."})
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		var shop model.Shop
+
+		if db.Find(&shop, shopID).RecordNotFound() {
+			errorResponse := data.NotFoundError("Shop")
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		db.Delete(&shop, shopID)
 
 		return c.JSON(
 			http.StatusOK,
