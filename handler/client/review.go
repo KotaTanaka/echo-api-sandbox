@@ -27,7 +27,7 @@ func GetReviewListClient(db *gorm.DB) echo.HandlerFunc {
 		var service model.Service
 		var reviews []model.Review
 
-		if db.Where("id = ?", shopID).Find(&shop).Related(&reviews).RecordNotFound() {
+		if db.Find(&shop, shopID).Related(&reviews).RecordNotFound() {
 			errorResponse := data.NotFoundError("Shop")
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
