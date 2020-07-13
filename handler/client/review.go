@@ -39,6 +39,7 @@ func GetReviewListClient(db *gorm.DB) echo.HandlerFunc {
 		response.ShopName = shop.ShopName
 		response.ServiceID = service.ID
 		response.WifiName = service.WifiName
+		response.Total = len(reviews)
 
 		var evaluationSum int
 		for _, review := range reviews {
@@ -52,8 +53,9 @@ func GetReviewListClient(db *gorm.DB) echo.HandlerFunc {
 					CreatedAt:  review.CreatedAt})
 		}
 
-		response.Total = len(reviews)
-		response.Average = float32(evaluationSum) / float32(response.Total)
+		if response.Total > 0 {
+			response.Average = float32(evaluationSum) / float32(response.Total)
+		}
 
 		return c.JSON(http.StatusOK, response)
 	}
