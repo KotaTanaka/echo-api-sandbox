@@ -32,11 +32,13 @@ func GetShopListAdmin(db *gorm.DB) echo.HandlerFunc {
 			service := model.Service{}
 			db.First(&service, shop.ServiceID)
 
-			reviewCount := 0
-			db.Model(&model.Review{}).Where("shop_id = ?", shop.ID).Count(&reviewCount)
+			reviews := db.Model(&model.Review{}).Where("shop_id = ?", shop.ID)
+			var reviewCount int
+			reviews.Count(&reviewCount)
+			var average float32
+			reviews.Select("avg(evaluation)").Row().Scan(&average)
 
 			response.ShopList = append(
-				// TODO Average: 評価の平均値の計算
 				response.ShopList, admindata.ShopListingResponseElement{
 					ShopID:       shop.ID,
 					ServiceID:    service.ID,
@@ -52,7 +54,7 @@ func GetShopListAdmin(db *gorm.DB) echo.HandlerFunc {
 					SeatsNum:     shop.SeatsNum,
 					HasPower:     shop.HasPower,
 					ReviewCount:  reviewCount,
-					Average:      0})
+					Average:      average})
 		}
 
 		return c.JSON(http.StatusOK, response)

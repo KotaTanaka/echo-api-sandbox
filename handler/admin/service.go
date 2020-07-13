@@ -76,10 +76,12 @@ func GetServiceDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 		response.ShopCount = len(shops)
 
 		for _, shop := range shops {
-			reviewCount := 0
-			db.Model(&model.Review{}).Where("shop_id = ?", shop.ID).Count(&reviewCount)
+			reviews := db.Model(&model.Review{}).Where("shop_id = ?", shop.ID)
+			var reviewCount int
+			reviews.Count(&reviewCount)
+			var average float32
+			reviews.Select("avg(evaluation)").Row().Scan(&average)
 
-			// TODO Average: 評価の平均値の計算
 			response.ShopList = append(
 				response.ShopList, admindata.ServiceDetailResponseShopListElement{
 					ShopID:       shop.ID,
@@ -94,7 +96,7 @@ func GetServiceDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 					SeatsNum:     shop.SeatsNum,
 					HasPower:     shop.HasPower,
 					ReviewCount:  reviewCount,
-					Average:      0})
+					Average:      average})
 		}
 
 		return c.JSON(http.StatusOK, response)
