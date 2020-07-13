@@ -42,6 +42,8 @@ func Router(e *echo.Echo, db *gorm.DB) {
 	e.DELETE("/admin/services/:serviceId", adminhandler.DeleteServiceAdmin(db))
 	// AS-01 店舗一覧取得・検索
 	e.GET("/admin/shops", adminhandler.GetShopListAdmin(db))
+	// AS-02 店舗詳細取得
+	e.GET("/admin/shops/:shopId", adminhandler.GetShopDetailAdmin(db))
 	// AS-03 店舗登録
 	e.POST("/admin/shops", adminhandler.RegisterShopAdmin(db))
 	// AS-05 店舗削除

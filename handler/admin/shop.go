@@ -62,6 +62,73 @@ func GetShopListAdmin(db *gorm.DB) echo.HandlerFunc {
 }
 
 /*
+GetShopDetailAdmin | 店舗詳細取得
+*/
+func GetShopDetailAdmin(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		shopIDParam := c.Param("shopId")
+		shopID, err := strconv.Atoi(shopIDParam)
+
+		if err != nil {
+			errorResponse := data.InvalidParameterError([]string{"ShopID must be number."})
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		var shop model.Shop
+		var service model.Service
+		var reviews []model.Review
+
+		if db.Find(&shop, shopID).Related(&reviews).RecordNotFound() {
+			errorResponse := data.NotFoundError("Shop")
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		db.First(&service, shop.ServiceID)
+
+		response := admindata.ShopDetailResponse{}
+
+		response.ShopID = shop.ID
+		response.ServiceID = service.ID
+		response.WifiName = service.WifiName
+		response.ShopName = shop.ShopName
+		response.Area = shop.AreaKey
+		response.Description = shop.Description
+		response.Address = shop.Address
+		response.Access = shop.Access
+		response.SSID = strings.Split(shop.SSID, ",")
+		response.ShopType = shop.ShopType
+		response.OpeningHours = shop.OpeningHours
+		response.SeatsNum = shop.SeatsNum
+		response.SeatsNum = shop.SeatsNum
+		response.HasPower = shop.HasPower
+		response.UpdatedAt = shop.UpdatedAt
+		response.DeletedAt = shop.DeletedAt
+		response.ReviewCount = len(reviews)
+
+		var evaluationSum int
+		for _, review := range reviews {
+			evaluationSum += review.Evaluation
+			response.ReviewList = append(
+				response.ReviewList, admindata.ShopDetailResponseReviewListElement{
+					ReviewID:   review.ID,
+					Comment:    review.Comment,
+					Evaluation: review.Evaluation,
+					Status:     review.PublishStatus,
+					CreatedAt:  review.CreatedAt,
+					UpdatedAt:  review.UpdatedAt,
+					DeletedAt:  review.DeletedAt,
+				})
+		}
+
+		if response.ReviewCount > 0 {
+			response.Average = float32(evaluationSum) / float32(response.ReviewCount)
+		}
+
+		return c.JSON(http.StatusOK, response)
+	}
+}
+
+/*
 RegisterShopAdmin | 店舗登録
 */
 func RegisterShopAdmin(db *gorm.DB) echo.HandlerFunc {
