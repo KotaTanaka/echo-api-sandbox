@@ -76,6 +76,9 @@ func GetServiceDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 		response.ShopCount = len(shops)
 
 		for _, shop := range shops {
+			reviewCount := 0
+			db.Model(&model.Review{}).Where("shop_id = ?", shop.ID).Count(&reviewCount)
+
 			// TODO Average: 評価の平均値の計算
 			response.ShopList = append(
 				response.ShopList, admindata.ServiceDetailResponseShopListElement{
@@ -90,7 +93,7 @@ func GetServiceDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 					OpeningHours: shop.OpeningHours,
 					SeatsNum:     shop.SeatsNum,
 					HasPower:     shop.HasPower,
-					ReviewCount:  len(shop.Reviews),
+					ReviewCount:  reviewCount,
 					Average:      0})
 		}
 
