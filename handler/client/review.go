@@ -39,11 +39,10 @@ func GetReviewListClient(db *gorm.DB) echo.HandlerFunc {
 		response.ShopName = shop.ShopName
 		response.ServiceID = service.ID
 		response.WifiName = service.WifiName
-		// TODO レビューの平均値算出
-		response.Average = 0
-		response.Total = len(reviews)
 
+		var evaluationSum int
 		for _, review := range reviews {
+			evaluationSum += review.Evaluation
 			response.ReviewList = append(
 				response.ReviewList, clientdata.ReviewListingResponseElement{
 					ReviewID:   review.ID,
@@ -52,6 +51,9 @@ func GetReviewListClient(db *gorm.DB) echo.HandlerFunc {
 					Status:     review.PublishStatus,
 					CreatedAt:  review.CreatedAt})
 		}
+
+		response.Total = len(reviews)
+		response.Average = float32(evaluationSum) / float32(response.Total)
 
 		return c.JSON(http.StatusOK, response)
 	}
