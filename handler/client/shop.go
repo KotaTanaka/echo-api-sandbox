@@ -28,6 +28,9 @@ func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 			service := model.Service{}
 			db.First(&service, shop.ServiceID)
 
+			reviewCount := 0
+			db.Model(&model.Review{}).Where("shop_id = ?", shop.ID).Count(&reviewCount)
+
 			response.ShopList = append(
 				// TODO SSID: 文字列を配列に変換
 				// TODO Average: 評価の平均値の計算
@@ -45,7 +48,7 @@ func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 					OpeningHours: shop.OpeningHours,
 					SeatsNum:     shop.SeatsNum,
 					HasPower:     shop.HasPower,
-					ReviewCount:  len(shop.Reviews),
+					ReviewCount:  reviewCount,
 					Average:      0})
 		}
 
