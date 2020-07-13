@@ -22,6 +22,7 @@ func GetAreaMasterClient(db *gorm.DB) echo.HandlerFunc {
 		db.Find(&areas)
 
 		response := clientdata.AreaMasterResponse{}
+		response.AreaList = []clientdata.AreaMasterResponseElement{}
 
 		for _, area := range areas {
 			response.AreaList = append(

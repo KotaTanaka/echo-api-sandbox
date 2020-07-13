@@ -24,6 +24,7 @@ func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 
 		response := clientdata.ShopListingResponse{}
 		response.Total = len(shops)
+		response.ShopList = []clientdata.ShopListingResponseElement{}
 
 		for _, shop := range shops {
 			service := model.Service{}

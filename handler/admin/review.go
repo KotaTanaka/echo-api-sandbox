@@ -25,6 +25,7 @@ func GetReviewListAdmin(db *gorm.DB) echo.HandlerFunc {
 
 		response := admindata.ReviewListingResponse{}
 		response.Total = len(reviews)
+		response.ReviewList = []admindata.ReviewListingResponseElement{}
 
 		for _, review := range reviews {
 			shop := model.Shop{}

@@ -40,6 +40,7 @@ func GetReviewListClient(db *gorm.DB) echo.HandlerFunc {
 		response.ServiceID = service.ID
 		response.WifiName = service.WifiName
 		response.Total = len(reviews)
+		response.ReviewList = []clientdata.ReviewListingResponseElement{}
 
 		var evaluationSum int
 		for _, review := range reviews {

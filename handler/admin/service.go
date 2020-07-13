@@ -27,6 +27,7 @@ func GetServiceListAdmin(db *gorm.DB) echo.HandlerFunc {
 
 		response := admindata.ServiceListingResponse{}
 		response.Total = len(services)
+		response.ServiceList = []admindata.ServiceListingResponseElement{}
 
 		for _, service := range services {
 			shopCount := 0
@@ -74,6 +75,7 @@ func GetServiceDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 		response.UpdatedAt = service.UpdatedAt
 		response.DeletedAt = service.DeletedAt
 		response.ShopCount = len(shops)
+		response.ShopList = []admindata.ServiceDetailResponseShopListElement{}
 
 		for _, shop := range shops {
 			reviews := db.Model(&model.Review{}).Where("shop_id = ?", shop.ID)
