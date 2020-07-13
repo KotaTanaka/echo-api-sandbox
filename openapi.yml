@@ -864,6 +864,7 @@ paths:
                   - shopType
                   - openingHours
                   - seatsNum
+                  - hasPower
                   - createdAt
                   - updatedAt
                   - deletedAt
@@ -895,6 +896,8 @@ paths:
                     $ref: "#/components/schemas/OpeningHours"
                   seatsNum:
                     $ref: "#/components/schemas/SeatsNum"
+                  hasPower:
+                    $ref: "#/components/schemas/HasPower"
                   createdAt:
                     $ref: "#/components/schemas/CreatedAt"
                   updatedAt:
