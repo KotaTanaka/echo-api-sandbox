@@ -29,12 +29,15 @@ func GetServiceListAdmin(db *gorm.DB) echo.HandlerFunc {
 		response.Total = len(services)
 
 		for _, service := range services {
+			shopCount := 0
+			db.Model(&model.Shop{}).Where("service_id = ?", service.ID).Count(&shopCount)
+
 			response.ServiceList = append(
 				response.ServiceList, admindata.ServiceListingResponseElement{
 					ServiceID: service.ID,
 					WifiName:  service.WifiName,
 					Link:      service.Link,
-					ShopCount: len(service.Shops)})
+					ShopCount: shopCount})
 		}
 
 		return c.JSON(http.StatusOK, response)
