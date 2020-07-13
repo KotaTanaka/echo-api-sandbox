@@ -36,7 +36,6 @@ func GetShopListAdmin(db *gorm.DB) echo.HandlerFunc {
 			db.Model(&model.Review{}).Where("shop_id = ?", shop.ID).Count(&reviewCount)
 
 			response.ShopList = append(
-				// TODO SSID: 文字列を配列に変換
 				// TODO Average: 評価の平均値の計算
 				response.ShopList, admindata.ShopListingResponseElement{
 					ShopID:       shop.ID,
@@ -47,7 +46,7 @@ func GetShopListAdmin(db *gorm.DB) echo.HandlerFunc {
 					Description:  shop.Description,
 					Address:      shop.Address,
 					Access:       shop.Access,
-					SSID:         []string{shop.SSID},
+					SSID:         strings.Split(shop.SSID, ","),
 					ShopType:     shop.ShopType,
 					OpeningHours: shop.OpeningHours,
 					SeatsNum:     shop.SeatsNum,
@@ -81,7 +80,7 @@ func RegisterShopAdmin(db *gorm.DB) echo.HandlerFunc {
 		shop := new(model.Shop)
 		shop.ServiceID = body.ServiceID
 		shop.AreaKey = body.Area
-		shop.SSID = body.SSID
+		shop.SSID = strings.Join(body.SSID, ",")
 		shop.ShopName = body.ShopName
 		shop.Description = body.Description
 		shop.Address = body.Address

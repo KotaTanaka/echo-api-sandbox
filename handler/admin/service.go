@@ -76,7 +76,6 @@ func GetServiceDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 		response.ShopCount = len(shops)
 
 		for _, shop := range shops {
-			// TODO SSID: 文字列を配列に変換
 			// TODO Average: 評価の平均値の計算
 			response.ShopList = append(
 				response.ShopList, admindata.ServiceDetailResponseShopListElement{
@@ -86,7 +85,7 @@ func GetServiceDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 					Description:  shop.Description,
 					Address:      shop.Address,
 					Access:       shop.Access,
-					SSID:         []string{shop.SSID},
+					SSID:         strings.Split(shop.SSID, ","),
 					ShopType:     shop.ShopType,
 					OpeningHours: shop.OpeningHours,
 					SeatsNum:     shop.SeatsNum,

@@ -5,6 +5,7 @@ package clienthandler
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
@@ -32,7 +33,6 @@ func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 			db.Model(&model.Review{}).Where("shop_id = ?", shop.ID).Count(&reviewCount)
 
 			response.ShopList = append(
-				// TODO SSID: 文字列を配列に変換
 				// TODO Average: 評価の平均値の計算
 				response.ShopList, clientdata.ShopListingResponseElement{
 					ShopID:       shop.ID,
@@ -43,7 +43,7 @@ func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 					Description:  shop.Description,
 					Address:      shop.Address,
 					Access:       shop.Access,
-					SSID:         []string{shop.SSID},
+					SSID:         strings.Split(shop.SSID, ","),
 					ShopType:     shop.ShopType,
 					OpeningHours: shop.OpeningHours,
 					SeatsNum:     shop.SeatsNum,

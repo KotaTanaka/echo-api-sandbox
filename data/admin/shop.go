@@ -8,17 +8,17 @@ RegisterShopRequestBody | 店舗登録リクエストボディ
 @type Request
 */
 type RegisterShopRequestBody struct {
-	ServiceID    uint   `json:"serviceId" validate:"required"`
-	ShopName     string `json:"shopName" validate:"required"`
-	Area         string `json:"area" validate:"required"`
-	Description  string `json:"description"`
-	Address      string `json:"address" validate:"required"`
-	Access       string `json:"access"`
-	SSID         string `json:"ssid" validate:"required"`
-	ShopType     string `json:"shopType"`
-	OpeningHours string `json:"openingHours"`
-	SeatsNum     int    `json:"seatsNum"`
-	HasPower     bool   `json:"hasPower"`
+	ServiceID    uint     `json:"serviceId" validate:"required"`
+	ShopName     string   `json:"shopName" validate:"required"`
+	Area         string   `json:"area" validate:"required"`
+	Description  string   `json:"description"`
+	Address      string   `json:"address" validate:"required"`
+	Access       string   `json:"access"`
+	SSID         []string `json:"ssid" validate:"required"`
+	ShopType     string   `json:"shopType"`
+	OpeningHours string   `json:"openingHours"`
+	SeatsNum     int      `json:"seatsNum"`
+	HasPower     bool     `json:"hasPower"`
 }
 
 /*
