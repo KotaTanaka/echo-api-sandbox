@@ -42,6 +42,61 @@ func GetServiceListAdmin(db *gorm.DB) echo.HandlerFunc {
 }
 
 /*
+GetServiceDetailAdmin | Wi-Fiサービス詳細取得
+*/
+func GetServiceDetailAdmin(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		serviceIDParam := c.Param("serviceId")
+		serviceID, err := strconv.Atoi(serviceIDParam)
+
+		if err != nil {
+			errorResponse := data.InvalidParameterError([]string{"ServiceID must be number."})
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		var service model.Service
+		var shops []model.Shop
+
+		if db.Find(&service, serviceID).Related(&shops).RecordNotFound() {
+			errorResponse := data.NotFoundError("Service")
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		response := admindata.ServiceDetailResponse{}
+
+		response.ServiceID = service.ID
+		response.WifiName = service.WifiName
+		response.Link = service.Link
+		response.CreatedAt = service.CreatedAt
+		response.UpdatedAt = service.UpdatedAt
+		response.DeletedAt = service.DeletedAt
+		response.ShopCount = len(shops)
+
+		for _, shop := range shops {
+			// TODO SSID: 文字列を配列に変換
+			// TODO Average: 評価の平均値の計算
+			response.ShopList = append(
+				response.ShopList, admindata.ServiceDetailResponseShopListElement{
+					ShopID:       shop.ID,
+					ShopName:     shop.ShopName,
+					Area:         shop.AreaKey,
+					Description:  shop.Description,
+					Address:      shop.Address,
+					Access:       shop.Access,
+					SSID:         []string{shop.SSID},
+					ShopType:     shop.ShopType,
+					OpeningHours: shop.OpeningHours,
+					SeatsNum:     shop.SeatsNum,
+					HasPower:     shop.HasPower,
+					ReviewCount:  len(shop.Reviews),
+					Average:      0})
+		}
+
+		return c.JSON(http.StatusOK, response)
+	}
+}
+
+/*
 RegisterServiceAdmin | Wi-Fiサービス登録
 */
 func RegisterServiceAdmin(db *gorm.DB) echo.HandlerFunc {

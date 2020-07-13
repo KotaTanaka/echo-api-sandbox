@@ -34,6 +34,8 @@ func Router(e *echo.Echo, db *gorm.DB) {
 	e.DELETE("/admin/areas/:areaKey", adminhandler.DeleteAreaAdmin(db))
 	// AW-01 Wi-Fiサービス一覧取得・検索
 	e.GET("/admin/services", adminhandler.GetServiceListAdmin(db))
+	// AW-02 Wi-Fiサービス詳細取得
+	e.GET("/admin/services/:serviceId", adminhandler.GetServiceDetailAdmin(db))
 	// AW-03 Wi-Fiサービス登録
 	e.POST("/admin/services", adminhandler.RegisterServiceAdmin(db))
 	// AW-05 Wi-Fiサービス削除
