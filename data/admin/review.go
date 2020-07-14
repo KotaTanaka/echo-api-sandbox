@@ -6,6 +6,14 @@ package admindata
 import "time"
 
 /*
+UpdateReviewStatusRequestBody | レビューステータス変更リクエストボディ
+@type Request
+*/
+type UpdateReviewStatusRequestBody struct {
+	Status string `json:"status" validate:"required"`
+}
+
+/*
 ReviewListingResponseElement | レビュー一覧取得レスポンス要素
 @type Response
 */

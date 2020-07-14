@@ -54,6 +54,8 @@ func Router(e *echo.Echo, db *gorm.DB) {
 	e.DELETE("/admin/shops/:shopId", adminhandler.DeleteShopAdmin(db))
 	// AR-01 レビュー一覧取得・検索
 	e.GET("/admin/reviews", adminhandler.GetReviewListAdmin(db))
+	// AR-02 レビューステータス変更
+	e.PUT("/admin/reviews/:reviewId", adminhandler.UpdateReviewStatusAdmin(db))
 	// AR-03 レビュー削除
 	e.DELETE("/admin/reviews/:reviewId", adminhandler.DeleteReviewAdmin(db))
 }
