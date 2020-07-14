@@ -1139,7 +1139,7 @@ paths:
       tags:
         - Admin Review
       summary: レビューステータス変更
-      operationId: putShopAdminStatus
+      operationId: putReviewStatusAdmin
       description: |-
         レビューの公開/非公開ステータスを変更する。
       x-code-samples:
@@ -1275,7 +1275,7 @@ paths:
       tags:
         - Admin Area
       summary: エリア削除
-      operationId: putShopAdminStatus
+      operationId: deleteAreaAdmin
       description: |-
         エリアマスタからエリアを削除する。
       x-code-samples:
