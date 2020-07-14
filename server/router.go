@@ -38,6 +38,8 @@ func Router(e *echo.Echo, db *gorm.DB) {
 	e.GET("/admin/services/:serviceId", adminhandler.GetServiceDetailAdmin(db))
 	// AW-03 Wi-Fiサービス登録
 	e.POST("/admin/services", adminhandler.RegisterServiceAdmin(db))
+	// AW-04 Wi-Fiサービス編集
+	e.PUT("/admin/services/:serviceId", adminhandler.UpdateServiceAdmin(db))
 	// AW-05 Wi-Fiサービス削除
 	e.DELETE("/admin/services/:serviceId", adminhandler.DeleteServiceAdmin(db))
 	// AS-01 店舗一覧取得・検索

@@ -136,6 +136,56 @@ func RegisterServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 }
 
 /*
+UpdateServiceAdmin | Wi-Fiサービス編集
+*/
+func UpdateServiceAdmin(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		validator.New()
+
+		serviceIDParam := c.Param("serviceId")
+		serviceID, err := strconv.Atoi(serviceIDParam)
+
+		if err != nil {
+			errorResponse := data.InvalidParameterError([]string{"ServiceID must be number."})
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		var service model.Service
+
+		if db.Find(&service, serviceID).RecordNotFound() {
+			errorResponse := data.NotFoundError("Service")
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		body := new(admindata.UpdateServiceRequestBody)
+
+		if err := c.Bind(body); err != nil {
+			errorResponse := data.InvalidRequestError([]string{err.Error()})
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		if err := c.Validate(body); err != nil {
+			errorResponse := data.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		if body.WifiName != "" {
+			service.WifiName = body.WifiName
+		}
+
+		if body.Link != "" {
+			service.Link = body.Link
+		}
+
+		db.Save(&service)
+
+		return c.JSON(
+			http.StatusOK,
+			data.ServiceIDResponse{ServiceID: service.ID})
+	}
+}
+
+/*
 DeleteServiceAdmin | Wi-Fiサービス削除
 */
 func DeleteServiceAdmin(db *gorm.DB) echo.HandlerFunc {

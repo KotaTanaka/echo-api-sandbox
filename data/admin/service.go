@@ -35,6 +35,15 @@ type ServiceListingResponse struct {
 }
 
 /*
+UpdateServiceRequestBody | Wi-Fiサービス編集リクエストボディ
+@type Request
+*/
+type UpdateServiceRequestBody struct {
+	WifiName string `json:"wifiName"`
+	Link     string `json:"link"`
+}
+
+/*
 ServiceDetailResponse | Wi-Fiサービス詳細取得レスポンス
 @type Response
 */
