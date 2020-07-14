@@ -24,6 +24,23 @@ type RegisterShopRequestBody struct {
 }
 
 /*
+UpdateShopRequestBody | 店舗編集リクエストボディ
+@type Request
+*/
+type UpdateShopRequestBody struct {
+	ShopName     string   `json:"shopName"`
+	Area         string   `json:"area"`
+	Description  string   `json:"description"`
+	Address      string   `json:"address"`
+	Access       string   `json:"access"`
+	SSID         []string `json:"ssid"`
+	ShopType     string   `json:"shopType"`
+	OpeningHours string   `json:"openingHours"`
+	SeatsNum     int      `json:"seatsNum"`
+	HasPower     bool     `json:"hasPower"`
+}
+
+/*
 ShopListingResponseElement | 店舗一覧取得・検索レスポンス要素
 @type Response
 */

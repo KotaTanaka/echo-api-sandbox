@@ -150,17 +150,91 @@ func RegisterShopAdmin(db *gorm.DB) echo.HandlerFunc {
 
 		shop := new(model.Shop)
 		shop.ServiceID = body.ServiceID
-		shop.AreaKey = body.Area
-		shop.SSID = strings.Join(body.SSID, ",")
 		shop.ShopName = body.ShopName
+		shop.AreaKey = body.Area
 		shop.Description = body.Description
 		shop.Address = body.Address
+		shop.Access = body.Access
+		shop.SSID = strings.Join(body.SSID, ",")
 		shop.ShopType = body.ShopType
 		shop.OpeningHours = body.OpeningHours
 		shop.SeatsNum = body.SeatsNum
 		shop.HasPower = body.HasPower
 
 		db.Create(&shop)
+
+		return c.JSON(
+			http.StatusOK,
+			data.ShopIDResponse{ShopID: shop.ID})
+	}
+}
+
+/*
+UpdateShopAdmin | 店舗編集
+*/
+func UpdateShopAdmin(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		validator.New()
+
+		shopIDParam := c.Param("shopId")
+		shopID, err := strconv.Atoi(shopIDParam)
+
+		if err != nil {
+			errorResponse := data.InvalidParameterError([]string{"ShopID must be number."})
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		var shop model.Shop
+
+		if db.Find(&shop, shopID).RecordNotFound() {
+			errorResponse := data.NotFoundError("Shop")
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		body := new(admindata.UpdateShopRequestBody)
+
+		if err := c.Bind(body); err != nil {
+			errorResponse := data.InvalidRequestError([]string{err.Error()})
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		if err := c.Validate(body); err != nil {
+			errorResponse := data.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
+			return c.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		if body.ShopName != "" {
+			shop.ShopName = body.ShopName
+		}
+		if body.Area != "" {
+			shop.AreaKey = body.Area
+		}
+		if body.Description != "" {
+			shop.Description = body.Description
+		}
+		if body.Address != "" {
+			shop.Address = body.Address
+		}
+		if body.Access != "" {
+			shop.Access = body.Access
+		}
+		if len(body.SSID) > 0 {
+			shop.SSID = strings.Join(body.SSID, ",")
+		}
+		if body.ShopType != "" {
+			shop.ShopType = body.ShopType
+		}
+		if body.OpeningHours != "" {
+			shop.OpeningHours = body.OpeningHours
+		}
+		if body.SeatsNum != 0 {
+			shop.SeatsNum = body.SeatsNum
+		}
+		if body.HasPower != false {
+			shop.HasPower = body.HasPower
+		}
+
+		db.Save(&shop)
 
 		return c.JSON(
 			http.StatusOK,

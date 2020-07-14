@@ -48,6 +48,8 @@ func Router(e *echo.Echo, db *gorm.DB) {
 	e.GET("/admin/shops/:shopId", adminhandler.GetShopDetailAdmin(db))
 	// AS-03 店舗登録
 	e.POST("/admin/shops", adminhandler.RegisterShopAdmin(db))
+	// AS-04 店舗編集
+	e.PUT("/admin/shops/:shopId", adminhandler.UpdateShopAdmin(db))
 	// AS-05 店舗削除
 	e.DELETE("/admin/shops/:shopId", adminhandler.DeleteShopAdmin(db))
 	// AR-01 レビュー一覧取得・検索
