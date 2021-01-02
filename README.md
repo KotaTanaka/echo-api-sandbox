@@ -1,32 +1,30 @@
-***find-wifi-backend***
+***echo-api-sandbox***
 
 ## About
 
-Find Wi-Fi バックエンド RESTful API
+Go (Echo) でのサーバーサイド開発の実験場  
+Wi-Fi検索システムのバックエンドAPI
 
-*[管理コンソールUI - find-wifi-console-ui](https://github.com/KotaTanaka/find-wifi-console-ui)*
+*[管理画面 - react-frontend-sandbox](https://github.com/KotaTanaka/react-frontend-sandbox)*
 
 ## Technology
 
-* 言語 `Go`
-* フレームワーク `Echo`
-* データベース `MySQL`
-* ORマッパー `Gorm`
-* 仮想環境 `Docker` `docker-compose`
-* API仕様書 `OpenAPI` `ReDoc`
+* 言語 - `Go`
+* フレームワーク - `Echo`
+* データベース - `MySQL`
+* ORM - `Gorm`
+* 開発環境 - `Docker` `docker-compose`
+* API定義書 - `OpenAPI` `ReDoc`
 
 ## Getting Started
-
-* インストール
-
-```bash
-$ git clone git@github.com:KotaTanaka/find-wifi-backend.git
-$ cd find-wifi-backend
-```
 
 * サービスの起動
 
 ```bash
+# 初回
+$ docker-compose up --build -d
+
+# 2回目以降
 $ docker-compose up -d
 ```
 
