@@ -2,7 +2,7 @@
 
 ## About
 
-Go (Echo) でのサーバーサイド開発の実験場  
+Go (Echo) でのサーバーサイド開発の素振り  
 Wi-Fi検索システムのバックエンドAPI
 
 *[管理画面 - react-frontend-sandbox](https://github.com/KotaTanaka/react-frontend-sandbox)*
