@@ -7,9 +7,9 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 
-	"../handler"
-	adminhandler "../handler/admin"
-	clienthandler "../handler/client"
+	"github.com/KotaTanaka/echo-api-sandbox/handler"
+	adminhandler "github.com/KotaTanaka/echo-api-sandbox/handler/admin"
+	clienthandler "github.com/KotaTanaka/echo-api-sandbox/handler/client"
 )
 
 /*

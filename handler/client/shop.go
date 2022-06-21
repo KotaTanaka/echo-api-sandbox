@@ -10,8 +10,8 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 
-	clientdata "../../data/client"
-	"../../model"
+	clientdata "github.com/KotaTanaka/echo-api-sandbox/data/client"
+	"github.com/KotaTanaka/echo-api-sandbox/model"
 )
 
 /*

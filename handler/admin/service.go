@@ -12,9 +12,9 @@ import (
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
-	"../../data"
-	admindata "../../data/admin"
-	"../../model"
+	"github.com/KotaTanaka/echo-api-sandbox/data"
+	admindata "github.com/KotaTanaka/echo-api-sandbox/data/admin"
+	"github.com/KotaTanaka/echo-api-sandbox/model"
 )
 
 /*
