@@ -7,69 +7,62 @@ Wi-Fi検索システムのバックエンドAPI
 
 *[管理画面 - react-frontend-sandbox](https://github.com/KotaTanaka/react-frontend-sandbox)*
 
-## Technology
+## Tech Stack
 
-* 言語 - `Go`
-* フレームワーク - `Echo`
-* データベース - `MySQL`
-* ORM - `Gorm`
-* 開発環境 - `Docker` `docker-compose`
-* API定義書 - `OpenAPI` `ReDoc`
+- 言語 - `Go`
+- フレームワーク - `Echo`
+- データベース - `MySQL`
+- ORM - `Gorm`
+- API定義書 - `OpenAPI` `ReDoc`
+
+## Requirements
+
+- Go 1.18
+- Docker, docker-compose
+- direnv
 
 ## Getting Started
 
-* サービスの起動
+- アプリケーションの起動
 
-```bash
-# 初回
-$ docker-compose up --build -d
+```sh
+# データベースの起動
+docker compose up mysql -d
 
-# 2回目以降
-$ docker-compose up -d
-```
+# 環境変数の設定
+cp .envrc.sample .envrc
+direnv allow
 
-* アプリケーションの起動
-
-```bash
-$ ./start-server.sh
+# ローカルサーバー配信
+make run
 ```
 
 → http://localhost:1323
 
-* サービスの停止
-
-```bash
-$ docker-compose down
-```
 
 ## Utility Commands
 
-* データベースログイン
+- データベースログイン
 
-```bash
-$ ./mysql.sh
+```sh
+./mysql.sh
 Enter password: password
 mysql> use find_wifi_db;
 ```
 
-* データベース初期化
+- API定義書生成（ReDocUI配信）
 
-```bash
-# DB削除
-$ rm -rf docker/db/mysql_data
-
-# サービス再起動(DB再生成)
-$ docker-compose down && docker-compose up -d
+```sh
+docker compose up redoc -d
 ```
 
-* API定義書生成
+→ http://localhost:1324
 
-```bash
-# OpenAPIからReDocへの書き出し
-$ ./redoc.sh
+- サービス停止（MySQL, ReDoc）
+
+```sh
+docker compose down
 ```
-
-→ http://localhost:1323/doc
 
 ## Database
 
