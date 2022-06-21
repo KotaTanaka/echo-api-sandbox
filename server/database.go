@@ -4,11 +4,12 @@ Package server サーバー全体のセットアップ
 package server
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/jinzhu/gorm"
 
-	"../model"
+	"github.com/KotaTanaka/echo-api-sandbox/model"
 )
 
 /*
@@ -19,13 +20,14 @@ func ConnectGorm() *gorm.DB {
 	USER := os.Getenv("MYSQL_USER")
 	PASS := os.Getenv("MYSQL_PASSWORD")
 	PROTOCOL := "tcp(" + os.Getenv("MYSQL_HOST") + ":" + os.Getenv("MYSQL_PORT") + ")"
-	DBNAME := os.Getenv("MYSQL_DB")
+	DB_NAME := os.Getenv("MYSQL_DB")
 	OPTION := "charset=utf8mb4&loc=Asia%2FTokyo&parseTime=true"
 
-	CONNECT := USER + ":" + PASS + "@" + PROTOCOL + "/" + DBNAME + "?" + OPTION
+	CONNECT := USER + ":" + PASS + "@" + PROTOCOL + "/" + DB_NAME + "?" + OPTION
 	db, err := gorm.Open(DBMS, CONNECT)
 
 	if err != nil {
+		fmt.Printf("ConnectGorm error: %v", err.Error())
 		panic(err.Error())
 	}
 

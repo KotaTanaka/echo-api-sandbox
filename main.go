@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/middleware"
 	"gopkg.in/go-playground/validator.v9"
 
-	"./server"
+	"github.com/KotaTanaka/echo-api-sandbox/server"
 )
 
 /*

@@ -1,37 +1,26 @@
 version: '3.6'
 services:
-  # ------------------------------
-  # Find Wi-Fi App (Golang)
-  # ------------------------------
-  app:
-    build: .
-    tty: true
-    depends_on:
-      - mysql
-    ports:
-      - 1323:1323
-    container_name: find_wifi_api
-    volumes:
-      - .:/go/app
-    environment:
-      MYSQL_HOST: mysql
-      MYSQL_DB: find_wifi_db
-      MYSQL_PORT: 3306
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
-  # ------------------------------
-  # MySQL
-  # ------------------------------
+  # Database
   mysql:
     image: mysql:5.7
+    container_name: find_wifi_mysql
     volumes:
       - ./docker/db/mysql_data:/var/lib/mysql
       - ./docker/db/init:/docker-entrypoint-initdb.d
       - ./docker/db/config/my.cnf:/etc/mysql/conf.d/my.cnf
     ports:
       - 3309:3306
-    container_name: find_wifi_mysql
-    hostname: mysql
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: find_wifi_db
+
+  # API Spec
+  redoc:
+    image: redocly/redoc
+    container_name: find_wifi_redoc
+    ports:
+      - 1324:80
+    volumes:
+      - ./openapi.yml:/usr/share/nginx/html/openapi.yml
+    environment:
+      SPEC_URL: openapi.yml

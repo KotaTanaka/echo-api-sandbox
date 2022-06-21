@@ -6,7 +6,8 @@ package handler
 import (
 	"net/http"
 
-	"../data"
+	"github.com/KotaTanaka/echo-api-sandbox/data"
+
 	"github.com/labstack/echo"
 )
 
