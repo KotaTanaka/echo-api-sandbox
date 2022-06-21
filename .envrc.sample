@@ -1,0 +1,5 @@
+export MYSQL_HOST=localhost
+export MYSQL_DB=find_wifi_db
+export MYSQL_PORT=3309
+export MYSQL_USER=root
+export MYSQL_PASSWORD=password

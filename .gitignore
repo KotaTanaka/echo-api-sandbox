@@ -1,2 +1,5 @@
+# data
 docker/db/mysql_data
-redoc.html
+
+# environment
+.envrc
