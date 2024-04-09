@@ -7,7 +7,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 
 	"github.com/KotaTanaka/echo-api-sandbox/lib"
-	"github.com/KotaTanaka/echo-api-sandbox/server"
+	"github.com/KotaTanaka/echo-api-sandbox/router"
 )
 
 type Validator struct {
@@ -21,17 +21,18 @@ func (v *Validator) Validate(i interface{}) error {
 func main() {
 	e := echo.New()
 
-	// バリデーターのセットアップ
+	// バリデーター初期化
 	e.Validator = &Validator{validator: validator.New()}
 
-	// DBのセットアップ
+	// DB接続
 	db := lib.ConnectGorm()
 	defer db.Close()
 	db.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8mb4")
 	lib.MigrateDB(db)
 
 	// ルーティング
-	server.Router(e, db)
+	router.ClientRouter(e, db)
+	router.AdminRouter(e, db)
 
 	// リクエスト共通処理
 	e.Use(middleware.Logger())
