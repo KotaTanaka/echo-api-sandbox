@@ -1,6 +1,12 @@
 ARCH=amd64
 BINARY=bin/server
 
+up:
+	docker-compose up
+
+down:
+	docker-compose down
+
 dep:
 	go mod download
 

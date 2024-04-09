@@ -26,14 +26,14 @@ Wi-Fi検索システムのバックエンドAPI
 - アプリケーションの起動
 
 ```sh
-# データベースの起動
-docker compose up mysql -d
+# ミドルウェアの起動
+make up
 
 # 環境変数の設定
 cp .envrc.sample .envrc
 direnv allow
 
-# ローカルサーバー配信
+# サーバー起動
 make run
 ```
 
@@ -53,15 +53,16 @@ mysql> use find_wifi_db;
 - API定義書生成（ReDocUI配信）
 
 ```sh
+# `make up` していれば不要
 docker compose up redoc -d
 ```
 
 → http://localhost:1324
 
-- サービス停止（MySQL, ReDoc）
+- サービス停止（DB, ReDoc）
 
 ```sh
-docker compose down
+make down
 ```
 
 ## Database
