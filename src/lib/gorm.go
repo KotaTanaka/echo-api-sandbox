@@ -1,4 +1,4 @@
-package server
+package lib
 
 import (
 	"fmt"
@@ -28,7 +28,7 @@ func ConnectGorm() *gorm.DB {
 	return db
 }
 
-func Migrate(db *gorm.DB) {
+func MigrateDB(db *gorm.DB) {
 	db.AutoMigrate(&model.Area{})
 	db.AutoMigrate(&model.Service{})
 	db.AutoMigrate(&model.Shop{}).AddForeignKey("service_id", "services(id)", "RESTRICT", "RESTRICT")
