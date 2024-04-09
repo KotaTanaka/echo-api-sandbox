@@ -9,32 +9,32 @@ import (
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
-	"github.com/KotaTanaka/echo-api-sandbox/data"
-	admindata "github.com/KotaTanaka/echo-api-sandbox/data/admin"
-	"github.com/KotaTanaka/echo-api-sandbox/model"
+	"github.com/KotaTanaka/echo-api-sandbox/model/dto"
+	admindto "github.com/KotaTanaka/echo-api-sandbox/model/dto/admin"
+	"github.com/KotaTanaka/echo-api-sandbox/model/entity"
 )
 
 func GetShopListAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		shops := []model.Shop{}
+		shops := []entity.Shop{}
 		db.Find(&shops)
 
-		response := admindata.ShopListingResponse{}
+		response := admindto.ShopListingResponse{}
 		response.Total = len(shops)
-		response.ShopList = []admindata.ShopListingResponseElement{}
+		response.ShopList = []admindto.ShopListingResponseElement{}
 
 		for _, shop := range shops {
-			service := model.Service{}
+			service := entity.Service{}
 			db.First(&service, shop.ServiceID)
 
-			reviews := db.Model(&model.Review{}).Where("shop_id = ?", shop.ID)
+			reviews := db.Model(&entity.Review{}).Where("shop_id = ?", shop.ID)
 			var reviewCount int
 			reviews.Count(&reviewCount)
 			var average float32
 			reviews.Select("avg(evaluation)").Row().Scan(&average)
 
 			response.ShopList = append(
-				response.ShopList, admindata.ShopListingResponseElement{
+				response.ShopList, admindto.ShopListingResponseElement{
 					ShopID:       shop.ID,
 					ServiceID:    service.ID,
 					WifiName:     service.WifiName,
@@ -62,22 +62,22 @@ func GetShopDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 		shopID, err := strconv.Atoi(shopIDParam)
 
 		if err != nil {
-			errorResponse := data.InvalidParameterError([]string{"ShopID must be number."})
+			errorResponse := dto.InvalidParameterError([]string{"ShopID must be number."})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var shop model.Shop
-		var service model.Service
-		var reviews []model.Review
+		var shop entity.Shop
+		var service entity.Service
+		var reviews []entity.Review
 
 		if db.Find(&shop, shopID).Related(&reviews).RecordNotFound() {
-			errorResponse := data.NotFoundError("Shop")
+			errorResponse := dto.NotFoundError("Shop")
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		db.First(&service, shop.ServiceID)
 
-		response := admindata.ShopDetailResponse{}
+		response := admindto.ShopDetailResponse{}
 
 		response.ShopID = shop.ID
 		response.ServiceID = service.ID
@@ -96,13 +96,13 @@ func GetShopDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 		response.UpdatedAt = shop.UpdatedAt
 		response.DeletedAt = shop.DeletedAt
 		response.ReviewCount = len(reviews)
-		response.ReviewList = []admindata.ShopDetailResponseReviewListElement{}
+		response.ReviewList = []admindto.ShopDetailResponseReviewListElement{}
 
 		var evaluationSum int
 		for _, review := range reviews {
 			evaluationSum += review.Evaluation
 			response.ReviewList = append(
-				response.ReviewList, admindata.ShopDetailResponseReviewListElement{
+				response.ReviewList, admindto.ShopDetailResponseReviewListElement{
 					ReviewID:   review.ID,
 					Comment:    review.Comment,
 					Evaluation: review.Evaluation,
@@ -124,19 +124,19 @@ func GetShopDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 func RegisterShopAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		validator.New()
-		body := new(admindata.RegisterShopRequestBody)
+		body := new(admindto.RegisterShopRequest)
 
 		if err := c.Bind(body); err != nil {
-			errorResponse := data.InvalidRequestError([]string{err.Error()})
+			errorResponse := dto.InvalidRequestError([]string{err.Error()})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		if err := c.Validate(body); err != nil {
-			errorResponse := data.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
+			errorResponse := dto.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		shop := new(model.Shop)
+		shop := new(entity.Shop)
 		shop.ServiceID = body.ServiceID
 		shop.ShopName = body.ShopName
 		shop.AreaKey = body.Area
@@ -153,7 +153,7 @@ func RegisterShopAdmin(db *gorm.DB) echo.HandlerFunc {
 
 		return c.JSON(
 			http.StatusOK,
-			data.ShopIDResponse{ShopID: shop.ID})
+			dto.ShopIDResponse{ShopID: shop.ID})
 	}
 }
 
@@ -165,26 +165,26 @@ func UpdateShopAdmin(db *gorm.DB) echo.HandlerFunc {
 		shopID, err := strconv.Atoi(shopIDParam)
 
 		if err != nil {
-			errorResponse := data.InvalidParameterError([]string{"ShopID must be number."})
+			errorResponse := dto.InvalidParameterError([]string{"ShopID must be number."})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var shop model.Shop
+		var shop entity.Shop
 
 		if db.Find(&shop, shopID).RecordNotFound() {
-			errorResponse := data.NotFoundError("Shop")
+			errorResponse := dto.NotFoundError("Shop")
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		body := new(admindata.UpdateShopRequestBody)
+		body := new(admindto.UpdateShopRequest)
 
 		if err := c.Bind(body); err != nil {
-			errorResponse := data.InvalidRequestError([]string{err.Error()})
+			errorResponse := dto.InvalidRequestError([]string{err.Error()})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		if err := c.Validate(body); err != nil {
-			errorResponse := data.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
+			errorResponse := dto.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -223,7 +223,7 @@ func UpdateShopAdmin(db *gorm.DB) echo.HandlerFunc {
 
 		return c.JSON(
 			http.StatusOK,
-			data.ShopIDResponse{ShopID: shop.ID})
+			dto.ShopIDResponse{ShopID: shop.ID})
 	}
 }
 
@@ -233,14 +233,14 @@ func DeleteShopAdmin(db *gorm.DB) echo.HandlerFunc {
 		shopID, err := strconv.Atoi(shopIDParam)
 
 		if err != nil {
-			errorResponse := data.InvalidParameterError([]string{"ShopID must be number."})
+			errorResponse := dto.InvalidParameterError([]string{"ShopID must be number."})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var shop model.Shop
+		var shop entity.Shop
 
 		if db.Find(&shop, shopID).RecordNotFound() {
-			errorResponse := data.NotFoundError("Shop")
+			errorResponse := dto.NotFoundError("Shop")
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -248,6 +248,6 @@ func DeleteShopAdmin(db *gorm.DB) echo.HandlerFunc {
 
 		return c.JSON(
 			http.StatusOK,
-			data.ShopIDResponse{ShopID: shop.ID})
+			dto.ShopIDResponse{ShopID: shop.ID})
 	}
 }

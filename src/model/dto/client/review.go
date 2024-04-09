@@ -1,4 +1,4 @@
-package clientdata
+package dto
 
 import "time"
 
@@ -20,7 +20,7 @@ type ReviewListingResponse struct {
 	Total      int                            `json:"total"`
 }
 
-type CreateReviewRequestBody struct {
+type CreateReviewRequest struct {
 	ShopID     uint   `json:"shopId" validate:"required"`
 	Comment    string `json:"comment" validate:"required"`
 	Evaluation int    `json:"evaluation" validate:"required"`

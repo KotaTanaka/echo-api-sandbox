@@ -1,4 +1,4 @@
-package clientdata
+package dto
 
 type ShopListingResponseElement struct {
 	ShopID       uint     `json:"shopId"`

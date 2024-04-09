@@ -1,8 +1,8 @@
-package admindata
+package admindto
 
 import "time"
 
-type UpdateReviewStatusRequestBody struct {
+type UpdateReviewStatusRequest struct {
 	Status string `json:"status" validate:"required"`
 }
 

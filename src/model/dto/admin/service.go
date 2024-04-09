@@ -1,8 +1,8 @@
-package admindata
+package admindto
 
 import "time"
 
-type RegisterServiceRequestBody struct {
+type RegisterServiceRequest struct {
 	WifiName string `json:"wifiName" validate:"required"`
 	Link     string `json:"link" validate:"required"`
 }
@@ -19,7 +19,7 @@ type ServiceListingResponse struct {
 	Total       int                             `json:"total"`
 }
 
-type UpdateServiceRequestBody struct {
+type UpdateServiceRequest struct {
 	WifiName string `json:"wifiName"`
 	Link     string `json:"link"`
 }

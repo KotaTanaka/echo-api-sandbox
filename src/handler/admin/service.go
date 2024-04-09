@@ -9,26 +9,26 @@ import (
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
-	"github.com/KotaTanaka/echo-api-sandbox/data"
-	admindata "github.com/KotaTanaka/echo-api-sandbox/data/admin"
-	"github.com/KotaTanaka/echo-api-sandbox/model"
+	"github.com/KotaTanaka/echo-api-sandbox/model/dto"
+	admindto "github.com/KotaTanaka/echo-api-sandbox/model/dto/admin"
+	"github.com/KotaTanaka/echo-api-sandbox/model/entity"
 )
 
 func GetServiceListAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		services := []model.Service{}
+		services := []entity.Service{}
 		db.Find(&services)
 
-		response := admindata.ServiceListingResponse{}
+		response := admindto.ServiceListingResponse{}
 		response.Total = len(services)
-		response.ServiceList = []admindata.ServiceListingResponseElement{}
+		response.ServiceList = []admindto.ServiceListingResponseElement{}
 
 		for _, service := range services {
 			shopCount := 0
-			db.Model(&model.Shop{}).Where("service_id = ?", service.ID).Count(&shopCount)
+			db.Model(&entity.Shop{}).Where("service_id = ?", service.ID).Count(&shopCount)
 
 			response.ServiceList = append(
-				response.ServiceList, admindata.ServiceListingResponseElement{
+				response.ServiceList, admindto.ServiceListingResponseElement{
 					ServiceID: service.ID,
 					WifiName:  service.WifiName,
 					Link:      service.Link,
@@ -45,19 +45,19 @@ func GetServiceDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 		serviceID, err := strconv.Atoi(serviceIDParam)
 
 		if err != nil {
-			errorResponse := data.InvalidParameterError([]string{"ServiceID must be number."})
+			errorResponse := dto.InvalidParameterError([]string{"ServiceID must be number."})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var service model.Service
-		var shops []model.Shop
+		var service entity.Service
+		var shops []entity.Shop
 
 		if db.Find(&service, serviceID).Related(&shops).RecordNotFound() {
-			errorResponse := data.NotFoundError("Service")
+			errorResponse := dto.NotFoundError("Service")
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		response := admindata.ServiceDetailResponse{}
+		response := admindto.ServiceDetailResponse{}
 
 		response.ServiceID = service.ID
 		response.WifiName = service.WifiName
@@ -66,17 +66,17 @@ func GetServiceDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 		response.UpdatedAt = service.UpdatedAt
 		response.DeletedAt = service.DeletedAt
 		response.ShopCount = len(shops)
-		response.ShopList = []admindata.ServiceDetailResponseShopListElement{}
+		response.ShopList = []admindto.ServiceDetailResponseShopListElement{}
 
 		for _, shop := range shops {
-			reviews := db.Model(&model.Review{}).Where("shop_id = ?", shop.ID)
+			reviews := db.Model(&entity.Review{}).Where("shop_id = ?", shop.ID)
 			var reviewCount int
 			reviews.Count(&reviewCount)
 			var average float32
 			reviews.Select("avg(evaluation)").Row().Scan(&average)
 
 			response.ShopList = append(
-				response.ShopList, admindata.ServiceDetailResponseShopListElement{
+				response.ShopList, admindto.ServiceDetailResponseShopListElement{
 					ShopID:       shop.ID,
 					ShopName:     shop.ShopName,
 					Area:         shop.AreaKey,
@@ -99,19 +99,19 @@ func GetServiceDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 func RegisterServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		validator.New()
-		body := new(admindata.RegisterServiceRequestBody)
+		body := new(admindto.RegisterServiceRequest)
 
 		if err := c.Bind(body); err != nil {
-			errorResponse := data.InvalidRequestError([]string{err.Error()})
+			errorResponse := dto.InvalidRequestError([]string{err.Error()})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		if err := c.Validate(body); err != nil {
-			errorResponse := data.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
+			errorResponse := dto.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		service := new(model.Service)
+		service := new(entity.Service)
 		service.WifiName = body.WifiName
 		service.Link = body.Link
 
@@ -119,7 +119,7 @@ func RegisterServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 
 		return c.JSON(
 			http.StatusOK,
-			data.ServiceIDResponse{ServiceID: service.ID})
+			dto.ServiceIDResponse{ServiceID: service.ID})
 	}
 }
 
@@ -131,26 +131,26 @@ func UpdateServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 		serviceID, err := strconv.Atoi(serviceIDParam)
 
 		if err != nil {
-			errorResponse := data.InvalidParameterError([]string{"ServiceID must be number."})
+			errorResponse := dto.InvalidParameterError([]string{"ServiceID must be number."})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var service model.Service
+		var service entity.Service
 
 		if db.Find(&service, serviceID).RecordNotFound() {
-			errorResponse := data.NotFoundError("Service")
+			errorResponse := dto.NotFoundError("Service")
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		body := new(admindata.UpdateServiceRequestBody)
+		body := new(admindto.UpdateServiceRequest)
 
 		if err := c.Bind(body); err != nil {
-			errorResponse := data.InvalidRequestError([]string{err.Error()})
+			errorResponse := dto.InvalidRequestError([]string{err.Error()})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		if err := c.Validate(body); err != nil {
-			errorResponse := data.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
+			errorResponse := dto.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -166,7 +166,7 @@ func UpdateServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 
 		return c.JSON(
 			http.StatusOK,
-			data.ServiceIDResponse{ServiceID: service.ID})
+			dto.ServiceIDResponse{ServiceID: service.ID})
 	}
 }
 
@@ -176,14 +176,14 @@ func DeleteServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 		serviceID, err := strconv.Atoi(serviceIDParam)
 
 		if err != nil {
-			errorResponse := data.InvalidParameterError([]string{"ServiceID must be number."})
+			errorResponse := dto.InvalidParameterError([]string{"ServiceID must be number."})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var service model.Service
+		var service entity.Service
 
 		if db.Find(&service, serviceID).RecordNotFound() {
-			errorResponse := data.NotFoundError("Service")
+			errorResponse := dto.NotFoundError("Service")
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -191,6 +191,6 @@ func DeleteServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 
 		return c.JSON(
 			http.StatusOK,
-			data.ServiceIDResponse{ServiceID: service.ID})
+			dto.ServiceIDResponse{ServiceID: service.ID})
 	}
 }

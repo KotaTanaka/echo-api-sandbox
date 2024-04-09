@@ -1,8 +1,8 @@
-package admindata
+package admindto
 
 import "time"
 
-type RegisterShopRequestBody struct {
+type RegisterShopRequest struct {
 	ServiceID    uint     `json:"serviceId" validate:"required"`
 	ShopName     string   `json:"shopName" validate:"required"`
 	Area         string   `json:"area" validate:"required"`
@@ -16,7 +16,7 @@ type RegisterShopRequestBody struct {
 	HasPower     bool     `json:"hasPower"`
 }
 
-type UpdateShopRequestBody struct {
+type UpdateShopRequest struct {
 	ShopName     string   `json:"shopName"`
 	Area         string   `json:"area"`
 	Description  string   `json:"description"`

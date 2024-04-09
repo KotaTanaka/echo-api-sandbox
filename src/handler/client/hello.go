@@ -3,7 +3,7 @@ package clienthandler
 import (
 	"net/http"
 
-	"github.com/KotaTanaka/echo-api-sandbox/data"
+	"github.com/KotaTanaka/echo-api-sandbox/model/dto"
 
 	"github.com/labstack/echo"
 )
@@ -12,6 +12,6 @@ func Hello() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		return c.JSON(
 			http.StatusOK,
-			data.MessageResponse{Message: "Hello, Find Wi-Fi!"})
+			dto.MessageResponse{Message: "Hello, Find Wi-Fi!"})
 	}
 }

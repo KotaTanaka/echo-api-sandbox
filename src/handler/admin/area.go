@@ -8,27 +8,27 @@ import (
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
-	"github.com/KotaTanaka/echo-api-sandbox/data"
-	admindata "github.com/KotaTanaka/echo-api-sandbox/data/admin"
-	"github.com/KotaTanaka/echo-api-sandbox/model"
+	"github.com/KotaTanaka/echo-api-sandbox/model/dto"
+	admindto "github.com/KotaTanaka/echo-api-sandbox/model/dto/admin"
+	"github.com/KotaTanaka/echo-api-sandbox/model/entity"
 )
 
 func RegisterAreaAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		validator.New()
-		body := new(admindata.RegisterAreaRequestBody)
+		body := new(admindto.RegisterAreaRequest)
 
 		if err := c.Bind(body); err != nil {
-			errorResponse := data.InvalidRequestError([]string{err.Error()})
+			errorResponse := dto.InvalidRequestError([]string{err.Error()})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		if err := c.Validate(body); err != nil {
-			errorResponse := data.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
+			errorResponse := dto.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		area := new(model.Area)
+		area := new(entity.Area)
 		area.AreaKey = body.AreaKey
 		area.AreaName = body.AreaName
 
@@ -36,7 +36,7 @@ func RegisterAreaAdmin(db *gorm.DB) echo.HandlerFunc {
 
 		return c.JSON(
 			http.StatusOK,
-			data.AreaKeyResponse{AreaKey: area.AreaKey})
+			dto.AreaKeyResponse{AreaKey: area.AreaKey})
 	}
 }
 
@@ -44,12 +44,12 @@ func DeleteAreaAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		areaKey := c.Param("areaKey")
 
-		area := model.Area{}
+		area := entity.Area{}
 		db.Where("area_key = ?", areaKey).Find(&area)
 		db.Delete(&area)
 
 		return c.JSON(
 			http.StatusOK,
-			data.AreaKeyResponse{AreaKey: area.AreaKey})
+			dto.AreaKeyResponse{AreaKey: area.AreaKey})
 	}
 }

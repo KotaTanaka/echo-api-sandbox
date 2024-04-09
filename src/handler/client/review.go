@@ -8,39 +8,39 @@ import (
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
-	"github.com/KotaTanaka/echo-api-sandbox/data"
-	clientdata "github.com/KotaTanaka/echo-api-sandbox/data/client"
-	"github.com/KotaTanaka/echo-api-sandbox/model"
+	"github.com/KotaTanaka/echo-api-sandbox/model/dto"
+	clientdto "github.com/KotaTanaka/echo-api-sandbox/model/dto/client"
+	"github.com/KotaTanaka/echo-api-sandbox/model/entity"
 )
 
 func GetReviewListClient(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		shopID := c.QueryParam("shopId")
 
-		var shop model.Shop
-		var service model.Service
-		var reviews []model.Review
+		var shop entity.Shop
+		var service entity.Service
+		var reviews []entity.Review
 
 		if db.Find(&shop, shopID).Related(&reviews).RecordNotFound() {
-			errorResponse := data.NotFoundError("Shop")
+			errorResponse := dto.NotFoundError("Shop")
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		db.First(&service, shop.ID)
 
-		response := clientdata.ReviewListingResponse{}
+		response := clientdto.ReviewListingResponse{}
 		response.ShopID = shop.ID
 		response.ShopName = shop.ShopName
 		response.ServiceID = service.ID
 		response.WifiName = service.WifiName
 		response.Total = len(reviews)
-		response.ReviewList = []clientdata.ReviewListingResponseElement{}
+		response.ReviewList = []clientdto.ReviewListingResponseElement{}
 
 		var evaluationSum int
 		for _, review := range reviews {
 			evaluationSum += review.Evaluation
 			response.ReviewList = append(
-				response.ReviewList, clientdata.ReviewListingResponseElement{
+				response.ReviewList, clientdto.ReviewListingResponseElement{
 					ReviewID:   review.ID,
 					Comment:    review.Comment,
 					Evaluation: review.Evaluation,
@@ -59,22 +59,22 @@ func GetReviewListClient(db *gorm.DB) echo.HandlerFunc {
 func CreateReviewClient(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		validator.New()
-		body := new(clientdata.CreateReviewRequestBody)
+		body := new(clientdto.CreateReviewRequest)
 
 		if err := c.Bind(body); err != nil {
-			errorResponse := data.InvalidRequestError([]string{err.Error()})
+			errorResponse := dto.InvalidRequestError([]string{err.Error()})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		if err := c.Validate(body); err != nil {
-			errorResponse := data.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
+			errorResponse := dto.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		shop := model.Shop{}
+		shop := entity.Shop{}
 		db.First(&shop, body.ShopID)
 
-		review := new(model.Review)
+		review := new(entity.Review)
 		review.ShopID = shop.ID
 		review.Comment = body.Comment
 		review.Evaluation = body.Evaluation
@@ -83,6 +83,6 @@ func CreateReviewClient(db *gorm.DB) echo.HandlerFunc {
 
 		return c.JSON(
 			http.StatusOK,
-			data.ReviewIDResponse{ReviewID: review.ID})
+			dto.ReviewIDResponse{ReviewID: review.ID})
 	}
 }

@@ -9,29 +9,29 @@ import (
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
-	"github.com/KotaTanaka/echo-api-sandbox/data"
-	admindata "github.com/KotaTanaka/echo-api-sandbox/data/admin"
-	"github.com/KotaTanaka/echo-api-sandbox/model"
+	"github.com/KotaTanaka/echo-api-sandbox/model/dto"
+	admindto "github.com/KotaTanaka/echo-api-sandbox/model/dto/admin"
+	"github.com/KotaTanaka/echo-api-sandbox/model/entity"
 )
 
 func GetReviewListAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		reviews := []model.Review{}
+		reviews := []entity.Review{}
 		db.Find(&reviews)
 
-		response := admindata.ReviewListingResponse{}
+		response := admindto.ReviewListingResponse{}
 		response.Total = len(reviews)
-		response.ReviewList = []admindata.ReviewListingResponseElement{}
+		response.ReviewList = []admindto.ReviewListingResponseElement{}
 
 		for _, review := range reviews {
-			shop := model.Shop{}
+			shop := entity.Shop{}
 			db.First(&shop, review.ShopID)
 
-			service := model.Service{}
+			service := entity.Service{}
 			db.First(&service, shop.ID)
 
 			response.ReviewList = append(
-				response.ReviewList, admindata.ReviewListingResponseElement{
+				response.ReviewList, admindto.ReviewListingResponseElement{
 					ReviewID:   review.ID,
 					ShopID:     shop.ID,
 					ShopName:   shop.ShopName,
@@ -57,26 +57,26 @@ func UpdateReviewStatusAdmin(db *gorm.DB) echo.HandlerFunc {
 		reviewID, err := strconv.Atoi(reviewIDParam)
 
 		if err != nil {
-			errorResponse := data.InvalidParameterError([]string{"ReviewID must be number."})
+			errorResponse := dto.InvalidParameterError([]string{"ReviewID must be number."})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var review model.Review
+		var review entity.Review
 
 		if db.Find(&review, reviewID).RecordNotFound() {
-			errorResponse := data.NotFoundError("Review")
+			errorResponse := dto.NotFoundError("Review")
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		body := new(admindata.UpdateReviewStatusRequestBody)
+		body := new(admindto.UpdateReviewStatusRequest)
 
 		if err := c.Bind(body); err != nil {
-			errorResponse := data.InvalidRequestError([]string{err.Error()})
+			errorResponse := dto.InvalidRequestError([]string{err.Error()})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		if err := c.Validate(body); err != nil {
-			errorResponse := data.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
+			errorResponse := dto.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -85,7 +85,7 @@ func UpdateReviewStatusAdmin(db *gorm.DB) echo.HandlerFunc {
 		} else if body.Status == "hidden" {
 			review.PublishStatus = false
 		} else {
-			errorResponse := data.InvalidParameterError([]string{"Status is 'public' or 'hidden'"})
+			errorResponse := dto.InvalidParameterError([]string{"Status is 'public' or 'hidden'"})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -93,7 +93,7 @@ func UpdateReviewStatusAdmin(db *gorm.DB) echo.HandlerFunc {
 
 		return c.JSON(
 			http.StatusOK,
-			data.ReviewIDResponse{ReviewID: review.ID})
+			dto.ReviewIDResponse{ReviewID: review.ID})
 	}
 }
 
@@ -103,14 +103,14 @@ func DeleteReviewAdmin(db *gorm.DB) echo.HandlerFunc {
 		reviewID, err := strconv.Atoi(reviewIDParam)
 
 		if err != nil {
-			errorResponse := data.InvalidParameterError([]string{"ReviewID must be number."})
+			errorResponse := dto.InvalidParameterError([]string{"ReviewID must be number."})
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var review model.Review
+		var review entity.Review
 
 		if db.Find(&review, reviewID).RecordNotFound() {
-			errorResponse := data.NotFoundError("Review")
+			errorResponse := dto.NotFoundError("Review")
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -118,6 +118,6 @@ func DeleteReviewAdmin(db *gorm.DB) echo.HandlerFunc {
 
 		return c.JSON(
 			http.StatusOK,
-			data.ReviewIDResponse{ReviewID: review.ID})
+			dto.ReviewIDResponse{ReviewID: review.ID})
 	}
 }

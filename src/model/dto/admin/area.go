@@ -1,6 +1,6 @@
-package admindata
+package admindto
 
-type RegisterAreaRequestBody struct {
+type RegisterAreaRequest struct {
 	AreaKey  string `json:"areaKey" validate:"required"`
 	AreaName string `json:"areaName" validate:"required"`
 }
