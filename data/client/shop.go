@@ -1,12 +1,5 @@
-/*
-Package clientdata クライアントAPI関連構造体
-*/
 package clientdata
 
-/*
-ShopListingResponseElement | エリアに紐付く店舗一覧取得レスポンス要素
-@type Response
-*/
 type ShopListingResponseElement struct {
 	ShopID       uint     `json:"shopId"`
 	WifiName     string   `json:"wifiName"`
@@ -25,10 +18,6 @@ type ShopListingResponseElement struct {
 	Average      float32  `json:"average"`
 }
 
-/*
-ShopListingResponse | エリアに紐付く店舗一覧取得レスポンス
-@type Response
-*/
 type ShopListingResponse struct {
 	ShopList []ShopListingResponseElement `json:"shopList"`
 	Total    int                          `json:"total"`

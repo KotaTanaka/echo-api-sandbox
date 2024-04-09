@@ -1,6 +1,3 @@
-/*
-Package clienthandler クライアントAPI関連ハンドラー
-*/
 package clienthandler
 
 import (
@@ -16,9 +13,6 @@ import (
 	"github.com/KotaTanaka/echo-api-sandbox/model"
 )
 
-/*
-GetReviewListClient | 店舗に紐づくレビュー一覧取得
-*/
 func GetReviewListClient(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		shopID := c.QueryParam("shopId")
@@ -62,9 +56,6 @@ func GetReviewListClient(db *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-/*
-CreateReviewClient | 店舗へのレビュー投稿
-*/
 func CreateReviewClient(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		validator.New()

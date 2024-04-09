@@ -1,6 +1,3 @@
-/*
-Package clienthandler クライアントAPI関連ハンドラー
-*/
 package clienthandler
 
 import (
@@ -13,9 +10,6 @@ import (
 	"github.com/KotaTanaka/echo-api-sandbox/model"
 )
 
-/*
-GetAreaMasterClient | エリアマスタ取得
-*/
 func GetAreaMasterClient(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		areas := []model.Area{}

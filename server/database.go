@@ -1,6 +1,3 @@
-/*
-Package server サーバー全体のセットアップ
-*/
 package server
 
 import (
@@ -12,9 +9,6 @@ import (
 	"github.com/KotaTanaka/echo-api-sandbox/model"
 )
 
-/*
-ConnectGorm | Gormの接続
-*/
 func ConnectGorm() *gorm.DB {
 	DBMS := "mysql"
 	USER := os.Getenv("MYSQL_USER")
@@ -34,9 +28,6 @@ func ConnectGorm() *gorm.DB {
 	return db
 }
 
-/*
-Migrate | DBの構築
-*/
 func Migrate(db *gorm.DB) {
 	db.AutoMigrate(&model.Area{})
 	db.AutoMigrate(&model.Service{})

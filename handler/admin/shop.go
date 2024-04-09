@@ -1,6 +1,3 @@
-/*
-Package adminhandler 管理API関連ハンドラー
-*/
 package adminhandler
 
 import (
@@ -17,9 +14,6 @@ import (
 	"github.com/KotaTanaka/echo-api-sandbox/model"
 )
 
-/*
-GetShopListAdmin | 店舗一覧取得・検索
-*/
 func GetShopListAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		shops := []model.Shop{}
@@ -62,9 +56,6 @@ func GetShopListAdmin(db *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-/*
-GetShopDetailAdmin | 店舗詳細取得
-*/
 func GetShopDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		shopIDParam := c.Param("shopId")
@@ -130,9 +121,6 @@ func GetShopDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-/*
-RegisterShopAdmin | 店舗登録
-*/
 func RegisterShopAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		validator.New()
@@ -169,9 +157,6 @@ func RegisterShopAdmin(db *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-/*
-UpdateShopAdmin | 店舗編集
-*/
 func UpdateShopAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		validator.New()
@@ -230,7 +215,7 @@ func UpdateShopAdmin(db *gorm.DB) echo.HandlerFunc {
 		if body.SeatsNum != 0 {
 			shop.SeatsNum = body.SeatsNum
 		}
-		if body.HasPower != false {
+		if body.HasPower {
 			shop.HasPower = body.HasPower
 		}
 
@@ -242,9 +227,6 @@ func UpdateShopAdmin(db *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-/*
-DeleteShopAdmin | 店舗削除
-*/
 func DeleteShopAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		shopIDParam := c.Param("shopId")

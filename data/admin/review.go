@@ -1,22 +1,11 @@
-/*
-Package admindata 管理API関連構造体
-*/
 package admindata
 
 import "time"
 
-/*
-UpdateReviewStatusRequestBody | レビューステータス変更リクエストボディ
-@type Request
-*/
 type UpdateReviewStatusRequestBody struct {
 	Status string `json:"status" validate:"required"`
 }
 
-/*
-ReviewListingResponseElement | レビュー一覧取得レスポンス要素
-@type Response
-*/
 type ReviewListingResponseElement struct {
 	ReviewID   uint       `json:"reviewId"`
 	ShopID     uint       `json:"shopId"`
@@ -31,10 +20,6 @@ type ReviewListingResponseElement struct {
 	DeletedAt  *time.Time `json:"deletedAt"`
 }
 
-/*
-ReviewListingResponse | レビュー一覧取得レスポンス
-@type Response
-*/
 type ReviewListingResponse struct {
 	ReviewList []ReviewListingResponseElement `json:"reviewList"`
 	Total      int                            `json:"total"`

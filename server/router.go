@@ -1,6 +1,3 @@
-/*
-Package server サーバー全体のセットアップ
-*/
 package server
 
 import (
@@ -12,9 +9,6 @@ import (
 	clienthandler "github.com/KotaTanaka/echo-api-sandbox/handler/client"
 )
 
-/*
-Router | ルーティング
-*/
 func Router(e *echo.Echo, db *gorm.DB) {
 	// API仕様書の出力
 	e.File("/doc", "app/redoc.html")

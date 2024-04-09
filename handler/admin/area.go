@@ -1,6 +1,3 @@
-/*
-Package adminhandler 管理API関連ハンドラー
-*/
 package adminhandler
 
 import (
@@ -16,9 +13,6 @@ import (
 	"github.com/KotaTanaka/echo-api-sandbox/model"
 )
 
-/*
-RegisterAreaAdmin | エリア登録
-*/
 func RegisterAreaAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		validator.New()
@@ -46,9 +40,6 @@ func RegisterAreaAdmin(db *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-/*
-DeleteAreaAdmin | エリア削除
-*/
 func DeleteAreaAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		areaKey := c.Param("areaKey")

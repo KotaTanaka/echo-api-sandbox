@@ -1,6 +1,3 @@
-/*
-Package adminhandler 管理API関連ハンドラー
-*/
 package adminhandler
 
 import (
@@ -17,9 +14,6 @@ import (
 	"github.com/KotaTanaka/echo-api-sandbox/model"
 )
 
-/*
-GetServiceListAdmin | Wi-Fiサービス一覧取得・検索
-*/
 func GetServiceListAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		services := []model.Service{}
@@ -45,9 +39,6 @@ func GetServiceListAdmin(db *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-/*
-GetServiceDetailAdmin | Wi-Fiサービス詳細取得
-*/
 func GetServiceDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		serviceIDParam := c.Param("serviceId")
@@ -105,9 +96,6 @@ func GetServiceDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-/*
-RegisterServiceAdmin | Wi-Fiサービス登録
-*/
 func RegisterServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		validator.New()
@@ -135,9 +123,6 @@ func RegisterServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-/*
-UpdateServiceAdmin | Wi-Fiサービス編集
-*/
 func UpdateServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		validator.New()
@@ -185,9 +170,6 @@ func UpdateServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-/*
-DeleteServiceAdmin | Wi-Fiサービス削除
-*/
 func DeleteServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		serviceIDParam := c.Param("serviceId")

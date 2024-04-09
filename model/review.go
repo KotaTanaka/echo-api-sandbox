@@ -1,13 +1,7 @@
-/*
-Package model モデル
-*/
 package model
 
 import "github.com/jinzhu/gorm"
 
-/*
-Review | 店舗レビューモデル
-*/
 type Review struct {
 	gorm.Model
 	ShopID        uint

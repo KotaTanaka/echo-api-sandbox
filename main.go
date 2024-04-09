@@ -1,6 +1,3 @@
-/*
-Find Wi-Fi API main.go
-*/
 package main
 
 import (
@@ -12,23 +9,14 @@ import (
 	"github.com/KotaTanaka/echo-api-sandbox/server"
 )
 
-/*
-Validator | バリデーターの構造体
-*/
 type Validator struct {
 	validator *validator.Validate
 }
 
-/*
-Validate | バリデーターのセットアップ
-*/
 func (v *Validator) Validate(i interface{}) error {
 	return v.validator.Struct(i)
 }
 
-/*
-Main
-*/
 func main() {
 	e := echo.New()
 

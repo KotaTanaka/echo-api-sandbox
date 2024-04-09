@@ -1,14 +1,7 @@
-/*
-Package admindata 管理API関連構造体
-*/
 package admindata
 
 import "time"
 
-/*
-RegisterShopRequestBody | 店舗登録リクエストボディ
-@type Request
-*/
 type RegisterShopRequestBody struct {
 	ServiceID    uint     `json:"serviceId" validate:"required"`
 	ShopName     string   `json:"shopName" validate:"required"`
@@ -23,10 +16,6 @@ type RegisterShopRequestBody struct {
 	HasPower     bool     `json:"hasPower"`
 }
 
-/*
-UpdateShopRequestBody | 店舗編集リクエストボディ
-@type Request
-*/
 type UpdateShopRequestBody struct {
 	ShopName     string   `json:"shopName"`
 	Area         string   `json:"area"`
@@ -40,10 +29,6 @@ type UpdateShopRequestBody struct {
 	HasPower     bool     `json:"hasPower"`
 }
 
-/*
-ShopListingResponseElement | 店舗一覧取得・検索レスポンス要素
-@type Response
-*/
 type ShopListingResponseElement struct {
 	ShopID       uint     `json:"shopId"`
 	ServiceID    uint     `json:"serviceId"`
@@ -62,19 +47,11 @@ type ShopListingResponseElement struct {
 	Average      float32  `json:"average"`
 }
 
-/*
-ShopListingResponse | 店舗一覧取得・検索レスポンス
-@type Response
-*/
 type ShopListingResponse struct {
 	ShopList []ShopListingResponseElement `json:"shopList"`
 	Total    int                          `json:"total"`
 }
 
-/*
-ShopDetailResponse | 店舗詳細取得レスポンス
-@type Response
-*/
 type ShopDetailResponse struct {
 	ShopID       uint                                  `json:"shopId"`
 	ServiceID    uint                                  `json:"serviceId"`
@@ -97,10 +74,6 @@ type ShopDetailResponse struct {
 	Average      float32                               `json:"average"`
 }
 
-/*
-ShopDetailResponseReviewListElement | 店舗詳細取得レスポンスレビューリスト要素
-@type Response
-*/
 type ShopDetailResponseReviewListElement struct {
 	ReviewID   uint       `json:"reviewId"`
 	Comment    string     `json:"comment"`

@@ -1,6 +1,3 @@
-/*
-Package adminhandler 管理API関連ハンドラー
-*/
 package adminhandler
 
 import (
@@ -17,9 +14,6 @@ import (
 	"github.com/KotaTanaka/echo-api-sandbox/model"
 )
 
-/*
-GetReviewListAdmin | レビュー一覧取得・検索
-*/
 func GetReviewListAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		reviews := []model.Review{}
@@ -55,9 +49,6 @@ func GetReviewListAdmin(db *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-/*
-UpdateReviewStatusAdmin | レビューステータス変更
-*/
 func UpdateReviewStatusAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		validator.New()
@@ -106,9 +97,6 @@ func UpdateReviewStatusAdmin(db *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-/*
-DeleteReviewAdmin | レビュー削除
-*/
 func DeleteReviewAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		reviewIDParam := c.Param("reviewId")

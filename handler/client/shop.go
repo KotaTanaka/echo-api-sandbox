@@ -1,6 +1,3 @@
-/*
-Package clienthandler クライアントAPI関連ハンドラー
-*/
 package clienthandler
 
 import (
@@ -14,9 +11,6 @@ import (
 	"github.com/KotaTanaka/echo-api-sandbox/model"
 )
 
-/*
-GetShopListClient | エリアに紐付く店舗一覧取得
-*/
 func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		shops := []model.Shop{}

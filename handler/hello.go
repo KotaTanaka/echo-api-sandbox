@@ -1,6 +1,3 @@
-/*
-Package handler Hello, Find Wi-Fi!
-*/
 package handler
 
 import (
@@ -11,9 +8,6 @@ import (
 	"github.com/labstack/echo"
 )
 
-/*
-Hello | Hello, Find Wi-Fi! 文字列を表示する
-*/
 func Hello() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		return c.JSON(

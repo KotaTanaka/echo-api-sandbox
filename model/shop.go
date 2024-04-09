@@ -1,13 +1,7 @@
-/*
-Package model モデル
-*/
 package model
 
 import "github.com/jinzhu/gorm"
 
-/*
-Shop | Wi-Fi提供店舗モデル
-*/
 type Shop struct {
 	gorm.Model
 	ServiceID    uint
