@@ -1,4 +1,4 @@
-package dto
+package clientdto
 
 import "time"
 

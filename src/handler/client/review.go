@@ -8,9 +8,9 @@ import (
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
+	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
+	clientdto "github.com/KotaTanaka/echo-api-sandbox/application/dto/client"
 	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
-	"github.com/KotaTanaka/echo-api-sandbox/model/dto"
-	clientdto "github.com/KotaTanaka/echo-api-sandbox/model/dto/client"
 )
 
 func GetReviewListClient(db *gorm.DB) echo.HandlerFunc {

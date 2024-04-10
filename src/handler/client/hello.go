@@ -3,7 +3,7 @@ package clienthandler
 import (
 	"net/http"
 
-	"github.com/KotaTanaka/echo-api-sandbox/model/dto"
+	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
 
 	"github.com/labstack/echo"
 )

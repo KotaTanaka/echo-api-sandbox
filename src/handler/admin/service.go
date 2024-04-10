@@ -9,9 +9,9 @@ import (
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
+	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
+	admindto "github.com/KotaTanaka/echo-api-sandbox/application/dto/admin"
 	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
-	"github.com/KotaTanaka/echo-api-sandbox/model/dto"
-	admindto "github.com/KotaTanaka/echo-api-sandbox/model/dto/admin"
 )
 
 func GetServiceListAdmin(db *gorm.DB) echo.HandlerFunc {

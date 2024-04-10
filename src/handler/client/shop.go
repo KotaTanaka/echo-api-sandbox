@@ -7,8 +7,8 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 
+	clientdto "github.com/KotaTanaka/echo-api-sandbox/application/dto/client"
 	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
-	clientdto "github.com/KotaTanaka/echo-api-sandbox/model/dto/client"
 )
 
 func GetShopListClient(db *gorm.DB) echo.HandlerFunc {

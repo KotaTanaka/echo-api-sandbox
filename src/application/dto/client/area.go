@@ -1,4 +1,4 @@
-package dto
+package clientdto
 
 type AreaMasterResponseElement struct {
 	AreaKey   string `json:"areaKey"`
