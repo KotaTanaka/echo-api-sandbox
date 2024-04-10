@@ -6,7 +6,7 @@ import (
 	"github.com/labstack/echo/middleware"
 	"gopkg.in/go-playground/validator.v9"
 
-	"github.com/KotaTanaka/echo-api-sandbox/lib"
+	"github.com/KotaTanaka/echo-api-sandbox/infrastructure"
 	"github.com/KotaTanaka/echo-api-sandbox/router"
 )
 
@@ -25,10 +25,10 @@ func main() {
 	e.Validator = &Validator{validator: validator.New()}
 
 	// DB接続
-	db := lib.ConnectGorm()
+	db := infrastructure.ConnectGorm()
 	defer db.Close()
 	db.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8mb4")
-	lib.MigrateDB(db)
+	infrastructure.MigrateDB(db)
 
 	// ルーティング
 	router.ClientRouter(e, db)
