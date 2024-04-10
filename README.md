@@ -2,7 +2,7 @@
 
 ## About
 
-Go (Echo) でのサーバーサイド開発の素振り  
+Go (Echo) でのサーバーサイドDDDの素振り  
 Wi-Fi検索システムのバックエンドAPI
 
 *[管理画面 - react-frontend-sandbox](https://github.com/KotaTanaka/react-frontend-sandbox)*
@@ -79,36 +79,38 @@ make down
 ## Package Architecture
 
 ```
-find-wifi-backend
-├── data
-│   ├── admin
-│   │   ├── area.go
-│   │   ├── review.go
-│   │   ├── service.go
-│   │   └── shop.go
-│   ├── client
-│   │   ├── area.go
-│   │   ├── review.go
-│   │   └── shop.go
-│   └── common.go
+src
+├── application
+│   ├── dto
+│   │   ├── admin
+│   │   │   └── {xxx}.go
+│   │   ├── client
+│   │   │   └── {xxx}.go
+│   │   ├── common.go
+│   │   └── error.go
+│   └── usecase
+│       ├── admin
+│       │   └── {xxx}.go
+│       └── client
+│           └── {xxx}.go
+├── domain
+│   ├── model
+│   │   └── {xxx}.go
+│   └── repository
+│       └── {xxx}.go
+├── go.mod
+├── go.sum
 ├── handler
 │   ├── admin
-│   │   ├── area.go
-│   │   ├── review.go
-│   │   ├── service.go
-│   │   └── shop.go
-│   ├── client
-│   │   ├── area.go
-│   │   ├── review.go
-│   │   └── shop.go
-│   └── hello.go
+│   │   └── {xxx}.go
+│   └── client
+│       └── {xxx}.go
+├── infrastructure
+│   └── gorm.go
 ├── main.go
-├── model
-│   ├── area.go
-│   ├── review.go
-│   ├── service.go
-│   └── shop.go
-└── server
-    ├── database.go
-    └── router.go
+├── registry
+│   └── registry.go
+└── router
+    ├── admin.go
+    └── client.go
 ```
