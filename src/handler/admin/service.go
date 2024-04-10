@@ -9,14 +9,14 @@ import (
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
+	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
 	"github.com/KotaTanaka/echo-api-sandbox/model/dto"
 	admindto "github.com/KotaTanaka/echo-api-sandbox/model/dto/admin"
-	"github.com/KotaTanaka/echo-api-sandbox/model/entity"
 )
 
 func GetServiceListAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		services := []entity.Service{}
+		services := []model.Service{}
 		db.Find(&services)
 
 		response := admindto.ServiceListingResponse{}
@@ -25,7 +25,7 @@ func GetServiceListAdmin(db *gorm.DB) echo.HandlerFunc {
 
 		for _, service := range services {
 			shopCount := 0
-			db.Model(&entity.Shop{}).Where("service_id = ?", service.ID).Count(&shopCount)
+			db.Model(&model.Shop{}).Where("service_id = ?", service.ID).Count(&shopCount)
 
 			response.ServiceList = append(
 				response.ServiceList, admindto.ServiceListingResponseElement{
@@ -49,8 +49,8 @@ func GetServiceDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var service entity.Service
-		var shops []entity.Shop
+		var service model.Service
+		var shops []model.Shop
 
 		if db.Find(&service, serviceID).Related(&shops).RecordNotFound() {
 			errorResponse := dto.NotFoundError("Service")
@@ -69,7 +69,7 @@ func GetServiceDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 		response.ShopList = []admindto.ServiceDetailResponseShopListElement{}
 
 		for _, shop := range shops {
-			reviews := db.Model(&entity.Review{}).Where("shop_id = ?", shop.ID)
+			reviews := db.Model(&model.Review{}).Where("shop_id = ?", shop.ID)
 			var reviewCount int
 			reviews.Count(&reviewCount)
 			var average float32
@@ -111,7 +111,7 @@ func RegisterServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		service := new(entity.Service)
+		service := new(model.Service)
 		service.WifiName = body.WifiName
 		service.Link = body.Link
 
@@ -135,7 +135,7 @@ func UpdateServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var service entity.Service
+		var service model.Service
 
 		if db.Find(&service, serviceID).RecordNotFound() {
 			errorResponse := dto.NotFoundError("Service")
@@ -180,7 +180,7 @@ func DeleteServiceAdmin(db *gorm.DB) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var service entity.Service
+		var service model.Service
 
 		if db.Find(&service, serviceID).RecordNotFound() {
 			errorResponse := dto.NotFoundError("Service")

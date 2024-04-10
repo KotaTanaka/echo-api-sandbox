@@ -7,13 +7,13 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 
+	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
 	clientdto "github.com/KotaTanaka/echo-api-sandbox/model/dto/client"
-	"github.com/KotaTanaka/echo-api-sandbox/model/entity"
 )
 
 func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		shops := []entity.Shop{}
+		shops := []model.Shop{}
 		db.Find(&shops)
 
 		response := clientdto.ShopListingResponse{}
@@ -21,10 +21,10 @@ func GetShopListClient(db *gorm.DB) echo.HandlerFunc {
 		response.ShopList = []clientdto.ShopListingResponseElement{}
 
 		for _, shop := range shops {
-			service := entity.Service{}
+			service := model.Service{}
 			db.First(&service, shop.ServiceID)
 
-			reviews := db.Model(&entity.Review{}).Where("shop_id = ?", shop.ID)
+			reviews := db.Model(&model.Review{}).Where("shop_id = ?", shop.ID)
 			var reviewCount int
 			reviews.Count(&reviewCount)
 			var average float32

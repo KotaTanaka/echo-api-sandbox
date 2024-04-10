@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/KotaTanaka/echo-api-sandbox/model/entity"
+	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
 	"github.com/jinzhu/gorm"
 )
 
@@ -28,8 +28,8 @@ func ConnectGorm() *gorm.DB {
 }
 
 func MigrateDB(db *gorm.DB) {
-	db.AutoMigrate(&entity.Area{})
-	db.AutoMigrate(&entity.Service{})
-	db.AutoMigrate(&entity.Shop{}).AddForeignKey("service_id", "services(id)", "RESTRICT", "RESTRICT")
-	db.AutoMigrate(&entity.Review{}).AddForeignKey("shop_id", "shops(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.Area{})
+	db.AutoMigrate(&model.Service{})
+	db.AutoMigrate(&model.Shop{}).AddForeignKey("service_id", "services(id)", "RESTRICT", "RESTRICT")
+	db.AutoMigrate(&model.Review{}).AddForeignKey("shop_id", "shops(id)", "RESTRICT", "RESTRICT")
 }

@@ -8,9 +8,9 @@ import (
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
+	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
 	"github.com/KotaTanaka/echo-api-sandbox/model/dto"
 	admindto "github.com/KotaTanaka/echo-api-sandbox/model/dto/admin"
-	"github.com/KotaTanaka/echo-api-sandbox/model/entity"
 )
 
 func RegisterAreaAdmin(db *gorm.DB) echo.HandlerFunc {
@@ -28,7 +28,7 @@ func RegisterAreaAdmin(db *gorm.DB) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		area := new(entity.Area)
+		area := new(model.Area)
 		area.AreaKey = body.AreaKey
 		area.AreaName = body.AreaName
 
@@ -44,7 +44,7 @@ func DeleteAreaAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		areaKey := c.Param("areaKey")
 
-		area := entity.Area{}
+		area := model.Area{}
 		db.Where("area_key = ?", areaKey).Find(&area)
 		db.Delete(&area)
 

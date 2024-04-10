@@ -8,18 +8,18 @@ import (
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
+	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
 	"github.com/KotaTanaka/echo-api-sandbox/model/dto"
 	clientdto "github.com/KotaTanaka/echo-api-sandbox/model/dto/client"
-	"github.com/KotaTanaka/echo-api-sandbox/model/entity"
 )
 
 func GetReviewListClient(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		shopID := c.QueryParam("shopId")
 
-		var shop entity.Shop
-		var service entity.Service
-		var reviews []entity.Review
+		var shop model.Shop
+		var service model.Service
+		var reviews []model.Review
 
 		if db.Find(&shop, shopID).Related(&reviews).RecordNotFound() {
 			errorResponse := dto.NotFoundError("Shop")
@@ -71,10 +71,10 @@ func CreateReviewClient(db *gorm.DB) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		shop := entity.Shop{}
+		shop := model.Shop{}
 		db.First(&shop, body.ShopID)
 
-		review := new(entity.Review)
+		review := new(model.Review)
 		review.ShopID = shop.ID
 		review.Comment = body.Comment
 		review.Evaluation = body.Evaluation

@@ -9,14 +9,14 @@ import (
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
+	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
 	"github.com/KotaTanaka/echo-api-sandbox/model/dto"
 	admindto "github.com/KotaTanaka/echo-api-sandbox/model/dto/admin"
-	"github.com/KotaTanaka/echo-api-sandbox/model/entity"
 )
 
 func GetReviewListAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		reviews := []entity.Review{}
+		reviews := []model.Review{}
 		db.Find(&reviews)
 
 		response := admindto.ReviewListingResponse{}
@@ -24,10 +24,10 @@ func GetReviewListAdmin(db *gorm.DB) echo.HandlerFunc {
 		response.ReviewList = []admindto.ReviewListingResponseElement{}
 
 		for _, review := range reviews {
-			shop := entity.Shop{}
+			shop := model.Shop{}
 			db.First(&shop, review.ShopID)
 
-			service := entity.Service{}
+			service := model.Service{}
 			db.First(&service, shop.ID)
 
 			response.ReviewList = append(
@@ -61,7 +61,7 @@ func UpdateReviewStatusAdmin(db *gorm.DB) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var review entity.Review
+		var review model.Review
 
 		if db.Find(&review, reviewID).RecordNotFound() {
 			errorResponse := dto.NotFoundError("Review")
@@ -107,7 +107,7 @@ func DeleteReviewAdmin(db *gorm.DB) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var review entity.Review
+		var review model.Review
 
 		if db.Find(&review, reviewID).RecordNotFound() {
 			errorResponse := dto.NotFoundError("Review")

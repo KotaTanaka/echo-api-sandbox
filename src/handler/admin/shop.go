@@ -9,14 +9,14 @@ import (
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
+	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
 	"github.com/KotaTanaka/echo-api-sandbox/model/dto"
 	admindto "github.com/KotaTanaka/echo-api-sandbox/model/dto/admin"
-	"github.com/KotaTanaka/echo-api-sandbox/model/entity"
 )
 
 func GetShopListAdmin(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		shops := []entity.Shop{}
+		shops := []model.Shop{}
 		db.Find(&shops)
 
 		response := admindto.ShopListingResponse{}
@@ -24,10 +24,10 @@ func GetShopListAdmin(db *gorm.DB) echo.HandlerFunc {
 		response.ShopList = []admindto.ShopListingResponseElement{}
 
 		for _, shop := range shops {
-			service := entity.Service{}
+			service := model.Service{}
 			db.First(&service, shop.ServiceID)
 
-			reviews := db.Model(&entity.Review{}).Where("shop_id = ?", shop.ID)
+			reviews := db.Model(&model.Review{}).Where("shop_id = ?", shop.ID)
 			var reviewCount int
 			reviews.Count(&reviewCount)
 			var average float32
@@ -66,9 +66,9 @@ func GetShopDetailAdmin(db *gorm.DB) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var shop entity.Shop
-		var service entity.Service
-		var reviews []entity.Review
+		var shop model.Shop
+		var service model.Service
+		var reviews []model.Review
 
 		if db.Find(&shop, shopID).Related(&reviews).RecordNotFound() {
 			errorResponse := dto.NotFoundError("Shop")
@@ -136,7 +136,7 @@ func RegisterShopAdmin(db *gorm.DB) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		shop := new(entity.Shop)
+		shop := new(model.Shop)
 		shop.ServiceID = body.ServiceID
 		shop.ShopName = body.ShopName
 		shop.AreaKey = body.Area
@@ -169,7 +169,7 @@ func UpdateShopAdmin(db *gorm.DB) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var shop entity.Shop
+		var shop model.Shop
 
 		if db.Find(&shop, shopID).RecordNotFound() {
 			errorResponse := dto.NotFoundError("Shop")
@@ -237,7 +237,7 @@ func DeleteShopAdmin(db *gorm.DB) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		var shop entity.Shop
+		var shop model.Shop
 
 		if db.Find(&shop, shopID).RecordNotFound() {
 			errorResponse := dto.NotFoundError("Shop")
