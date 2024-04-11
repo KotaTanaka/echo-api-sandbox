@@ -8,10 +8,21 @@ import (
 	"github.com/labstack/echo"
 )
 
-func Hello() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		return c.JSON(
-			http.StatusOK,
-			dto.MessageResponse{Message: "Hello, Find Wi-Fi!"})
-	}
+type HelloHandler interface {
+	Hello(ctx echo.Context) error
+}
+
+type helloHandler struct{}
+
+func NewHelloHandler() HelloHandler {
+	return &helloHandler{}
+}
+
+func (hh helloHandler) Hello(ctx echo.Context) error {
+	return ctx.JSON(
+		http.StatusOK,
+		dto.MessageResponse{
+			Message: "Hello, Find Wi-Fi!",
+		},
+	)
 }

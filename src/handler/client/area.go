@@ -10,22 +10,35 @@ import (
 	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
 )
 
-func GetAreaMasterClient(db *gorm.DB) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		areas := []model.Area{}
-		db.Find(&areas)
+type AreaHandler interface {
+	GetAreaMaster(ctx echo.Context) error
+}
 
-		response := clientdto.AreaMasterResponse{}
-		response.AreaList = []clientdto.AreaMasterResponseElement{}
+type areaHandler struct {
+	db *gorm.DB
+}
 
-		for _, area := range areas {
-			response.AreaList = append(
-				response.AreaList, clientdto.AreaMasterResponseElement{
-					AreaKey:   area.AreaKey,
-					AreaName:  area.AreaName,
-					ShopCount: len(area.Shops)})
-		}
+func NewAreaHandler(db *gorm.DB) AreaHandler {
+	return &areaHandler{db: db}
+}
 
-		return c.JSON(http.StatusOK, response)
+func (ah areaHandler) GetAreaMaster(ctx echo.Context) error {
+	areas := []model.Area{}
+	ah.db.Find(&areas)
+
+	response := clientdto.AreaMasterResponse{}
+	response.AreaList = []clientdto.AreaMasterResponseElement{}
+
+	for _, area := range areas {
+		response.AreaList = append(
+			response.AreaList,
+			clientdto.AreaMasterResponseElement{
+				AreaKey:   area.AreaKey,
+				AreaName:  area.AreaName,
+				ShopCount: len(area.Shops),
+			},
+		)
 	}
+
+	return ctx.JSON(http.StatusOK, response)
 }

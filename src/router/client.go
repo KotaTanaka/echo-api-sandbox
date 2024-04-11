@@ -8,14 +8,19 @@ import (
 )
 
 func ClientRouter(e *echo.Echo, db *gorm.DB) {
+	helloHandler := clienthandler.NewHelloHandler()
+	areaHandler := clienthandler.NewAreaHandler(db)
+	shopHandler := clienthandler.NewShopHandler(db)
+	reviewHandler := clienthandler.NewReviewHandler(db)
+
 	// Hello, World!
-	e.GET("/", clienthandler.Hello())
+	e.GET("/", helloHandler.Hello)
 	// CA-01 エリアマスタ取得
-	e.GET("/areas", clienthandler.GetAreaMasterClient(db))
+	e.GET("/areas", areaHandler.GetAreaMaster)
 	// CS-01 エリアに紐づく店舗一覧取得
-	e.GET("/shops", clienthandler.GetShopListClient(db))
+	e.GET("/shops", shopHandler.GetShopList)
 	// CR-01 店舗に紐づくレビュー一覧取得
-	e.GET("/reviews", clienthandler.GetReviewListClient(db))
+	e.GET("/reviews", reviewHandler.GetReviewList)
 	// CR-02 店舗へのレビュー投稿
-	e.POST("/reviews", clienthandler.CreateReviewClient(db))
+	e.POST("/reviews", reviewHandler.CreateReview)
 }
