@@ -4,13 +4,12 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
 	clientdto "github.com/KotaTanaka/echo-api-sandbox/application/dto/client"
-	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
+	clientusecase "github.com/KotaTanaka/echo-api-sandbox/application/usecase/client"
 )
 
 type ReviewHandler interface {
@@ -19,58 +18,27 @@ type ReviewHandler interface {
 }
 
 type reviewHandler struct {
-	db *gorm.DB
+	usecase clientusecase.ReviewUsecase
 }
 
-func NewReviewHandler(db *gorm.DB) ReviewHandler {
-	return &reviewHandler{db: db}
+func NewReviewHandler(usecase clientusecase.ReviewUsecase) ReviewHandler {
+	return &reviewHandler{usecase: usecase}
 }
 
-func (rh reviewHandler) GetReviewList(ctx echo.Context) error {
-	shopID := ctx.QueryParam("shopId")
-
-	var shop model.Shop
-	var service model.Service
-	var reviews []model.Review
-
-	if rh.db.Find(&shop, shopID).Related(&reviews).RecordNotFound() {
-		errorResponse := dto.NotFoundError("Shop")
-		return ctx.JSON(http.StatusBadRequest, errorResponse)
+func (h *reviewHandler) GetReviewList(ctx echo.Context) error {
+	query := &clientdto.ReviewListingQuery{
+		ShopID: ctx.QueryParam("shopId"),
 	}
 
-	rh.db.First(&service, shop.ID)
-
-	response := clientdto.ReviewListingResponse{}
-	response.ShopID = shop.ID
-	response.ShopName = shop.ShopName
-	response.ServiceID = service.ID
-	response.WifiName = service.WifiName
-	response.Total = len(reviews)
-	response.ReviewList = []clientdto.ReviewListingResponseElement{}
-
-	var evaluationSum int
-	for _, review := range reviews {
-		evaluationSum += review.Evaluation
-		response.ReviewList = append(
-			response.ReviewList,
-			clientdto.ReviewListingResponseElement{
-				ReviewID:   review.ID,
-				Comment:    review.Comment,
-				Evaluation: review.Evaluation,
-				Status:     review.PublishStatus,
-				CreatedAt:  review.CreatedAt,
-			},
-		)
+	res, err := h.usecase.GetReviewList(query)
+	if err != nil {
+		return ctx.JSON(err.Code, err)
 	}
 
-	if response.Total > 0 {
-		response.Average = float32(evaluationSum) / float32(response.Total)
-	}
-
-	return ctx.JSON(http.StatusOK, response)
+	return ctx.JSON(http.StatusOK, res)
 }
 
-func (rh reviewHandler) CreateReview(ctx echo.Context) error {
+func (h *reviewHandler) CreateReview(ctx echo.Context) error {
 	validator.New()
 	body := new(clientdto.CreateReviewRequest)
 
@@ -84,20 +52,10 @@ func (rh reviewHandler) CreateReview(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, errorResponse)
 	}
 
-	shop := model.Shop{}
-	rh.db.First(&shop, body.ShopID)
+	res, err := h.usecase.CreateReview(body)
+	if err != nil {
+		return ctx.JSON(err.Code, err)
+	}
 
-	review := new(model.Review)
-	review.ShopID = shop.ID
-	review.Comment = body.Comment
-	review.Evaluation = body.Evaluation
-
-	rh.db.Create(&review)
-
-	return ctx.JSON(
-		http.StatusOK,
-		dto.ReviewIDResponse{
-			ReviewID: review.ID,
-		},
-	)
+	return ctx.JSON(http.StatusOK, res)
 }

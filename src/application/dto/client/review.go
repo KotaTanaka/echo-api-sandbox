@@ -2,6 +2,10 @@ package clientdto
 
 import "time"
 
+type ReviewListingQuery struct {
+	ShopID string
+}
+
 type ReviewListingResponseElement struct {
 	ReviewID   uint      `json:"reviewId"`
 	Comment    string    `json:"comment"`

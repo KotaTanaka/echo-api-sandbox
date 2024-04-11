@@ -18,7 +18,7 @@ func NewHelloHandler() HelloHandler {
 	return &helloHandler{}
 }
 
-func (hh helloHandler) Hello(ctx echo.Context) error {
+func (h helloHandler) Hello(ctx echo.Context) error {
 	return ctx.JSON(
 		http.StatusOK,
 		dto.MessageResponse{
