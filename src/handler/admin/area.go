@@ -13,43 +13,58 @@ import (
 	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
 )
 
-func RegisterAreaAdmin(db *gorm.DB) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		validator.New()
-		body := new(admindto.RegisterAreaRequest)
-
-		if err := c.Bind(body); err != nil {
-			errorResponse := dto.InvalidRequestError([]string{err.Error()})
-			return c.JSON(http.StatusBadRequest, errorResponse)
-		}
-
-		if err := c.Validate(body); err != nil {
-			errorResponse := dto.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
-			return c.JSON(http.StatusBadRequest, errorResponse)
-		}
-
-		area := new(model.Area)
-		area.AreaKey = body.AreaKey
-		area.AreaName = body.AreaName
-
-		db.Create(&area)
-
-		return c.JSON(
-			http.StatusOK,
-			dto.AreaKeyResponse{AreaKey: area.AreaKey})
-	}
+type AreaHandler interface {
+	RegisterArea(ctx echo.Context) error
+	DeleteArea(ctx echo.Context) error
 }
 
-func DeleteAreaAdmin(db *gorm.DB) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		areaKey := c.Param("areaKey")
+type areaHandler struct {
+	db *gorm.DB
+}
 
-		area := model.Area{}
-		db.Where("area_key = ?", areaKey).Find(&area)
-		db.Delete(&area)
+func NewAreaHandler(db *gorm.DB) AreaHandler {
+	return &areaHandler{db: db}
+}
 
-		return c.JSON(
-			http.StatusOK,
-			dto.AreaKeyResponse{AreaKey: area.AreaKey})
+func (ah areaHandler) RegisterArea(ctx echo.Context) error {
+	validator.New()
+	body := new(admindto.RegisterAreaRequest)
+
+	if err := ctx.Bind(body); err != nil {
+		errorResponse := dto.InvalidRequestError([]string{err.Error()})
+		return ctx.JSON(http.StatusBadRequest, errorResponse)
 	}
+
+	if err := ctx.Validate(body); err != nil {
+		errorResponse := dto.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
+		return ctx.JSON(http.StatusBadRequest, errorResponse)
+	}
+
+	area := new(model.Area)
+	area.AreaKey = body.AreaKey
+	area.AreaName = body.AreaName
+
+	ah.db.Create(&area)
+
+	return ctx.JSON(
+		http.StatusOK,
+		dto.AreaKeyResponse{
+			AreaKey: area.AreaKey,
+		},
+	)
+}
+
+func (ah areaHandler) DeleteArea(ctx echo.Context) error {
+	areaKey := ctx.Param("areaKey")
+
+	area := model.Area{}
+	ah.db.Where("area_key = ?", areaKey).Find(&area)
+	ah.db.Delete(&area)
+
+	return ctx.JSON(
+		http.StatusOK,
+		dto.AreaKeyResponse{
+			AreaKey: area.AreaKey,
+		},
+	)
 }
