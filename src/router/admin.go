@@ -4,14 +4,18 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 
+	adminusecase "github.com/KotaTanaka/echo-api-sandbox/application/usecase/admin"
 	adminhandler "github.com/KotaTanaka/echo-api-sandbox/handler/admin"
 )
 
 func AdminRouter(e *echo.Echo, db *gorm.DB) {
-	areaHandler := adminhandler.NewAreaHandler(db)
+	areaUsecase := adminusecase.NewAreaUsecase(db)
+	reviewUsecase := adminusecase.NewReviewUsecase(db)
+
+	areaHandler := adminhandler.NewAreaHandler(areaUsecase)
 	serviceHandler := adminhandler.NewServiceHandler(db)
 	shopHandler := adminhandler.NewShopHandler(db)
-	reviewHandler := adminhandler.NewReviewHandler(db)
+	reviewHandler := adminhandler.NewReviewHandler(reviewUsecase)
 
 	// AA-01 エリア登録
 	e.POST("/admin/areas", areaHandler.RegisterArea)

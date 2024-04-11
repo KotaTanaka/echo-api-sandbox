@@ -5,13 +5,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
 	admindto "github.com/KotaTanaka/echo-api-sandbox/application/dto/admin"
-	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
+	adminusecase "github.com/KotaTanaka/echo-api-sandbox/application/usecase/admin"
 )
 
 type ReviewHandler interface {
@@ -21,49 +20,23 @@ type ReviewHandler interface {
 }
 
 type reviewHandler struct {
-	db *gorm.DB
+	usecase adminusecase.ReviewUsecase
 }
 
-func NewReviewHandler(db *gorm.DB) ReviewHandler {
-	return &reviewHandler{db: db}
+func NewReviewHandler(usecase adminusecase.ReviewUsecase) ReviewHandler {
+	return &reviewHandler{usecase: usecase}
 }
 
-func (rh reviewHandler) GetReviewList(ctx echo.Context) error {
-	reviews := []model.Review{}
-	rh.db.Find(&reviews)
-
-	response := admindto.ReviewListingResponse{}
-	response.Total = len(reviews)
-	response.ReviewList = []admindto.ReviewListingResponseElement{}
-
-	for _, review := range reviews {
-		shop := model.Shop{}
-		rh.db.First(&shop, review.ShopID)
-
-		service := model.Service{}
-		rh.db.First(&service, shop.ID)
-
-		response.ReviewList = append(
-			response.ReviewList, admindto.ReviewListingResponseElement{
-				ReviewID:   review.ID,
-				ShopID:     shop.ID,
-				ShopName:   shop.ShopName,
-				ServiceID:  service.ID,
-				WifiName:   service.WifiName,
-				Comment:    review.Comment,
-				Evaluation: review.Evaluation,
-				Status:     review.PublishStatus,
-				CreatedAt:  review.CreatedAt,
-				UpdatedAt:  review.UpdatedAt,
-				DeletedAt:  review.DeletedAt,
-			},
-		)
+func (h reviewHandler) GetReviewList(ctx echo.Context) error {
+	res, err := h.usecase.GetReviewList()
+	if err != nil {
+		return ctx.JSON(err.Code, err)
 	}
 
-	return ctx.JSON(http.StatusOK, response)
+	return ctx.JSON(http.StatusOK, res)
 }
 
-func (rh reviewHandler) UpdateReviewStatus(ctx echo.Context) error {
+func (h reviewHandler) UpdateReviewStatus(ctx echo.Context) error {
 	validator.New()
 
 	reviewIDParam := ctx.Param("reviewId")
@@ -71,13 +44,6 @@ func (rh reviewHandler) UpdateReviewStatus(ctx echo.Context) error {
 
 	if err != nil {
 		errorResponse := dto.InvalidParameterError([]string{"ReviewID must be number."})
-		return ctx.JSON(http.StatusBadRequest, errorResponse)
-	}
-
-	var review model.Review
-
-	if rh.db.Find(&review, reviewID).RecordNotFound() {
-		errorResponse := dto.NotFoundError("Review")
 		return ctx.JSON(http.StatusBadRequest, errorResponse)
 	}
 
@@ -93,26 +59,15 @@ func (rh reviewHandler) UpdateReviewStatus(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, errorResponse)
 	}
 
-	if body.Status == "public" {
-		review.PublishStatus = true
-	} else if body.Status == "hidden" {
-		review.PublishStatus = false
-	} else {
-		errorResponse := dto.InvalidParameterError([]string{"Status is 'public' or 'hidden'"})
-		return ctx.JSON(http.StatusBadRequest, errorResponse)
+	res, errRes := h.usecase.UpdateReviewStatus(reviewID, body)
+	if errRes != nil {
+		return ctx.JSON(errRes.Code, err)
 	}
 
-	rh.db.Save(&review)
-
-	return ctx.JSON(
-		http.StatusOK,
-		dto.ReviewIDResponse{
-			ReviewID: review.ID,
-		},
-	)
+	return ctx.JSON(http.StatusOK, res)
 }
 
-func (rh reviewHandler) DeleteReview(ctx echo.Context) error {
+func (h reviewHandler) DeleteReview(ctx echo.Context) error {
 	reviewIDParam := ctx.Param("reviewId")
 	reviewID, err := strconv.Atoi(reviewIDParam)
 
@@ -121,19 +76,10 @@ func (rh reviewHandler) DeleteReview(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, errorResponse)
 	}
 
-	var review model.Review
-
-	if rh.db.Find(&review, reviewID).RecordNotFound() {
-		errorResponse := dto.NotFoundError("Review")
-		return ctx.JSON(http.StatusBadRequest, errorResponse)
+	res, errRes := h.usecase.DeleteReview(reviewID)
+	if errRes != nil {
+		return ctx.JSON(errRes.Code, err)
 	}
 
-	rh.db.Delete(&review, reviewID)
-
-	return ctx.JSON(
-		http.StatusOK,
-		dto.ReviewIDResponse{
-			ReviewID: review.ID,
-		},
-	)
+	return ctx.JSON(http.StatusOK, res)
 }

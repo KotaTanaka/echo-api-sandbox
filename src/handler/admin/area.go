@@ -4,13 +4,12 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
 	admindto "github.com/KotaTanaka/echo-api-sandbox/application/dto/admin"
-	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
+	adminusecase "github.com/KotaTanaka/echo-api-sandbox/application/usecase/admin"
 )
 
 type AreaHandler interface {
@@ -19,14 +18,14 @@ type AreaHandler interface {
 }
 
 type areaHandler struct {
-	db *gorm.DB
+	areaUsecase adminusecase.AreaUsecase
 }
 
-func NewAreaHandler(db *gorm.DB) AreaHandler {
-	return &areaHandler{db: db}
+func NewAreaHandler(areaUsecase adminusecase.AreaUsecase) AreaHandler {
+	return &areaHandler{areaUsecase: areaUsecase}
 }
 
-func (ah areaHandler) RegisterArea(ctx echo.Context) error {
+func (h *areaHandler) RegisterArea(ctx echo.Context) error {
 	validator.New()
 	body := new(admindto.RegisterAreaRequest)
 
@@ -40,31 +39,23 @@ func (ah areaHandler) RegisterArea(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, errorResponse)
 	}
 
-	area := new(model.Area)
-	area.AreaKey = body.AreaKey
-	area.AreaName = body.AreaName
+	res, err := h.areaUsecase.RegisterArea(body)
+	if err != nil {
+		return ctx.JSON(err.Code, err)
+	}
 
-	ah.db.Create(&area)
-
-	return ctx.JSON(
-		http.StatusOK,
-		dto.AreaKeyResponse{
-			AreaKey: area.AreaKey,
-		},
-	)
+	return ctx.JSON(http.StatusOK, res)
 }
 
-func (ah areaHandler) DeleteArea(ctx echo.Context) error {
-	areaKey := ctx.Param("areaKey")
+func (h *areaHandler) DeleteArea(ctx echo.Context) error {
+	query := &admindto.DeleteAreaQuery{
+		AreaKey: ctx.Param("areaKey"),
+	}
 
-	area := model.Area{}
-	ah.db.Where("area_key = ?", areaKey).Find(&area)
-	ah.db.Delete(&area)
+	res, err := h.areaUsecase.DeleteArea(query)
+	if err != nil {
+		return ctx.JSON(err.Code, err)
+	}
 
-	return ctx.JSON(
-		http.StatusOK,
-		dto.AreaKeyResponse{
-			AreaKey: area.AreaKey,
-		},
-	)
+	return ctx.JSON(http.StatusOK, res)
 }
