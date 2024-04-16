@@ -21,7 +21,7 @@ func NewReviewUsecase(db *gorm.DB) ReviewUsecase {
 	return &reviewUsecase{db: db}
 }
 
-func (u reviewUsecase) GetReviewList() (*admindto.ReviewListingResponse, *dto.ErrorResponse) {
+func (u *reviewUsecase) GetReviewList() (*admindto.ReviewListingResponse, *dto.ErrorResponse) {
 	reviews := []model.Review{}
 	u.db.Find(&reviews)
 
@@ -56,12 +56,11 @@ func (u reviewUsecase) GetReviewList() (*admindto.ReviewListingResponse, *dto.Er
 	return res, nil
 }
 
-func (u reviewUsecase) UpdateReviewStatus(reviewID int, body *admindto.UpdateReviewStatusRequest) (*dto.ReviewIDResponse, *dto.ErrorResponse) {
+func (u *reviewUsecase) UpdateReviewStatus(reviewID int, body *admindto.UpdateReviewStatusRequest) (*dto.ReviewIDResponse, *dto.ErrorResponse) {
 	var review model.Review
 
 	if u.db.Find(&review, reviewID).RecordNotFound() {
-		errorResponse := dto.NotFoundError("Review")
-		return nil, errorResponse
+		return nil, dto.NotFoundError("Review")
 	}
 
 	if body.Status == "public" {
@@ -69,8 +68,7 @@ func (u reviewUsecase) UpdateReviewStatus(reviewID int, body *admindto.UpdateRev
 	} else if body.Status == "hidden" {
 		review.PublishStatus = false
 	} else {
-		errorResponse := dto.InvalidParameterError([]string{"Status is 'public' or 'hidden'"})
-		return nil, errorResponse
+		return nil, dto.InvalidParameterError([]string{"Status is 'public' or 'hidden'"})
 	}
 
 	u.db.Save(&review)
@@ -80,12 +78,11 @@ func (u reviewUsecase) UpdateReviewStatus(reviewID int, body *admindto.UpdateRev
 	}, nil
 }
 
-func (u reviewUsecase) DeleteReview(reviewID int) (*dto.ReviewIDResponse, *dto.ErrorResponse) {
+func (u *reviewUsecase) DeleteReview(reviewID int) (*dto.ReviewIDResponse, *dto.ErrorResponse) {
 	var review model.Review
 
 	if u.db.Find(&review, reviewID).RecordNotFound() {
-		errorResponse := dto.NotFoundError("Review")
-		return nil, errorResponse
+		return nil, dto.NotFoundError("Review")
 	}
 
 	u.db.Delete(&review, reviewID)

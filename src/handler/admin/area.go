@@ -26,22 +26,21 @@ func NewAreaHandler(areaUsecase adminusecase.AreaUsecase) AreaHandler {
 }
 
 func (h *areaHandler) RegisterArea(ctx echo.Context) error {
-	validator.New()
 	body := new(admindto.RegisterAreaRequest)
-
 	if err := ctx.Bind(body); err != nil {
-		errorResponse := dto.InvalidRequestError([]string{err.Error()})
-		return ctx.JSON(http.StatusBadRequest, errorResponse)
+		errRes := dto.InvalidRequestError([]string{err.Error()})
+		return ctx.JSON(http.StatusBadRequest, errRes)
 	}
 
+	validator.New()
 	if err := ctx.Validate(body); err != nil {
-		errorResponse := dto.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
-		return ctx.JSON(http.StatusBadRequest, errorResponse)
+		errRes := dto.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
+		return ctx.JSON(http.StatusBadRequest, errRes)
 	}
 
-	res, err := h.areaUsecase.RegisterArea(body)
-	if err != nil {
-		return ctx.JSON(err.Code, err)
+	res, errRes := h.areaUsecase.RegisterArea(body)
+	if errRes != nil {
+		return ctx.JSON(errRes.Code, errRes)
 	}
 
 	return ctx.JSON(http.StatusOK, res)
@@ -52,9 +51,9 @@ func (h *areaHandler) DeleteArea(ctx echo.Context) error {
 		AreaKey: ctx.Param("areaKey"),
 	}
 
-	res, err := h.areaUsecase.DeleteArea(query)
-	if err != nil {
-		return ctx.JSON(err.Code, err)
+	res, errRes := h.areaUsecase.DeleteArea(query)
+	if errRes != nil {
+		return ctx.JSON(errRes.Code, errRes)
 	}
 
 	return ctx.JSON(http.StatusOK, res)

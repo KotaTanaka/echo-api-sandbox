@@ -20,7 +20,7 @@ func NewAreaUsecase(db *gorm.DB) AreaUsecase {
 	return &areaUsecase{db: db}
 }
 
-func (u areaUsecase) GetAreaMaster() (*clientdto.AreaMasterResponse, *dto.ErrorResponse) {
+func (u *areaUsecase) GetAreaMaster() (*clientdto.AreaMasterResponse, *dto.ErrorResponse) {
 	areas := []model.Area{}
 	u.db.Find(&areas)
 

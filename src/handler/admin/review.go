@@ -27,36 +27,34 @@ func NewReviewHandler(usecase adminusecase.ReviewUsecase) ReviewHandler {
 	return &reviewHandler{usecase: usecase}
 }
 
-func (h reviewHandler) GetReviewList(ctx echo.Context) error {
-	res, err := h.usecase.GetReviewList()
-	if err != nil {
-		return ctx.JSON(err.Code, err)
+func (h *reviewHandler) GetReviewList(ctx echo.Context) error {
+	res, errRes := h.usecase.GetReviewList()
+	if errRes != nil {
+		return ctx.JSON(errRes.Code, errRes)
 	}
 
 	return ctx.JSON(http.StatusOK, res)
 }
 
-func (h reviewHandler) UpdateReviewStatus(ctx echo.Context) error {
-	validator.New()
-
+func (h *reviewHandler) UpdateReviewStatus(ctx echo.Context) error {
 	reviewIDParam := ctx.Param("reviewId")
 	reviewID, err := strconv.Atoi(reviewIDParam)
 
 	if err != nil {
-		errorResponse := dto.InvalidParameterError([]string{"ReviewID must be number."})
-		return ctx.JSON(http.StatusBadRequest, errorResponse)
+		errRes := dto.InvalidParameterError([]string{"ReviewID must be number."})
+		return ctx.JSON(http.StatusBadRequest, errRes)
 	}
 
 	body := new(admindto.UpdateReviewStatusRequest)
-
 	if err := ctx.Bind(body); err != nil {
-		errorResponse := dto.InvalidRequestError([]string{err.Error()})
-		return ctx.JSON(http.StatusBadRequest, errorResponse)
+		errRes := dto.InvalidRequestError([]string{err.Error()})
+		return ctx.JSON(http.StatusBadRequest, errRes)
 	}
 
+	validator.New()
 	if err := ctx.Validate(body); err != nil {
-		errorResponse := dto.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
-		return ctx.JSON(http.StatusBadRequest, errorResponse)
+		errRes := dto.InvalidParameterError(strings.Split(err.(validator.ValidationErrors).Error(), "\n"))
+		return ctx.JSON(http.StatusBadRequest, errRes)
 	}
 
 	res, errRes := h.usecase.UpdateReviewStatus(reviewID, body)
@@ -67,13 +65,13 @@ func (h reviewHandler) UpdateReviewStatus(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, res)
 }
 
-func (h reviewHandler) DeleteReview(ctx echo.Context) error {
+func (h *reviewHandler) DeleteReview(ctx echo.Context) error {
 	reviewIDParam := ctx.Param("reviewId")
 	reviewID, err := strconv.Atoi(reviewIDParam)
 
 	if err != nil {
-		errorResponse := dto.InvalidParameterError([]string{"ReviewID must be number."})
-		return ctx.JSON(http.StatusBadRequest, errorResponse)
+		errRes := dto.InvalidParameterError([]string{"ReviewID must be number."})
+		return ctx.JSON(http.StatusBadRequest, errRes)
 	}
 
 	res, errRes := h.usecase.DeleteReview(reviewID)

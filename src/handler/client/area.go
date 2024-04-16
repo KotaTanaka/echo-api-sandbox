@@ -21,9 +21,9 @@ func NewAreaHandler(usecase clientusecase.AreaUsecase) AreaHandler {
 }
 
 func (h *areaHandler) GetAreaMaster(ctx echo.Context) error {
-	res, err := h.usecase.GetAreaMaster()
-	if err != nil {
-		return ctx.JSON(err.Code, err)
+	res, errRes := h.usecase.GetAreaMaster()
+	if errRes != nil {
+		return ctx.JSON(errRes.Code, errRes)
 	}
 
 	return ctx.JSON(http.StatusOK, res)

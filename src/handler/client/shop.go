@@ -21,9 +21,9 @@ func NewShopHandler(usecase clientusecase.ShopUsecase) ShopHandler {
 }
 
 func (h *shopHandler) GetShopList(ctx echo.Context) error {
-	res, err := h.usecase.GetShopList()
-	if err != nil {
-		return ctx.JSON(err.Code, err)
+	res, errRes := h.usecase.GetShopList()
+	if errRes != nil {
+		return ctx.JSON(errRes.Code, errRes)
 	}
 
 	return ctx.JSON(http.StatusOK, res)

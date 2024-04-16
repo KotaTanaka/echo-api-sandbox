@@ -21,14 +21,13 @@ func NewReviewUsecase(db *gorm.DB) ReviewUsecase {
 	return &reviewUsecase{db: db}
 }
 
-func (u reviewUsecase) GetReviewList(query *clientdto.ReviewListingQuery) (*clientdto.ReviewListingResponse, *dto.ErrorResponse) {
+func (u *reviewUsecase) GetReviewList(query *clientdto.ReviewListingQuery) (*clientdto.ReviewListingResponse, *dto.ErrorResponse) {
 	var shop model.Shop
 	var service model.Service
 	var reviews []model.Review
 
 	if u.db.Find(&shop, query.ShopID).Related(&reviews).RecordNotFound() {
-		errorResponse := dto.NotFoundError("Shop")
-		return nil, errorResponse
+		return nil, dto.NotFoundError("Shop")
 	}
 
 	u.db.First(&service, shop.ID)
@@ -63,7 +62,7 @@ func (u reviewUsecase) GetReviewList(query *clientdto.ReviewListingQuery) (*clie
 	return res, nil
 }
 
-func (u reviewUsecase) CreateReview(body *clientdto.CreateReviewRequest) (*dto.ReviewIDResponse, *dto.ErrorResponse) {
+func (u *reviewUsecase) CreateReview(body *clientdto.CreateReviewRequest) (*dto.ReviewIDResponse, *dto.ErrorResponse) {
 	shop := model.Shop{}
 	u.db.First(&shop, body.ShopID)
 

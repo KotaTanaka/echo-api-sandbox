@@ -20,7 +20,7 @@ func NewAreaUsecase(db *gorm.DB) AreaUsecase {
 	return &areaUsecase{db: db}
 }
 
-func (u areaUsecase) RegisterArea(body *admindto.RegisterAreaRequest) (*dto.AreaKeyResponse, *dto.ErrorResponse) {
+func (u *areaUsecase) RegisterArea(body *admindto.RegisterAreaRequest) (*dto.AreaKeyResponse, *dto.ErrorResponse) {
 	area := new(model.Area)
 	area.AreaKey = body.AreaKey
 	area.AreaName = body.AreaName
@@ -32,7 +32,7 @@ func (u areaUsecase) RegisterArea(body *admindto.RegisterAreaRequest) (*dto.Area
 	}, nil
 }
 
-func (u areaUsecase) DeleteArea(query *admindto.DeleteAreaQuery) (*dto.AreaKeyResponse, *dto.ErrorResponse) {
+func (u *areaUsecase) DeleteArea(query *admindto.DeleteAreaQuery) (*dto.AreaKeyResponse, *dto.ErrorResponse) {
 	area := model.Area{}
 	u.db.Where("area_key = ?", query.AreaKey).Find(&area)
 	u.db.Delete(&area)

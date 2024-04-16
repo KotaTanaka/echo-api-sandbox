@@ -22,7 +22,7 @@ func NewShopUsecase(db *gorm.DB) ShopUsecase {
 	return &shopUsecase{db: db}
 }
 
-func (u shopUsecase) GetShopList() (*clientdto.ShopListingResponse, *dto.ErrorResponse) {
+func (u *shopUsecase) GetShopList() (*clientdto.ShopListingResponse, *dto.ErrorResponse) {
 	shops := []model.Shop{}
 	u.db.Find(&shops)
 
