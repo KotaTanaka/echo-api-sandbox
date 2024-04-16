@@ -4,38 +4,49 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 
+	adminusecase "github.com/KotaTanaka/echo-api-sandbox/application/usecase/admin"
 	adminhandler "github.com/KotaTanaka/echo-api-sandbox/handler/admin"
 )
 
 func AdminRouter(e *echo.Echo, db *gorm.DB) {
+	areaUsecase := adminusecase.NewAreaUsecase(db)
+	serviceUsecase := adminusecase.NewServiceUsecase(db)
+	shopUsecase := adminusecase.NewShopUsecase(db)
+	reviewUsecase := adminusecase.NewReviewUsecase(db)
+
+	areaHandler := adminhandler.NewAreaHandler(areaUsecase)
+	serviceHandler := adminhandler.NewServiceHandler(serviceUsecase)
+	shopHandler := adminhandler.NewShopHandler(shopUsecase)
+	reviewHandler := adminhandler.NewReviewHandler(reviewUsecase)
+
 	// AA-01 エリア登録
-	e.POST("/admin/areas", adminhandler.RegisterAreaAdmin(db))
+	e.POST("/admin/areas", areaHandler.RegisterArea)
 	// AA-02 エリア削除
-	e.DELETE("/admin/areas/:areaKey", adminhandler.DeleteAreaAdmin(db))
+	e.DELETE("/admin/areas/:areaKey", areaHandler.DeleteArea)
 	// AW-01 Wi-Fiサービス一覧取得・検索
-	e.GET("/admin/services", adminhandler.GetServiceListAdmin(db))
+	e.GET("/admin/services", serviceHandler.GetServiceList)
 	// AW-02 Wi-Fiサービス詳細取得
-	e.GET("/admin/services/:serviceId", adminhandler.GetServiceDetailAdmin(db))
+	e.GET("/admin/services/:serviceId", serviceHandler.GetServiceDetail)
 	// AW-03 Wi-Fiサービス登録
-	e.POST("/admin/services", adminhandler.RegisterServiceAdmin(db))
+	e.POST("/admin/services", serviceHandler.RegisterService)
 	// AW-04 Wi-Fiサービス編集
-	e.PUT("/admin/services/:serviceId", adminhandler.UpdateServiceAdmin(db))
+	e.PUT("/admin/services/:serviceId", serviceHandler.UpdateService)
 	// AW-05 Wi-Fiサービス削除
-	e.DELETE("/admin/services/:serviceId", adminhandler.DeleteServiceAdmin(db))
+	e.DELETE("/admin/services/:serviceId", serviceHandler.DeleteService)
 	// AS-01 店舗一覧取得・検索
-	e.GET("/admin/shops", adminhandler.GetShopListAdmin(db))
+	e.GET("/admin/shops", shopHandler.GetShopList)
 	// AS-02 店舗詳細取得
-	e.GET("/admin/shops/:shopId", adminhandler.GetShopDetailAdmin(db))
+	e.GET("/admin/shops/:shopId", shopHandler.GetShopDetail)
 	// AS-03 店舗登録
-	e.POST("/admin/shops", adminhandler.RegisterShopAdmin(db))
+	e.POST("/admin/shops", shopHandler.RegisterShop)
 	// AS-04 店舗編集
-	e.PUT("/admin/shops/:shopId", adminhandler.UpdateShopAdmin(db))
+	e.PUT("/admin/shops/:shopId", shopHandler.UpdateShop)
 	// AS-05 店舗削除
-	e.DELETE("/admin/shops/:shopId", adminhandler.DeleteShopAdmin(db))
+	e.DELETE("/admin/shops/:shopId", shopHandler.DeleteShop)
 	// AR-01 レビュー一覧取得・検索
-	e.GET("/admin/reviews", adminhandler.GetReviewListAdmin(db))
+	e.GET("/admin/reviews", reviewHandler.GetReviewList)
 	// AR-02 レビューステータス変更
-	e.PUT("/admin/reviews/:reviewId", adminhandler.UpdateReviewStatusAdmin(db))
+	e.PUT("/admin/reviews/:reviewId", reviewHandler.UpdateReviewStatus)
 	// AR-03 レビュー削除
-	e.DELETE("/admin/reviews/:reviewId", adminhandler.DeleteReviewAdmin(db))
+	e.DELETE("/admin/reviews/:reviewId", reviewHandler.DeleteReview)
 }

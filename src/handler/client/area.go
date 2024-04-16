@@ -3,29 +3,28 @@ package clienthandler
 import (
 	"net/http"
 
-	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 
-	clientdto "github.com/KotaTanaka/echo-api-sandbox/application/dto/client"
-	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
+	clientusecase "github.com/KotaTanaka/echo-api-sandbox/application/usecase/client"
 )
 
-func GetAreaMasterClient(db *gorm.DB) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		areas := []model.Area{}
-		db.Find(&areas)
+type AreaHandler interface {
+	GetAreaMaster(ctx echo.Context) error
+}
 
-		response := clientdto.AreaMasterResponse{}
-		response.AreaList = []clientdto.AreaMasterResponseElement{}
+type areaHandler struct {
+	usecase clientusecase.AreaUsecase
+}
 
-		for _, area := range areas {
-			response.AreaList = append(
-				response.AreaList, clientdto.AreaMasterResponseElement{
-					AreaKey:   area.AreaKey,
-					AreaName:  area.AreaName,
-					ShopCount: len(area.Shops)})
-		}
+func NewAreaHandler(usecase clientusecase.AreaUsecase) AreaHandler {
+	return &areaHandler{usecase: usecase}
+}
 
-		return c.JSON(http.StatusOK, response)
+func (h *areaHandler) GetAreaMaster(ctx echo.Context) error {
+	res, errRes := h.usecase.GetAreaMaster()
+	if errRes != nil {
+		return ctx.JSON(errRes.Code, errRes)
 	}
+
+	return ctx.JSON(http.StatusOK, res)
 }
