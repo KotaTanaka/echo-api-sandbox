@@ -10,11 +10,13 @@ import (
 
 func AdminRouter(e *echo.Echo, db *gorm.DB) {
 	areaUsecase := adminusecase.NewAreaUsecase(db)
+	serviceUsecase := adminusecase.NewServiceUsecase(db)
+	shopUsecase := adminusecase.NewShopUsecase(db)
 	reviewUsecase := adminusecase.NewReviewUsecase(db)
 
 	areaHandler := adminhandler.NewAreaHandler(areaUsecase)
-	serviceHandler := adminhandler.NewServiceHandler(db)
-	shopHandler := adminhandler.NewShopHandler(db)
+	serviceHandler := adminhandler.NewServiceHandler(serviceUsecase)
+	shopHandler := adminhandler.NewShopHandler(shopUsecase)
 	reviewHandler := adminhandler.NewReviewHandler(reviewUsecase)
 
 	// AA-01 エリア登録
