@@ -5,11 +5,14 @@ import (
 	"github.com/labstack/echo"
 
 	clientusecase "github.com/KotaTanaka/echo-api-sandbox/application/usecase/client"
+	"github.com/KotaTanaka/echo-api-sandbox/domain/repository"
 	clienthandler "github.com/KotaTanaka/echo-api-sandbox/handler/client"
 )
 
 func ClientRouter(e *echo.Echo, db *gorm.DB) {
-	areaUsecase := clientusecase.NewAreaUsecase(db)
+	areaRepository := repository.NewAreaRepository(db)
+
+	areaUsecase := clientusecase.NewAreaUsecase(areaRepository)
 	shopUsecase := clientusecase.NewShopUsecase(db)
 	reviewUsecase := clientusecase.NewReviewUsecase(db)
 
