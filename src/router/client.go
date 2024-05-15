@@ -11,10 +11,13 @@ import (
 
 func ClientRouter(e *echo.Echo, db *gorm.DB) {
 	areaRepository := repository.NewAreaRepository(db)
+	serviceRepository := repository.NewServiceRepository(db)
+	shopRepository := repository.NewShopRepository(db)
+	reviewRepository := repository.NewReviewRepository(db)
 
 	areaUsecase := clientusecase.NewAreaUsecase(areaRepository)
-	shopUsecase := clientusecase.NewShopUsecase(db)
-	reviewUsecase := clientusecase.NewReviewUsecase(db)
+	shopUsecase := clientusecase.NewShopUsecase(serviceRepository, shopRepository, reviewRepository)
+	reviewUsecase := clientusecase.NewReviewUsecase(serviceRepository, shopRepository, reviewRepository)
 
 	helloHandler := clienthandler.NewHelloHandler()
 	areaHandler := clienthandler.NewAreaHandler(areaUsecase)

@@ -3,11 +3,10 @@ package adminusecase
 import (
 	"strings"
 
-	"github.com/jinzhu/gorm"
-
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
 	admindto "github.com/KotaTanaka/echo-api-sandbox/application/dto/admin"
 	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
+	"github.com/KotaTanaka/echo-api-sandbox/domain/repository"
 )
 
 type ShopUsecase interface {
@@ -19,30 +18,43 @@ type ShopUsecase interface {
 }
 
 type shopUsecase struct {
-	db *gorm.DB
+	serviceRepository repository.ServiceRepository
+	shopRepository    repository.ShopRepository
+	reviewRepository  repository.ReviewRepository
 }
 
-func NewShopUsecase(db *gorm.DB) ShopUsecase {
-	return &shopUsecase{db: db}
+func NewShopUsecase(
+	serviceRepository repository.ServiceRepository,
+	shopRepository repository.ShopRepository,
+	reviewRepository repository.ReviewRepository,
+) ShopUsecase {
+	return &shopUsecase{
+		serviceRepository: serviceRepository,
+		shopRepository:    shopRepository,
+		reviewRepository:  reviewRepository,
+	}
 }
 
 func (u *shopUsecase) GetShopList() (*admindto.ShopListingResponse, *dto.ErrorResponse) {
-	shops := []model.Shop{}
-	u.db.Find(&shops)
+	shops, err := u.shopRepository.ListShops()
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	res := &admindto.ShopListingResponse{}
 	res.Total = len(shops)
 	res.ShopList = []admindto.ShopListingResponseElement{}
 
 	for _, shop := range shops {
-		service := model.Service{}
-		u.db.First(&service, shop.ServiceID)
+		service, err := u.serviceRepository.FindServiceByID(int(shop.ServiceID))
+		if err != nil {
+			return nil, dto.InternalServerError(err)
+		}
 
-		reviews := u.db.Model(&model.Review{}).Where("shop_id = ?", shop.ID)
-		var reviewCount int
-		reviews.Count(&reviewCount)
-		var average float32
-		reviews.Select("avg(evaluation)").Row().Scan(&average)
+		reviewAg, err := u.reviewRepository.SelectReviewsCountAndAverageByShopID(int(shop.ID))
+		if err != nil {
+			return nil, dto.InternalServerError(err)
+		}
 
 		res.ShopList = append(
 			res.ShopList, admindto.ShopListingResponseElement{
@@ -59,8 +71,8 @@ func (u *shopUsecase) GetShopList() (*admindto.ShopListingResponse, *dto.ErrorRe
 				OpeningHours: shop.OpeningHours,
 				SeatsNum:     shop.SeatsNum,
 				HasPower:     shop.HasPower,
-				ReviewCount:  reviewCount,
-				Average:      average,
+				ReviewCount:  reviewAg.Count,
+				Average:      reviewAg.Average,
 			},
 		)
 	}
@@ -69,15 +81,20 @@ func (u *shopUsecase) GetShopList() (*admindto.ShopListingResponse, *dto.ErrorRe
 }
 
 func (u *shopUsecase) GetShopDetail(shopID int) (*admindto.ShopDetailResponse, *dto.ErrorResponse) {
-	var shop model.Shop
-	var service model.Service
-	var reviews []model.Review
-
-	if u.db.Find(&shop, shopID).Related(&reviews).RecordNotFound() {
-		return nil, dto.NotFoundError("Shop")
+	shop, err := u.shopRepository.FindShopByID(shopID)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
 	}
 
-	u.db.First(&service, shop.ServiceID)
+	service, err := u.serviceRepository.FindServiceByID(int(shop.ServiceID))
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
+
+	reviews, err := u.reviewRepository.ListReviewsByShopID(shopID)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	res := &admindto.ShopDetailResponse{}
 
@@ -137,7 +154,10 @@ func (u *shopUsecase) RegisterShop(body *admindto.RegisterShopRequest) (*dto.Sho
 	shop.SeatsNum = body.SeatsNum
 	shop.HasPower = body.HasPower
 
-	u.db.Create(&shop)
+	shop, err := u.shopRepository.CreateShop(shop)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	return &dto.ShopIDResponse{
 		ShopID: shop.ID,
@@ -145,10 +165,9 @@ func (u *shopUsecase) RegisterShop(body *admindto.RegisterShopRequest) (*dto.Sho
 }
 
 func (u *shopUsecase) UpdateShop(shopID int, body *admindto.UpdateShopRequest) (*dto.ShopIDResponse, *dto.ErrorResponse) {
-	var shop model.Shop
-
-	if u.db.Find(&shop, shopID).RecordNotFound() {
-		return nil, dto.NotFoundError("Shop")
+	shop, err := u.shopRepository.FindShopByID(shopID)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
 	}
 
 	if body.ShopName != "" {
@@ -182,7 +201,10 @@ func (u *shopUsecase) UpdateShop(shopID int, body *admindto.UpdateShopRequest) (
 		shop.HasPower = body.HasPower
 	}
 
-	u.db.Save(&shop)
+	shop, err = u.shopRepository.UpdateShop(shop)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	return &dto.ShopIDResponse{
 		ShopID: shop.ID,
@@ -190,13 +212,15 @@ func (u *shopUsecase) UpdateShop(shopID int, body *admindto.UpdateShopRequest) (
 }
 
 func (u *shopUsecase) DeleteShop(shopID int) (*dto.ShopIDResponse, *dto.ErrorResponse) {
-	var shop model.Shop
-
-	if u.db.Find(&shop, shopID).RecordNotFound() {
-		return nil, dto.NotFoundError("Shop")
+	shop, err := u.shopRepository.FindShopByID(shopID)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
 	}
 
-	u.db.Delete(&shop, shopID)
+	err = u.shopRepository.DeleteShop(shop)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	return &dto.ShopIDResponse{
 		ShopID: shop.ID,

@@ -3,11 +3,9 @@ package clientusecase
 import (
 	"strings"
 
-	"github.com/jinzhu/gorm"
-
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
 	clientdto "github.com/KotaTanaka/echo-api-sandbox/application/dto/client"
-	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
+	"github.com/KotaTanaka/echo-api-sandbox/domain/repository"
 )
 
 type ShopUsecase interface {
@@ -15,30 +13,43 @@ type ShopUsecase interface {
 }
 
 type shopUsecase struct {
-	db *gorm.DB
+	serviceRepository repository.ServiceRepository
+	shopRepository    repository.ShopRepository
+	reviewRepository  repository.ReviewRepository
 }
 
-func NewShopUsecase(db *gorm.DB) ShopUsecase {
-	return &shopUsecase{db: db}
+func NewShopUsecase(
+	serviceRepository repository.ServiceRepository,
+	shopRepository repository.ShopRepository,
+	reviewRepository repository.ReviewRepository,
+) ShopUsecase {
+	return &shopUsecase{
+		serviceRepository: serviceRepository,
+		shopRepository:    shopRepository,
+		reviewRepository:  reviewRepository,
+	}
 }
 
 func (u *shopUsecase) GetShopList() (*clientdto.ShopListingResponse, *dto.ErrorResponse) {
-	shops := []model.Shop{}
-	u.db.Find(&shops)
+	shops, err := u.shopRepository.ListShops()
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	res := &clientdto.ShopListingResponse{}
 	res.Total = len(shops)
 	res.ShopList = []clientdto.ShopListingResponseElement{}
 
 	for _, shop := range shops {
-		service := model.Service{}
-		u.db.First(&service, shop.ServiceID)
+		service, err := u.serviceRepository.FindServiceByID(int(shop.ServiceID))
+		if err != nil {
+			return nil, dto.InternalServerError(err)
+		}
 
-		reviews := u.db.Model(&model.Review{}).Where("shop_id = ?", shop.ID)
-		var reviewCount int
-		reviews.Count(&reviewCount)
-		var average float32
-		reviews.Select("avg(evaluation)").Row().Scan(&average)
+		reviewAg, err := u.reviewRepository.SelectReviewsCountAndAverageByShopID(int(shop.ID))
+		if err != nil {
+			return nil, dto.InternalServerError(err)
+		}
 
 		res.ShopList = append(
 			res.ShopList, clientdto.ShopListingResponseElement{
@@ -55,8 +66,8 @@ func (u *shopUsecase) GetShopList() (*clientdto.ShopListingResponse, *dto.ErrorR
 				OpeningHours: shop.OpeningHours,
 				SeatsNum:     shop.SeatsNum,
 				HasPower:     shop.HasPower,
-				ReviewCount:  reviewCount,
-				Average:      average,
+				ReviewCount:  reviewAg.Count,
+				Average:      reviewAg.Average,
 			},
 		)
 	}

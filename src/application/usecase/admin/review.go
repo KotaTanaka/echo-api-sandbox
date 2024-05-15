@@ -3,8 +3,7 @@ package adminusecase
 import (
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
 	admindto "github.com/KotaTanaka/echo-api-sandbox/application/dto/admin"
-	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
-	"github.com/jinzhu/gorm"
+	"github.com/KotaTanaka/echo-api-sandbox/domain/repository"
 )
 
 type ReviewUsecase interface {
@@ -14,27 +13,43 @@ type ReviewUsecase interface {
 }
 
 type reviewUsecase struct {
-	db *gorm.DB
+	serviceRepository repository.ServiceRepository
+	shopRepository    repository.ShopRepository
+	reviewRepository  repository.ReviewRepository
 }
 
-func NewReviewUsecase(db *gorm.DB) ReviewUsecase {
-	return &reviewUsecase{db: db}
+func NewReviewUsecase(
+	serviceRepository repository.ServiceRepository,
+	shopRepository repository.ShopRepository,
+	reviewRepository repository.ReviewRepository,
+) ReviewUsecase {
+	return &reviewUsecase{
+		serviceRepository: serviceRepository,
+		shopRepository:    shopRepository,
+		reviewRepository:  reviewRepository,
+	}
 }
 
 func (u *reviewUsecase) GetReviewList() (*admindto.ReviewListingResponse, *dto.ErrorResponse) {
-	reviews := []model.Review{}
-	u.db.Find(&reviews)
+	reviews, err := u.reviewRepository.ListReviews()
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	res := &admindto.ReviewListingResponse{}
 	res.Total = len(reviews)
 	res.ReviewList = []admindto.ReviewListingResponseElement{}
 
 	for _, review := range reviews {
-		shop := model.Shop{}
-		u.db.First(&shop, review.ShopID)
+		shop, err := u.shopRepository.FindShopByID(int(review.ShopID))
+		if err != nil {
+			return nil, dto.InternalServerError(err)
+		}
 
-		service := model.Service{}
-		u.db.First(&service, shop.ID)
+		service, err := u.serviceRepository.FindServiceByID(int(shop.ServiceID))
+		if err != nil {
+			return nil, dto.InternalServerError(err)
+		}
 
 		res.ReviewList = append(
 			res.ReviewList, admindto.ReviewListingResponseElement{
@@ -57,10 +72,9 @@ func (u *reviewUsecase) GetReviewList() (*admindto.ReviewListingResponse, *dto.E
 }
 
 func (u *reviewUsecase) UpdateReviewStatus(reviewID int, body *admindto.UpdateReviewStatusRequest) (*dto.ReviewIDResponse, *dto.ErrorResponse) {
-	var review model.Review
-
-	if u.db.Find(&review, reviewID).RecordNotFound() {
-		return nil, dto.NotFoundError("Review")
+	review, err := u.reviewRepository.FindReviewByID(reviewID)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
 	}
 
 	if body.Status == "public" {
@@ -71,7 +85,10 @@ func (u *reviewUsecase) UpdateReviewStatus(reviewID int, body *admindto.UpdateRe
 		return nil, dto.InvalidParameterError([]string{"Status is 'public' or 'hidden'"})
 	}
 
-	u.db.Save(&review)
+	review, err = u.reviewRepository.UpdateReview(review)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	return &dto.ReviewIDResponse{
 		ReviewID: review.ID,
@@ -79,13 +96,15 @@ func (u *reviewUsecase) UpdateReviewStatus(reviewID int, body *admindto.UpdateRe
 }
 
 func (u *reviewUsecase) DeleteReview(reviewID int) (*dto.ReviewIDResponse, *dto.ErrorResponse) {
-	var review model.Review
-
-	if u.db.Find(&review, reviewID).RecordNotFound() {
-		return nil, dto.NotFoundError("Review")
+	review, err := u.reviewRepository.FindReviewByID(reviewID)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
 	}
 
-	u.db.Delete(&review, reviewID)
+	err = u.reviewRepository.DeleteReview(review)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	return &dto.ReviewIDResponse{
 		ReviewID: review.ID,

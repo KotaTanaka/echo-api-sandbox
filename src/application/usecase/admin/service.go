@@ -6,7 +6,7 @@ import (
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
 	admindto "github.com/KotaTanaka/echo-api-sandbox/application/dto/admin"
 	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
-	"github.com/jinzhu/gorm"
+	"github.com/KotaTanaka/echo-api-sandbox/domain/repository"
 )
 
 type ServiceUsecase interface {
@@ -18,31 +18,45 @@ type ServiceUsecase interface {
 }
 
 type serviceUsecase struct {
-	db *gorm.DB
+	serviceRepository repository.ServiceRepository
+	shopRepository    repository.ShopRepository
+	reviewRepository  repository.ReviewRepository
 }
 
-func NewServiceUsecase(db *gorm.DB) ServiceUsecase {
-	return &serviceUsecase{db: db}
+func NewServiceUsecase(
+	serviceRepository repository.ServiceRepository,
+	shopRepository repository.ShopRepository,
+	reviewRepository repository.ReviewRepository,
+) ServiceUsecase {
+	return &serviceUsecase{
+		serviceRepository: serviceRepository,
+		shopRepository:    shopRepository,
+		reviewRepository:  reviewRepository,
+	}
 }
 
 func (u *serviceUsecase) GetServiceList() (*admindto.ServiceListingResponse, *dto.ErrorResponse) {
-	services := []model.Service{}
-	u.db.Find(&services)
+	services, err := u.serviceRepository.ListServices()
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	res := &admindto.ServiceListingResponse{}
 	res.Total = len(services)
 	res.ServiceList = []admindto.ServiceListingResponseElement{}
 
 	for _, service := range services {
-		shopCount := 0
-		u.db.Model(&model.Shop{}).Where("service_id = ?", service.ID).Count(&shopCount)
+		shopAg, err := u.shopRepository.CountShopsByServiceID(int(service.ID))
+		if err != nil {
+			return nil, dto.InternalServerError(err)
+		}
 
 		res.ServiceList = append(
 			res.ServiceList, admindto.ServiceListingResponseElement{
 				ServiceID: service.ID,
 				WifiName:  service.WifiName,
 				Link:      service.Link,
-				ShopCount: shopCount,
+				ShopCount: shopAg.Count,
 			},
 		)
 	}
@@ -51,11 +65,14 @@ func (u *serviceUsecase) GetServiceList() (*admindto.ServiceListingResponse, *dt
 }
 
 func (u *serviceUsecase) GetServiceDetail(serviceID int) (*admindto.ServiceDetailResponse, *dto.ErrorResponse) {
-	var service model.Service
-	var shops []model.Shop
+	service, err := u.serviceRepository.FindServiceByID(serviceID)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
-	if u.db.Find(&service, serviceID).Related(&shops).RecordNotFound() {
-		return nil, dto.NotFoundError("Service")
+	shops, err := u.shopRepository.ListShopsByServiceID(serviceID)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
 	}
 
 	res := &admindto.ServiceDetailResponse{}
@@ -70,11 +87,10 @@ func (u *serviceUsecase) GetServiceDetail(serviceID int) (*admindto.ServiceDetai
 	res.ShopList = []admindto.ServiceDetailResponseShopListElement{}
 
 	for _, shop := range shops {
-		reviews := u.db.Model(&model.Review{}).Where("shop_id = ?", shop.ID)
-		var reviewCount int
-		reviews.Count(&reviewCount)
-		var average float32
-		reviews.Select("avg(evaluation)").Row().Scan(&average)
+		reviewAg, err := u.reviewRepository.SelectReviewsCountAndAverageByShopID(int(shop.ID))
+		if err != nil {
+			return nil, dto.InternalServerError(err)
+		}
 
 		res.ShopList = append(
 			res.ShopList, admindto.ServiceDetailResponseShopListElement{
@@ -89,8 +105,8 @@ func (u *serviceUsecase) GetServiceDetail(serviceID int) (*admindto.ServiceDetai
 				OpeningHours: shop.OpeningHours,
 				SeatsNum:     shop.SeatsNum,
 				HasPower:     shop.HasPower,
-				ReviewCount:  reviewCount,
-				Average:      average,
+				ReviewCount:  reviewAg.Count,
+				Average:      reviewAg.Average,
 			},
 		)
 	}
@@ -103,7 +119,10 @@ func (u *serviceUsecase) RegisterService(body *admindto.RegisterServiceRequest) 
 	service.WifiName = body.WifiName
 	service.Link = body.Link
 
-	u.db.Create(&service)
+	service, err := u.serviceRepository.CreateService(service)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	return &dto.ServiceIDResponse{
 		ServiceID: service.ID,
@@ -111,10 +130,9 @@ func (u *serviceUsecase) RegisterService(body *admindto.RegisterServiceRequest) 
 }
 
 func (u *serviceUsecase) UpdateService(serviceID int, body *admindto.UpdateServiceRequest) (*dto.ServiceIDResponse, *dto.ErrorResponse) {
-	var service model.Service
-
-	if u.db.Find(&service, serviceID).RecordNotFound() {
-		return nil, dto.NotFoundError("Service")
+	service, err := u.serviceRepository.FindServiceByID(serviceID)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
 	}
 
 	if body.WifiName != "" {
@@ -125,7 +143,10 @@ func (u *serviceUsecase) UpdateService(serviceID int, body *admindto.UpdateServi
 		service.Link = body.Link
 	}
 
-	u.db.Save(&service)
+	service, err = u.serviceRepository.UpdateService(service)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	return &dto.ServiceIDResponse{
 		ServiceID: service.ID,
@@ -133,13 +154,15 @@ func (u *serviceUsecase) UpdateService(serviceID int, body *admindto.UpdateServi
 }
 
 func (u *serviceUsecase) DeleteService(serviceID int) (*dto.ServiceIDResponse, *dto.ErrorResponse) {
-	var service model.Service
-
-	if u.db.Find(&service, serviceID).RecordNotFound() {
-		return nil, dto.NotFoundError("Service")
+	service, err := u.serviceRepository.FindServiceByID(serviceID)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
 	}
 
-	u.db.Delete(&service, serviceID)
+	err = u.serviceRepository.DeleteService(service)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	return &dto.ServiceIDResponse{
 		ServiceID: service.ID,
