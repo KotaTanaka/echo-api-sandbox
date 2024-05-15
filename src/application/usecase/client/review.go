@@ -53,27 +53,25 @@ func (u *reviewUsecase) GetReviewList(query *clientdto.ReviewListingQuery) (*cli
 		return nil, dto.InternalServerError(err)
 	}
 
-	res := &clientdto.ReviewListingResponse{}
-	res.ShopID = shop.ID
-	res.ShopName = shop.ShopName
-	res.ServiceID = service.ID
-	res.WifiName = service.WifiName
-	res.Total = len(reviews)
-	res.ReviewList = []clientdto.ReviewListingResponseElement{}
+	res := &clientdto.ReviewListingResponse{
+		ShopID:     shop.ID,
+		ShopName:   shop.ShopName,
+		ServiceID:  service.ID,
+		WifiName:   service.WifiName,
+		Total:      len(reviews),
+		ReviewList: make([]clientdto.ReviewListingResponseElement, len(reviews)),
+	}
 
 	var evaluationSum int
-	for _, review := range reviews {
+	for i, review := range reviews {
 		evaluationSum += review.Evaluation
-		res.ReviewList = append(
-			res.ReviewList,
-			clientdto.ReviewListingResponseElement{
-				ReviewID:   review.ID,
-				Comment:    review.Comment,
-				Evaluation: review.Evaluation,
-				Status:     review.PublishStatus,
-				CreatedAt:  review.CreatedAt,
-			},
-		)
+		res.ReviewList[i] = clientdto.ReviewListingResponseElement{
+			ReviewID:   review.ID,
+			Comment:    review.Comment,
+			Evaluation: review.Evaluation,
+			Status:     review.PublishStatus,
+			CreatedAt:  review.CreatedAt,
+		}
 	}
 
 	if res.Total > 0 {
@@ -89,10 +87,11 @@ func (u *reviewUsecase) CreateReview(body *clientdto.CreateReviewRequest) (*dto.
 		return nil, dto.InternalServerError(err)
 	}
 
-	review := new(model.Review)
-	review.ShopID = shop.ID
-	review.Comment = body.Comment
-	review.Evaluation = body.Evaluation
+	review := &model.Review{
+		ShopID:     shop.ID,
+		Comment:    body.Comment,
+		Evaluation: body.Evaluation,
+	}
 
 	review, err = u.reviewRepository.CreateReview(review)
 	if err != nil {

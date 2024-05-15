@@ -36,11 +36,12 @@ func (u *shopUsecase) GetShopList() (*clientdto.ShopListingResponse, *dto.ErrorR
 		return nil, dto.InternalServerError(err)
 	}
 
-	res := &clientdto.ShopListingResponse{}
-	res.Total = len(shops)
-	res.ShopList = []clientdto.ShopListingResponseElement{}
+	res := &clientdto.ShopListingResponse{
+		Total:    len(shops),
+		ShopList: make([]clientdto.ShopListingResponseElement, len(shops)),
+	}
 
-	for _, shop := range shops {
+	for i, shop := range shops {
 		service, err := u.serviceRepository.FindServiceByID(int(shop.ServiceID))
 		if err != nil {
 			return nil, dto.InternalServerError(err)
@@ -51,25 +52,23 @@ func (u *shopUsecase) GetShopList() (*clientdto.ShopListingResponse, *dto.ErrorR
 			return nil, dto.InternalServerError(err)
 		}
 
-		res.ShopList = append(
-			res.ShopList, clientdto.ShopListingResponseElement{
-				ShopID:       shop.ID,
-				WifiName:     service.WifiName,
-				ServiceLink:  service.Link,
-				ShopName:     shop.ShopName,
-				Area:         shop.AreaKey,
-				Description:  shop.Description,
-				Address:      shop.Address,
-				Access:       shop.Access,
-				SSID:         strings.Split(shop.SSID, ","),
-				ShopType:     shop.ShopType,
-				OpeningHours: shop.OpeningHours,
-				SeatsNum:     shop.SeatsNum,
-				HasPower:     shop.HasPower,
-				ReviewCount:  reviewAg.Count,
-				Average:      reviewAg.Average,
-			},
-		)
+		res.ShopList[i] = clientdto.ShopListingResponseElement{
+			ShopID:       shop.ID,
+			WifiName:     service.WifiName,
+			ServiceLink:  service.Link,
+			ShopName:     shop.ShopName,
+			Area:         shop.AreaKey,
+			Description:  shop.Description,
+			Address:      shop.Address,
+			Access:       shop.Access,
+			SSID:         strings.Split(shop.SSID, ","),
+			ShopType:     shop.ShopType,
+			OpeningHours: shop.OpeningHours,
+			SeatsNum:     shop.SeatsNum,
+			HasPower:     shop.HasPower,
+			ReviewCount:  reviewAg.Count,
+			Average:      reviewAg.Average,
+		}
 	}
 
 	return res, nil

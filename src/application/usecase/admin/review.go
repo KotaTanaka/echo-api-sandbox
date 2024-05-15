@@ -36,11 +36,12 @@ func (u *reviewUsecase) GetReviewList() (*admindto.ReviewListingResponse, *dto.E
 		return nil, dto.InternalServerError(err)
 	}
 
-	res := &admindto.ReviewListingResponse{}
-	res.Total = len(reviews)
-	res.ReviewList = []admindto.ReviewListingResponseElement{}
+	res := &admindto.ReviewListingResponse{
+		Total:      len(reviews),
+		ReviewList: make([]admindto.ReviewListingResponseElement, len(reviews)),
+	}
 
-	for _, review := range reviews {
+	for i, review := range reviews {
 		shop, err := u.shopRepository.FindShopByID(int(review.ShopID))
 		if err != nil {
 			return nil, dto.InternalServerError(err)
@@ -51,21 +52,19 @@ func (u *reviewUsecase) GetReviewList() (*admindto.ReviewListingResponse, *dto.E
 			return nil, dto.InternalServerError(err)
 		}
 
-		res.ReviewList = append(
-			res.ReviewList, admindto.ReviewListingResponseElement{
-				ReviewID:   review.ID,
-				ShopID:     shop.ID,
-				ShopName:   shop.ShopName,
-				ServiceID:  service.ID,
-				WifiName:   service.WifiName,
-				Comment:    review.Comment,
-				Evaluation: review.Evaluation,
-				Status:     review.PublishStatus,
-				CreatedAt:  review.CreatedAt,
-				UpdatedAt:  review.UpdatedAt,
-				DeletedAt:  review.DeletedAt,
-			},
-		)
+		res.ReviewList[i] = admindto.ReviewListingResponseElement{
+			ReviewID:   review.ID,
+			ShopID:     shop.ID,
+			ShopName:   shop.ShopName,
+			ServiceID:  service.ID,
+			WifiName:   service.WifiName,
+			Comment:    review.Comment,
+			Evaluation: review.Evaluation,
+			Status:     review.PublishStatus,
+			CreatedAt:  review.CreatedAt,
+			UpdatedAt:  review.UpdatedAt,
+			DeletedAt:  review.DeletedAt,
+		}
 	}
 
 	return res, nil

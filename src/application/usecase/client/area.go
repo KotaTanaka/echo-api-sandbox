@@ -24,18 +24,16 @@ func (u *areaUsecase) GetAreaMaster() (*clientdto.AreaMasterResponse, *dto.Error
 		return nil, dto.InternalServerError(err)
 	}
 
-	var res *clientdto.AreaMasterResponse
-	res.AreaList = []clientdto.AreaMasterResponseElement{}
+	res := &clientdto.AreaMasterResponse{
+		AreaList: make([]clientdto.AreaMasterResponseElement, len(areas)),
+	}
 
-	for _, area := range areas {
-		res.AreaList = append(
-			res.AreaList,
-			clientdto.AreaMasterResponseElement{
-				AreaKey:   area.AreaKey,
-				AreaName:  area.AreaName,
-				ShopCount: len(area.Shops),
-			},
-		)
+	for i, area := range areas {
+		res.AreaList[i] = clientdto.AreaMasterResponseElement{
+			AreaKey:   area.AreaKey,
+			AreaName:  area.AreaName,
+			ShopCount: len(area.Shops),
+		}
 	}
 
 	return res, nil

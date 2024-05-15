@@ -41,24 +41,23 @@ func (u *serviceUsecase) GetServiceList() (*admindto.ServiceListingResponse, *dt
 		return nil, dto.InternalServerError(err)
 	}
 
-	res := &admindto.ServiceListingResponse{}
-	res.Total = len(services)
-	res.ServiceList = []admindto.ServiceListingResponseElement{}
+	res := &admindto.ServiceListingResponse{
+		Total:       len(services),
+		ServiceList: make([]admindto.ServiceListingResponseElement, len(services)),
+	}
 
-	for _, service := range services {
+	for i, service := range services {
 		shopAg, err := u.shopRepository.CountShopsByServiceID(int(service.ID))
 		if err != nil {
 			return nil, dto.InternalServerError(err)
 		}
 
-		res.ServiceList = append(
-			res.ServiceList, admindto.ServiceListingResponseElement{
-				ServiceID: service.ID,
-				WifiName:  service.WifiName,
-				Link:      service.Link,
-				ShopCount: shopAg.Count,
-			},
-		)
+		res.ServiceList[i] = admindto.ServiceListingResponseElement{
+			ServiceID: service.ID,
+			WifiName:  service.WifiName,
+			Link:      service.Link,
+			ShopCount: shopAg.Count,
+		}
 	}
 
 	return res, nil
@@ -75,49 +74,48 @@ func (u *serviceUsecase) GetServiceDetail(serviceID int) (*admindto.ServiceDetai
 		return nil, dto.InternalServerError(err)
 	}
 
-	res := &admindto.ServiceDetailResponse{}
+	res := &admindto.ServiceDetailResponse{
+		ServiceID: service.ID,
+		WifiName:  service.WifiName,
+		Link:      service.Link,
+		CreatedAt: service.CreatedAt,
+		UpdatedAt: service.UpdatedAt,
+		DeletedAt: service.DeletedAt,
+		ShopCount: len(shops),
+		ShopList:  make([]admindto.ServiceDetailResponseShopListElement, len(shops)),
+	}
 
-	res.ServiceID = service.ID
-	res.WifiName = service.WifiName
-	res.Link = service.Link
-	res.CreatedAt = service.CreatedAt
-	res.UpdatedAt = service.UpdatedAt
-	res.DeletedAt = service.DeletedAt
-	res.ShopCount = len(shops)
-	res.ShopList = []admindto.ServiceDetailResponseShopListElement{}
-
-	for _, shop := range shops {
+	for i, shop := range shops {
 		reviewAg, err := u.reviewRepository.SelectReviewsCountAndAverageByShopID(int(shop.ID))
 		if err != nil {
 			return nil, dto.InternalServerError(err)
 		}
 
-		res.ShopList = append(
-			res.ShopList, admindto.ServiceDetailResponseShopListElement{
-				ShopID:       shop.ID,
-				ShopName:     shop.ShopName,
-				Area:         shop.AreaKey,
-				Description:  shop.Description,
-				Address:      shop.Address,
-				Access:       shop.Access,
-				SSID:         strings.Split(shop.SSID, ","),
-				ShopType:     shop.ShopType,
-				OpeningHours: shop.OpeningHours,
-				SeatsNum:     shop.SeatsNum,
-				HasPower:     shop.HasPower,
-				ReviewCount:  reviewAg.Count,
-				Average:      reviewAg.Average,
-			},
-		)
+		res.ShopList[i] = admindto.ServiceDetailResponseShopListElement{
+			ShopID:       shop.ID,
+			ShopName:     shop.ShopName,
+			Area:         shop.AreaKey,
+			Description:  shop.Description,
+			Address:      shop.Address,
+			Access:       shop.Access,
+			SSID:         strings.Split(shop.SSID, ","),
+			ShopType:     shop.ShopType,
+			OpeningHours: shop.OpeningHours,
+			SeatsNum:     shop.SeatsNum,
+			HasPower:     shop.HasPower,
+			ReviewCount:  reviewAg.Count,
+			Average:      reviewAg.Average,
+		}
 	}
 
 	return res, nil
 }
 
 func (u *serviceUsecase) RegisterService(body *admindto.RegisterServiceRequest) (*dto.ServiceIDResponse, *dto.ErrorResponse) {
-	service := new(model.Service)
-	service.WifiName = body.WifiName
-	service.Link = body.Link
+	service := &model.Service{
+		WifiName: body.WifiName,
+		Link:     body.Link,
+	}
 
 	service, err := u.serviceRepository.CreateService(service)
 	if err != nil {

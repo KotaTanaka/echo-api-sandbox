@@ -21,9 +21,10 @@ func NewAreaUsecase(areaRepository repository.AreaRepository) AreaUsecase {
 }
 
 func (u *areaUsecase) RegisterArea(body *admindto.RegisterAreaRequest) (*dto.AreaKeyResponse, *dto.ErrorResponse) {
-	area := new(model.Area)
-	area.AreaKey = body.AreaKey
-	area.AreaName = body.AreaName
+	area := &model.Area{
+		AreaKey:  body.AreaKey,
+		AreaName: body.AreaName,
+	}
 
 	area, err := u.areaRepository.CreateArea(area)
 	if err != nil {
