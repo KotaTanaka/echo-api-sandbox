@@ -38,10 +38,10 @@ func (r *reviewRepository) ListReviewsByShopID(shopID int) ([]*model.Review, err
 }
 
 func (r *reviewRepository) FindReviewByID(reviewID int) (*model.Review, error) {
-	var review *model.Review
+	var review model.Review
 	r.db.First(&review, reviewID)
 
-	return review, nil
+	return &review, nil
 }
 
 func (r *reviewRepository) CreateReview(review *model.Review) (*model.Review, error) {

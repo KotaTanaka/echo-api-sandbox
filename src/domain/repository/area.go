@@ -34,10 +34,10 @@ func (r *areaRepository) ListAreas() ([]*model.Area, error) {
 }
 
 func (r *areaRepository) FindAreaByKey(areaKey string) (*model.Area, error) {
-	var area *model.Area
-	r.db.Where("area_key = ?", areaKey).Find(&area)
+	var area model.Area
+	r.db.Where("area_key = ?", areaKey).First(&area)
 
-	return area, nil
+	return &area, nil
 }
 
 func (r *areaRepository) DeleteArea(area *model.Area) error {

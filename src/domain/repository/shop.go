@@ -38,10 +38,10 @@ func (r *shopRepository) ListShopsByServiceID(serviceID int) ([]*model.Shop, err
 }
 
 func (r *shopRepository) FindShopByID(shopID int) (*model.Shop, error) {
-	var shop *model.Shop
+	var shop model.Shop
 	r.db.First(&shop, shopID)
 
-	return shop, nil
+	return &shop, nil
 }
 
 func (r *shopRepository) CreateShop(shop *model.Shop) (*model.Shop, error) {

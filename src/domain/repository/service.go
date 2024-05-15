@@ -29,10 +29,10 @@ func (r *serviceRepository) ListServices() ([]*model.Service, error) {
 }
 
 func (r *serviceRepository) FindServiceByID(serviceID int) (*model.Service, error) {
-	var service *model.Service
+	var service model.Service
 	r.db.First(&service, serviceID)
 
-	return service, nil
+	return &service, nil
 }
 
 func (r *serviceRepository) CreateService(service *model.Service) (*model.Service, error) {
