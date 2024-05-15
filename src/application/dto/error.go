@@ -39,3 +39,13 @@ func NotFoundError(target string) *ErrorResponse {
 
 	return errorResponse
 }
+
+func InternalServerError(err error) *ErrorResponse {
+	errorResponse := new(ErrorResponse)
+
+	errorResponse.Code = http.StatusInternalServerError
+	errorResponse.Message = "Internal server error occurred."
+	errorResponse.DetailMessage = []string{err.Error()}
+
+	return errorResponse
+}

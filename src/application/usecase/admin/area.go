@@ -4,7 +4,7 @@ import (
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
 	admindto "github.com/KotaTanaka/echo-api-sandbox/application/dto/admin"
 	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
-	"github.com/jinzhu/gorm"
+	"github.com/KotaTanaka/echo-api-sandbox/domain/repository"
 )
 
 type AreaUsecase interface {
@@ -13,19 +13,23 @@ type AreaUsecase interface {
 }
 
 type areaUsecase struct {
-	db *gorm.DB
+	areaRepository repository.AreaRepository
 }
 
-func NewAreaUsecase(db *gorm.DB) AreaUsecase {
-	return &areaUsecase{db: db}
+func NewAreaUsecase(areaRepository repository.AreaRepository) AreaUsecase {
+	return &areaUsecase{areaRepository: areaRepository}
 }
 
 func (u *areaUsecase) RegisterArea(body *admindto.RegisterAreaRequest) (*dto.AreaKeyResponse, *dto.ErrorResponse) {
-	area := new(model.Area)
-	area.AreaKey = body.AreaKey
-	area.AreaName = body.AreaName
+	area := &model.Area{
+		AreaKey:  body.AreaKey,
+		AreaName: body.AreaName,
+	}
 
-	u.db.Create(&area)
+	area, err := u.areaRepository.CreateArea(area)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	return &dto.AreaKeyResponse{
 		AreaKey: area.AreaKey,
@@ -33,9 +37,15 @@ func (u *areaUsecase) RegisterArea(body *admindto.RegisterAreaRequest) (*dto.Are
 }
 
 func (u *areaUsecase) DeleteArea(query *admindto.DeleteAreaQuery) (*dto.AreaKeyResponse, *dto.ErrorResponse) {
-	area := model.Area{}
-	u.db.Where("area_key = ?", query.AreaKey).Find(&area)
-	u.db.Delete(&area)
+	area, err := u.areaRepository.FindAreaByKey(query.AreaKey)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
+
+	u.areaRepository.DeleteArea(area)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	return &dto.AreaKeyResponse{
 		AreaKey: area.AreaKey,

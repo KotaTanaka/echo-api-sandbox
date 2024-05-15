@@ -1,11 +1,12 @@
 package clientusecase
 
 import (
-	"github.com/jinzhu/gorm"
+	"strconv"
 
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
 	clientdto "github.com/KotaTanaka/echo-api-sandbox/application/dto/client"
 	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
+	"github.com/KotaTanaka/echo-api-sandbox/domain/repository"
 )
 
 type ReviewUsecase interface {
@@ -14,45 +15,63 @@ type ReviewUsecase interface {
 }
 
 type reviewUsecase struct {
-	db *gorm.DB
+	serviceRepository repository.ServiceRepository
+	shopRepository    repository.ShopRepository
+	reviewRepository  repository.ReviewRepository
 }
 
-func NewReviewUsecase(db *gorm.DB) ReviewUsecase {
-	return &reviewUsecase{db: db}
+func NewReviewUsecase(
+	serviceRepository repository.ServiceRepository,
+	shopRepository repository.ShopRepository,
+	reviewRepository repository.ReviewRepository,
+) ReviewUsecase {
+	return &reviewUsecase{
+		serviceRepository: serviceRepository,
+		shopRepository:    shopRepository,
+		reviewRepository:  reviewRepository,
+	}
 }
 
 func (u *reviewUsecase) GetReviewList(query *clientdto.ReviewListingQuery) (*clientdto.ReviewListingResponse, *dto.ErrorResponse) {
-	var shop model.Shop
-	var service model.Service
-	var reviews []model.Review
-
-	if u.db.Find(&shop, query.ShopID).Related(&reviews).RecordNotFound() {
-		return nil, dto.NotFoundError("Shop")
+	shopID, err := strconv.Atoi(query.ShopID)
+	if err != nil {
+		return nil, dto.InvalidParameterError([]string{"ShopID must be number."})
 	}
 
-	u.db.First(&service, shop.ID)
+	shop, err := u.shopRepository.FindShopByID(shopID)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
-	res := &clientdto.ReviewListingResponse{}
-	res.ShopID = shop.ID
-	res.ShopName = shop.ShopName
-	res.ServiceID = service.ID
-	res.WifiName = service.WifiName
-	res.Total = len(reviews)
-	res.ReviewList = []clientdto.ReviewListingResponseElement{}
+	reviews, err := u.reviewRepository.ListReviewsByShopID(shopID)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
+
+	service, err := u.serviceRepository.FindServiceByID(int(shop.ServiceID))
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
+
+	res := &clientdto.ReviewListingResponse{
+		ShopID:     shop.ID,
+		ShopName:   shop.ShopName,
+		ServiceID:  service.ID,
+		WifiName:   service.WifiName,
+		Total:      len(reviews),
+		ReviewList: make([]clientdto.ReviewListingResponseElement, len(reviews)),
+	}
 
 	var evaluationSum int
-	for _, review := range reviews {
+	for i, review := range reviews {
 		evaluationSum += review.Evaluation
-		res.ReviewList = append(
-			res.ReviewList,
-			clientdto.ReviewListingResponseElement{
-				ReviewID:   review.ID,
-				Comment:    review.Comment,
-				Evaluation: review.Evaluation,
-				Status:     review.PublishStatus,
-				CreatedAt:  review.CreatedAt,
-			},
-		)
+		res.ReviewList[i] = clientdto.ReviewListingResponseElement{
+			ReviewID:   review.ID,
+			Comment:    review.Comment,
+			Evaluation: review.Evaluation,
+			Status:     review.PublishStatus,
+			CreatedAt:  review.CreatedAt,
+		}
 	}
 
 	if res.Total > 0 {
@@ -63,15 +82,21 @@ func (u *reviewUsecase) GetReviewList(query *clientdto.ReviewListingQuery) (*cli
 }
 
 func (u *reviewUsecase) CreateReview(body *clientdto.CreateReviewRequest) (*dto.ReviewIDResponse, *dto.ErrorResponse) {
-	shop := model.Shop{}
-	u.db.First(&shop, body.ShopID)
+	shop, err := u.shopRepository.FindShopByID(int(body.ShopID))
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
-	review := new(model.Review)
-	review.ShopID = shop.ID
-	review.Comment = body.Comment
-	review.Evaluation = body.Evaluation
+	review := &model.Review{
+		ShopID:     shop.ID,
+		Comment:    body.Comment,
+		Evaluation: body.Evaluation,
+	}
 
-	u.db.Create(&review)
+	review, err = u.reviewRepository.CreateReview(review)
+	if err != nil {
+		return nil, dto.InternalServerError(err)
+	}
 
 	return &dto.ReviewIDResponse{
 		ReviewID: review.ID,

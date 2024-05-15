@@ -5,14 +5,20 @@ import (
 	"github.com/labstack/echo"
 
 	adminusecase "github.com/KotaTanaka/echo-api-sandbox/application/usecase/admin"
+	"github.com/KotaTanaka/echo-api-sandbox/domain/repository"
 	adminhandler "github.com/KotaTanaka/echo-api-sandbox/handler/admin"
 )
 
 func AdminRouter(e *echo.Echo, db *gorm.DB) {
-	areaUsecase := adminusecase.NewAreaUsecase(db)
-	serviceUsecase := adminusecase.NewServiceUsecase(db)
-	shopUsecase := adminusecase.NewShopUsecase(db)
-	reviewUsecase := adminusecase.NewReviewUsecase(db)
+	areaRepository := repository.NewAreaRepository(db)
+	serviceRepository := repository.NewServiceRepository(db)
+	shopRepository := repository.NewShopRepository(db)
+	reviewRepository := repository.NewReviewRepository(db)
+
+	areaUsecase := adminusecase.NewAreaUsecase(areaRepository)
+	serviceUsecase := adminusecase.NewServiceUsecase(serviceRepository, shopRepository, reviewRepository)
+	shopUsecase := adminusecase.NewShopUsecase(serviceRepository, shopRepository, reviewRepository)
+	reviewUsecase := adminusecase.NewReviewUsecase(serviceRepository, shopRepository, reviewRepository)
 
 	areaHandler := adminhandler.NewAreaHandler(areaUsecase)
 	serviceHandler := adminhandler.NewServiceHandler(serviceUsecase)
