@@ -3,7 +3,7 @@ package clienthandler
 import (
 	"net/http"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 
 	clientusecase "github.com/KotaTanaka/echo-api-sandbox/application/usecase/client"
 )

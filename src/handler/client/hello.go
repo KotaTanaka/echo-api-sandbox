@@ -5,7 +5,7 @@ import (
 
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type HelloHandler interface {
