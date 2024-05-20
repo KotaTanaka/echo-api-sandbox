@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type ServiceRepository interface {
@@ -23,14 +23,14 @@ func NewServiceRepository(db *gorm.DB) ServiceRepository {
 
 func (r *serviceRepository) ListServices() ([]*model.Service, error) {
 	services := []*model.Service{}
-	r.db.Find(&services)
+	r.db.Preload("Shops").Find(&services)
 
 	return services, nil
 }
 
 func (r *serviceRepository) FindServiceByID(serviceID int) (*model.Service, error) {
 	var service model.Service
-	r.db.First(&service, serviceID)
+	r.db.Preload("Shops.Area").First(&service, serviceID)
 
 	return &service, nil
 }

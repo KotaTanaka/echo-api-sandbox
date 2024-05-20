@@ -57,7 +57,7 @@ func (u *shopUsecase) GetShopList() (*clientdto.ShopListingResponse, *dto.ErrorR
 			WifiName:     service.WifiName,
 			ServiceLink:  service.Link,
 			ShopName:     shop.ShopName,
-			Area:         shop.AreaKey,
+			AreaKey:      shop.Area.AreaKey,
 			Description:  shop.Description,
 			Address:      shop.Address,
 			Access:       shop.Access,

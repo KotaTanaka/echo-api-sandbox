@@ -47,16 +47,11 @@ func (u *serviceUsecase) GetServiceList() (*admindto.ServiceListingResponse, *dt
 	}
 
 	for i, service := range services {
-		shopAg, err := u.shopRepository.CountShopsByServiceID(int(service.ID))
-		if err != nil {
-			return nil, dto.InternalServerError(err)
-		}
-
 		res.ServiceList[i] = admindto.ServiceListingResponseElement{
 			ServiceID: service.ID,
 			WifiName:  service.WifiName,
 			Link:      service.Link,
-			ShopCount: shopAg.Count,
+			ShopCount: len(service.Shops),
 		}
 	}
 
@@ -69,23 +64,19 @@ func (u *serviceUsecase) GetServiceDetail(serviceID int) (*admindto.ServiceDetai
 		return nil, dto.InternalServerError(err)
 	}
 
-	shops, err := u.shopRepository.ListShopsByServiceID(serviceID)
-	if err != nil {
-		return nil, dto.InternalServerError(err)
-	}
-
+	shopCount := len(service.Shops)
 	res := &admindto.ServiceDetailResponse{
 		ServiceID: service.ID,
 		WifiName:  service.WifiName,
 		Link:      service.Link,
 		CreatedAt: service.CreatedAt,
 		UpdatedAt: service.UpdatedAt,
-		DeletedAt: service.DeletedAt,
-		ShopCount: len(shops),
-		ShopList:  make([]admindto.ServiceDetailResponseShopListElement, len(shops)),
+		DeletedAt: &service.DeletedAt.Time,
+		ShopCount: shopCount,
+		ShopList:  make([]admindto.ServiceDetailResponseShopListElement, shopCount),
 	}
 
-	for i, shop := range shops {
+	for i, shop := range service.Shops {
 		reviewAg, err := u.reviewRepository.SelectReviewsCountAndAverageByShopID(int(shop.ID))
 		if err != nil {
 			return nil, dto.InternalServerError(err)
@@ -94,7 +85,7 @@ func (u *serviceUsecase) GetServiceDetail(serviceID int) (*admindto.ServiceDetai
 		res.ShopList[i] = admindto.ServiceDetailResponseShopListElement{
 			ShopID:       shop.ID,
 			ShopName:     shop.ShopName,
-			Area:         shop.AreaKey,
+			AreaKey:      shop.Area.AreaKey,
 			Description:  shop.Description,
 			Address:      shop.Address,
 			Access:       shop.Access,

@@ -47,11 +47,6 @@ func (u *shopUsecase) GetShopList() (*admindto.ShopListingResponse, *dto.ErrorRe
 	}
 
 	for i, shop := range shops {
-		service, err := u.serviceRepository.FindServiceByID(int(shop.ServiceID))
-		if err != nil {
-			return nil, dto.InternalServerError(err)
-		}
-
 		reviewAg, err := u.reviewRepository.SelectReviewsCountAndAverageByShopID(int(shop.ID))
 		if err != nil {
 			return nil, dto.InternalServerError(err)
@@ -59,10 +54,10 @@ func (u *shopUsecase) GetShopList() (*admindto.ShopListingResponse, *dto.ErrorRe
 
 		res.ShopList[i] = admindto.ShopListingResponseElement{
 			ShopID:       shop.ID,
-			ServiceID:    service.ID,
-			WifiName:     service.WifiName,
+			ServiceID:    shop.Service.ID,
+			WifiName:     shop.Service.WifiName,
 			ShopName:     shop.ShopName,
-			Area:         shop.AreaKey,
+			AreaKey:      shop.Area.AreaKey,
 			Description:  shop.Description,
 			Address:      shop.Address,
 			Access:       shop.Access,
@@ -84,23 +79,17 @@ func (u *shopUsecase) GetShopDetail(shopID int) (*admindto.ShopDetailResponse, *
 	if err != nil {
 		return nil, dto.InternalServerError(err)
 	}
-
-	service, err := u.serviceRepository.FindServiceByID(int(shop.ServiceID))
-	if err != nil {
-		return nil, dto.InternalServerError(err)
-	}
-
-	reviews, err := u.reviewRepository.ListReviewsByShopID(shopID)
+	reviewAg, err := u.reviewRepository.SelectReviewsCountAndAverageByShopID(shopID)
 	if err != nil {
 		return nil, dto.InternalServerError(err)
 	}
 
 	res := &admindto.ShopDetailResponse{
 		ShopID:       shop.ID,
-		ServiceID:    service.ID,
-		WifiName:     service.WifiName,
+		ServiceID:    shop.Service.ID,
+		WifiName:     shop.Service.WifiName,
 		ShopName:     shop.ShopName,
-		Area:         shop.AreaKey,
+		AreaKey:      shop.Area.AreaKey,
 		Description:  shop.Description,
 		Address:      shop.Address,
 		Access:       shop.Access,
@@ -110,13 +99,13 @@ func (u *shopUsecase) GetShopDetail(shopID int) (*admindto.ShopDetailResponse, *
 		SeatsNum:     shop.SeatsNum,
 		HasPower:     shop.HasPower,
 		UpdatedAt:    shop.UpdatedAt,
-		DeletedAt:    shop.DeletedAt,
-		ReviewCount:  len(reviews),
-		ReviewList:   make([]admindto.ShopDetailResponseReviewListElement, len(reviews)),
+		DeletedAt:    &shop.DeletedAt.Time,
+		ReviewCount:  reviewAg.Count,
+		ReviewList:   make([]admindto.ShopDetailResponseReviewListElement, len(shop.Reviews)),
 	}
 
 	var evaluationSum int
-	for i, review := range reviews {
+	for i, review := range shop.Reviews {
 		evaluationSum += review.Evaluation
 		res.ReviewList[i] = admindto.ShopDetailResponseReviewListElement{
 			ReviewID:   review.ID,
@@ -125,7 +114,7 @@ func (u *shopUsecase) GetShopDetail(shopID int) (*admindto.ShopDetailResponse, *
 			Status:     review.PublishStatus,
 			CreatedAt:  review.CreatedAt,
 			UpdatedAt:  review.UpdatedAt,
-			DeletedAt:  review.DeletedAt,
+			DeletedAt:  &review.DeletedAt.Time,
 		}
 	}
 
@@ -140,7 +129,7 @@ func (u *shopUsecase) RegisterShop(body *admindto.RegisterShopRequest) (*dto.Sho
 	shop := &model.Shop{
 		ServiceID:    body.ServiceID,
 		ShopName:     body.ShopName,
-		AreaKey:      body.Area,
+		AreaID:       body.AreaID,
 		Description:  body.Description,
 		Address:      body.Address,
 		Access:       body.Access,
@@ -170,8 +159,8 @@ func (u *shopUsecase) UpdateShop(shopID int, body *admindto.UpdateShopRequest) (
 	if body.ShopName != "" {
 		shop.ShopName = body.ShopName
 	}
-	if body.Area != "" {
-		shop.AreaKey = body.Area
+	if body.AreaID != 0 {
+		shop.AreaID = body.AreaID
 	}
 	if body.Description != "" {
 		shop.Description = body.Description

@@ -5,7 +5,7 @@ import "time"
 type RegisterShopRequest struct {
 	ServiceID    uint     `json:"serviceId" validate:"required"`
 	ShopName     string   `json:"shopName" validate:"required"`
-	Area         string   `json:"area" validate:"required"`
+	AreaID       uint     `json:"areaId" validate:"required"`
 	Description  string   `json:"description"`
 	Address      string   `json:"address" validate:"required"`
 	Access       string   `json:"access"`
@@ -18,7 +18,7 @@ type RegisterShopRequest struct {
 
 type UpdateShopRequest struct {
 	ShopName     string   `json:"shopName"`
-	Area         string   `json:"area"`
+	AreaID       uint     `json:"areaId"`
 	Description  string   `json:"description"`
 	Address      string   `json:"address"`
 	Access       string   `json:"access"`
@@ -34,7 +34,7 @@ type ShopListingResponseElement struct {
 	ServiceID    uint     `json:"serviceId"`
 	WifiName     string   `json:"wifiName"`
 	ShopName     string   `json:"shopName"`
-	Area         string   `json:"area"`
+	AreaKey      string   `json:"areaKey"`
 	Description  string   `json:"description"`
 	Address      string   `json:"address"`
 	Access       string   `json:"access"`
@@ -43,7 +43,7 @@ type ShopListingResponseElement struct {
 	OpeningHours string   `json:"openingHours"`
 	SeatsNum     int      `json:"seatsNum"`
 	HasPower     bool     `json:"hasPower"`
-	ReviewCount  int      `json:"reviewCount"`
+	ReviewCount  int64    `json:"reviewCount"`
 	Average      float32  `json:"average"`
 }
 
@@ -57,7 +57,7 @@ type ShopDetailResponse struct {
 	ServiceID    uint                                  `json:"serviceId"`
 	WifiName     string                                `json:"wifiName"`
 	ShopName     string                                `json:"shopName"`
-	Area         string                                `json:"area"`
+	AreaKey      string                                `json:"areaKey"`
 	Description  string                                `json:"description"`
 	Address      string                                `json:"address"`
 	Access       string                                `json:"access"`
@@ -69,7 +69,7 @@ type ShopDetailResponse struct {
 	CreatedAt    time.Time                             `json:"createdAt"`
 	UpdatedAt    time.Time                             `json:"updatedAt"`
 	DeletedAt    *time.Time                            `json:"deletedAt"`
-	ReviewCount  int                                   `json:"reviewCount"`
+	ReviewCount  int64                                 `json:"reviewCount"`
 	ReviewList   []ShopDetailResponseReviewListElement `json:"reviewList"`
 	Average      float32                               `json:"average"`
 }

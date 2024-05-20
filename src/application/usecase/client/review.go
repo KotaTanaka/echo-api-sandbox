@@ -38,26 +38,20 @@ func (u *reviewUsecase) GetReviewList(query *clientdto.ReviewListingQuery) (*cli
 		return nil, dto.InvalidParameterError([]string{"ShopID must be number."})
 	}
 
-	shop, err := u.shopRepository.FindShopByID(shopID)
-	if err != nil {
-		return nil, dto.InternalServerError(err)
-	}
-
 	reviews, err := u.reviewRepository.ListReviewsByShopID(shopID)
 	if err != nil {
 		return nil, dto.InternalServerError(err)
 	}
 
-	service, err := u.serviceRepository.FindServiceByID(int(shop.ServiceID))
-	if err != nil {
-		return nil, dto.InternalServerError(err)
+	if len(reviews) == 0 {
+		return &clientdto.ReviewListingResponse{}, nil
 	}
 
 	res := &clientdto.ReviewListingResponse{
-		ShopID:     shop.ID,
-		ShopName:   shop.ShopName,
-		ServiceID:  service.ID,
-		WifiName:   service.WifiName,
+		ShopID:     reviews[0].Shop.ID,
+		ShopName:   reviews[0].Shop.ShopName,
+		ServiceID:  reviews[0].Shop.Service.ID,
+		WifiName:   reviews[0].Shop.Service.WifiName,
 		Total:      len(reviews),
 		ReviewList: make([]clientdto.ReviewListingResponseElement, len(reviews)),
 	}

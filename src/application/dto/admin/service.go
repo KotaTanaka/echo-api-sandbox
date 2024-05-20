@@ -38,7 +38,7 @@ type ServiceDetailResponse struct {
 type ServiceDetailResponseShopListElement struct {
 	ShopID       uint     `json:"shopId"`
 	ShopName     string   `json:"shopName"`
-	Area         string   `json:"area"`
+	AreaKey      string   `json:"areaKey"`
 	Description  string   `json:"description"`
 	Address      string   `json:"address"`
 	Access       string   `json:"access"`
@@ -47,6 +47,6 @@ type ServiceDetailResponseShopListElement struct {
 	OpeningHours string   `json:"openingHours"`
 	SeatsNum     int      `json:"seatsNum"`
 	HasPower     bool     `json:"hasPower"`
-	ReviewCount  int      `json:"reviewCount"`
+	ReviewCount  int64    `json:"reviewCount"`
 	Average      float32  `json:"average"`
 }

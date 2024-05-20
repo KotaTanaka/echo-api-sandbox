@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type ReviewRepository interface {
@@ -25,14 +25,14 @@ func NewReviewRepository(db *gorm.DB) ReviewRepository {
 
 func (r *reviewRepository) ListReviews() ([]*model.Review, error) {
 	reviews := []*model.Review{}
-	r.db.Find(&reviews)
+	r.db.Preload("Shop.Service").Find(&reviews)
 
 	return reviews, nil
 }
 
 func (r *reviewRepository) ListReviewsByShopID(shopID int) ([]*model.Review, error) {
 	reviews := []*model.Review{}
-	r.db.Where("shop_id = ?", shopID).Find(&reviews)
+	r.db.Preload("Shop.Service").Where("shop_id = ?", shopID).Find(&reviews)
 
 	return reviews, nil
 }
@@ -64,7 +64,7 @@ func (r *reviewRepository) DeleteReview(review *model.Review) error {
 
 func (r *reviewRepository) SelectReviewsCountAndAverageByShopID(shopID int) (*model.Aggregation, error) {
 	reviews := r.db.Model(&model.Review{}).Where("shop_id = ?", shopID)
-	var reviewCount int
+	var reviewCount int64
 	reviews.Count(&reviewCount)
 	var average float32
 	reviews.Select("avg(evaluation)").Row().Scan(&average)
