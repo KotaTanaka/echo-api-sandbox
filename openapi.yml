@@ -137,7 +137,7 @@ paths:
           source: |
             curl 'http://localhost:1323/shops?area=dogenzaka&hasPower=true&limit=10&offset=10'
       parameters:
-        - $ref: "#/components/parameters/Area"
+        - $ref: "#/components/parameters/AreaKey"
         - $ref: "#/components/parameters/HasPowerQuery"
         - $ref: "#/components/parameters/Limit"
         - $ref: "#/components/parameters/Offset"
@@ -1334,9 +1334,9 @@ components:
         type: string
         format: asc / desc
         example: asc
-    Area:
+    AreaKey:
       in: query
-      name: area
+      name: areaKey
       description: 検索エリアキー
       required: true
       schema:

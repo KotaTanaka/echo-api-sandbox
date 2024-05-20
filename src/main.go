@@ -1,9 +1,10 @@
 package main
 
 import (
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"fmt"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"gopkg.in/go-playground/validator.v9"
 
 	"github.com/KotaTanaka/echo-api-sandbox/infrastructure"
@@ -25,10 +26,12 @@ func main() {
 	e.Validator = &Validator{validator: validator.New()}
 
 	// DB接続
-	db := infrastructure.ConnectGorm()
-	defer db.Close()
-	db.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8mb4")
-	infrastructure.MigrateDB(db)
+	db, err := infrastructure.ConnectDB()
+	if err != nil {
+		fmt.Printf("ConnectDB error: %v", err.Error())
+		panic(err.Error())
+	}
+	defer infrastructure.CloseDB(db)
 
 	// ルーティング
 	router.ClientRouter(e, db)

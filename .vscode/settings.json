@@ -1,11 +1,17 @@
 {
   "editor.detectIndentation": false,
   "cSpell.words": [
+    "admindto",
+    "adminhandler",
+    "adminusecase",
+    "clientdto",
+    "clienthandler",
+    "clientusecase",
     "direnv",
     "envrc",
     "Gorm",
     "jinzhu",
     "labstack",
     "redoc"
-  ]
+]
 }

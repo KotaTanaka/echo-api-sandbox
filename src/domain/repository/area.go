@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type AreaRepository interface {
@@ -28,7 +28,7 @@ func (r *areaRepository) CreateArea(area *model.Area) (*model.Area, error) {
 
 func (r *areaRepository) ListAreas() ([]*model.Area, error) {
 	areas := []*model.Area{}
-	r.db.Find(&areas)
+	r.db.Preload("Shops").Find(&areas)
 
 	return areas, nil
 }

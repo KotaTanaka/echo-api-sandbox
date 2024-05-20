@@ -1,8 +1,8 @@
 package router
 
 import (
-	"github.com/jinzhu/gorm"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 
 	clientusecase "github.com/KotaTanaka/echo-api-sandbox/application/usecase/client"
 	"github.com/KotaTanaka/echo-api-sandbox/domain/repository"

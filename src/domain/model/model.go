@@ -1,6 +1,6 @@
 package model
 
 type Aggregation struct {
-	Count   int
+	Count   int64
 	Average float32
 }

@@ -42,28 +42,18 @@ func (u *reviewUsecase) GetReviewList() (*admindto.ReviewListingResponse, *dto.E
 	}
 
 	for i, review := range reviews {
-		shop, err := u.shopRepository.FindShopByID(int(review.ShopID))
-		if err != nil {
-			return nil, dto.InternalServerError(err)
-		}
-
-		service, err := u.serviceRepository.FindServiceByID(int(shop.ServiceID))
-		if err != nil {
-			return nil, dto.InternalServerError(err)
-		}
-
 		res.ReviewList[i] = admindto.ReviewListingResponseElement{
 			ReviewID:   review.ID,
-			ShopID:     shop.ID,
-			ShopName:   shop.ShopName,
-			ServiceID:  service.ID,
-			WifiName:   service.WifiName,
+			ShopID:     review.Shop.ID,
+			ShopName:   review.Shop.ShopName,
+			ServiceID:  review.Shop.Service.ID,
+			WifiName:   review.Shop.Service.WifiName,
 			Comment:    review.Comment,
 			Evaluation: review.Evaluation,
 			Status:     review.PublishStatus,
 			CreatedAt:  review.CreatedAt,
 			UpdatedAt:  review.UpdatedAt,
-			DeletedAt:  review.DeletedAt,
+			DeletedAt:  &review.DeletedAt.Time,
 		}
 	}
 

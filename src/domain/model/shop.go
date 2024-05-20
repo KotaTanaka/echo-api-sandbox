@@ -1,11 +1,13 @@
 package model
 
-import "github.com/jinzhu/gorm"
+import "gorm.io/gorm"
 
 type Shop struct {
 	gorm.Model
 	ServiceID    uint
-	AreaKey      string `gorm:"size:20"`
+	Service      Service
+	AreaID       uint
+	Area         Area
 	ShopName     string `gorm:"size:255"`
 	Description  string `gorm:"size:255"`
 	Address      string `gorm:"size:255"`
