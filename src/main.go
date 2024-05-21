@@ -5,26 +5,18 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"gopkg.in/go-playground/validator.v9"
 
 	"github.com/KotaTanaka/echo-api-sandbox/infrastructure"
+	"github.com/KotaTanaka/echo-api-sandbox/lib"
 	"github.com/KotaTanaka/echo-api-sandbox/registry"
 	"github.com/KotaTanaka/echo-api-sandbox/router"
 )
-
-type Validator struct {
-	validator *validator.Validate
-}
-
-func (v *Validator) Validate(i interface{}) error {
-	return v.validator.Struct(i)
-}
 
 func main() {
 	e := echo.New()
 
 	// バリデーター初期化
-	e.Validator = &Validator{validator: validator.New()}
+	e.Validator = lib.NewValidator()
 
 	// DB接続
 	db, err := infrastructure.ConnectDB()
