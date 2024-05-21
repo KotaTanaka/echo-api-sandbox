@@ -107,9 +107,12 @@ src
 │       └── {xxx}.go
 ├── infrastructure
 │   └── gorm.go
+├── lib
+│   └── validator.go
 ├── main.go
 ├── registry
-│   └── registry.go
+│   ├── admin.go
+│   └── client.go
 └── router
     ├── admin.go
     └── client.go
