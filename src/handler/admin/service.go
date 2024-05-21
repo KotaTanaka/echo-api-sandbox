@@ -99,7 +99,7 @@ func (h *serviceHandler) UpdateService(ctx echo.Context) error {
 
 	res, errRes := h.usecase.UpdateService(serviceID, body)
 	if errRes != nil {
-		return ctx.JSON(errRes.Code, err)
+		return ctx.JSON(errRes.Code, errRes)
 	}
 
 	return ctx.JSON(http.StatusOK, res)
@@ -116,7 +116,7 @@ func (h *serviceHandler) DeleteService(ctx echo.Context) error {
 
 	res, errRes := h.usecase.DeleteService(serviceID)
 	if errRes != nil {
-		return ctx.JSON(errRes.Code, err)
+		return ctx.JSON(errRes.Code, errRes)
 	}
 
 	return ctx.JSON(http.StatusOK, res)

@@ -19,8 +19,6 @@ func ConnectDB() (*gorm.DB, error) {
 		os.Getenv("MYSQL_DB"),
 	)
 
-	fmt.Println(dsn)
-
 	gormDB, err := gorm.Open(mysql.Open(dsn))
 	if err != nil {
 		return nil, err
