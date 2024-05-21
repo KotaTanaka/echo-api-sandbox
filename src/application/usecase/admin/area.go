@@ -1,6 +1,8 @@
 package adminusecase
 
 import (
+	"fmt"
+
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
 	admindto "github.com/KotaTanaka/echo-api-sandbox/application/dto/admin"
 	"github.com/KotaTanaka/echo-api-sandbox/domain/model"
@@ -28,7 +30,7 @@ func (u *areaUsecase) RegisterArea(body *admindto.RegisterAreaRequest) (*dto.Are
 
 	area, err := u.areaRepository.CreateArea(area)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, "Area")
 	}
 
 	return &dto.AreaKeyResponse{
@@ -39,12 +41,11 @@ func (u *areaUsecase) RegisterArea(body *admindto.RegisterAreaRequest) (*dto.Are
 func (u *areaUsecase) DeleteArea(query *admindto.DeleteAreaQuery) (*dto.AreaKeyResponse, *dto.ErrorResponse) {
 	area, err := u.areaRepository.FindAreaByKey(query.AreaKey)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Area(key:%s)", query.AreaKey))
 	}
 
-	u.areaRepository.DeleteArea(area)
-	if err != nil {
-		return nil, dto.InternalServerError(err)
+	if err := u.areaRepository.DeleteArea(area); err != nil {
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Area(key:%s)", area.AreaKey))
 	}
 
 	return &dto.AreaKeyResponse{

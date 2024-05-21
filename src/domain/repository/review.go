@@ -25,49 +25,72 @@ func NewReviewRepository(db *gorm.DB) ReviewRepository {
 
 func (r *reviewRepository) ListReviews() ([]*model.Review, error) {
 	reviews := []*model.Review{}
-	r.db.Preload("Shop.Service").Find(&reviews)
+	if err := r.db.
+		Preload("Shop.Service").
+		Find(&reviews).Error; err != nil {
+		return nil, err
+	}
 
 	return reviews, nil
 }
 
 func (r *reviewRepository) ListReviewsByShopID(shopID int) ([]*model.Review, error) {
 	reviews := []*model.Review{}
-	r.db.Preload("Shop.Service").Where("shop_id = ?", shopID).Find(&reviews)
+	if err := r.db.
+		Preload("Shop.Service").
+		Where("shop_id = ?", shopID).
+		Find(&reviews).Error; err != nil {
+		return nil, err
+	}
 
 	return reviews, nil
 }
 
 func (r *reviewRepository) FindReviewByID(reviewID int) (*model.Review, error) {
 	var review model.Review
-	r.db.First(&review, reviewID)
+	if err := r.db.First(&review, reviewID).Error; err != nil {
+		return nil, err
+	}
 
 	return &review, nil
 }
 
 func (r *reviewRepository) CreateReview(review *model.Review) (*model.Review, error) {
-	r.db.Create(&review)
+	if err := r.db.Create(&review).Error; err != nil {
+		return nil, err
+	}
 
 	return review, nil
 }
 
 func (r *reviewRepository) UpdateReview(review *model.Review) (*model.Review, error) {
-	r.db.Save(&review)
+	if err := r.db.Save(&review).Error; err != nil {
+		return nil, err
+	}
 
 	return review, nil
 }
 
 func (r *reviewRepository) DeleteReview(review *model.Review) error {
-	r.db.Delete(&review)
-
-	return nil
+	return r.db.Delete(&review).Error
 }
 
 func (r *reviewRepository) SelectReviewsCountAndAverageByShopID(shopID int) (*model.Aggregation, error) {
 	reviews := r.db.Model(&model.Review{}).Where("shop_id = ?", shopID)
+
 	var reviewCount int64
-	reviews.Count(&reviewCount)
+	if err := reviews.Count(&reviewCount).Error; err != nil {
+		return nil, err
+	}
+
+	if reviewCount == 0 {
+		return &model.Aggregation{}, nil
+	}
+
 	var average float32
-	reviews.Select("avg(evaluation)").Row().Scan(&average)
+	if err := reviews.Select("AVG(evaluation)").Row().Scan(&average); err != nil {
+		return nil, err
+	}
 
 	return &model.Aggregation{
 		Count:   reviewCount,

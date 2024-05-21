@@ -23,32 +23,42 @@ func NewServiceRepository(db *gorm.DB) ServiceRepository {
 
 func (r *serviceRepository) ListServices() ([]*model.Service, error) {
 	services := []*model.Service{}
-	r.db.Preload("Shops").Find(&services)
+	if err := r.db.
+		Preload("Shops").
+		Find(&services).Error; err != nil {
+		return nil, err
+	}
 
 	return services, nil
 }
 
 func (r *serviceRepository) FindServiceByID(serviceID int) (*model.Service, error) {
 	var service model.Service
-	r.db.Preload("Shops.Area").First(&service, serviceID)
+	if err := r.db.
+		Preload("Shops.Area").
+		First(&service, serviceID).Error; err != nil {
+		return nil, err
+	}
 
 	return &service, nil
 }
 
 func (r *serviceRepository) CreateService(service *model.Service) (*model.Service, error) {
-	r.db.Create(&service)
+	if err := r.db.Create(&service).Error; err != nil {
+		return nil, err
+	}
 
 	return service, nil
 }
 
 func (r *serviceRepository) UpdateService(service *model.Service) (*model.Service, error) {
-	r.db.Save(&service)
+	if err := r.db.Save(&service).Error; err != nil {
+		return nil, err
+	}
 
 	return service, nil
 }
 
 func (r *serviceRepository) DeleteService(service *model.Service) error {
-	r.db.Delete(&service)
-
-	return nil
+	return r.db.Delete(&service).Error
 }

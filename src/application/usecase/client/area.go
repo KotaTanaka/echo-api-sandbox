@@ -21,7 +21,7 @@ func NewAreaUsecase(areaRepository repository.AreaRepository) AreaUsecase {
 func (u *areaUsecase) GetAreaMaster() (*clientdto.AreaMasterResponse, *dto.ErrorResponse) {
 	areas, err := u.areaRepository.ListAreas()
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, "Areas")
 	}
 
 	res := &clientdto.AreaMasterResponse{

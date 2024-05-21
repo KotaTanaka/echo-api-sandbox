@@ -1,6 +1,7 @@
 package clientusecase
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
@@ -33,7 +34,7 @@ func NewShopUsecase(
 func (u *shopUsecase) GetShopList() (*clientdto.ShopListingResponse, *dto.ErrorResponse) {
 	shops, err := u.shopRepository.ListShops()
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, "Shops")
 	}
 
 	res := &clientdto.ShopListingResponse{
@@ -42,20 +43,15 @@ func (u *shopUsecase) GetShopList() (*clientdto.ShopListingResponse, *dto.ErrorR
 	}
 
 	for i, shop := range shops {
-		service, err := u.serviceRepository.FindServiceByID(int(shop.ServiceID))
-		if err != nil {
-			return nil, dto.InternalServerError(err)
-		}
-
 		reviewAg, err := u.reviewRepository.SelectReviewsCountAndAverageByShopID(int(shop.ID))
 		if err != nil {
-			return nil, dto.InternalServerError(err)
+			return nil, dto.HandleDBError(err, fmt.Sprintf("Reviews(Shop ID:%d)", shop.ID))
 		}
 
 		res.ShopList[i] = clientdto.ShopListingResponseElement{
 			ShopID:       shop.ID,
-			WifiName:     service.WifiName,
-			ServiceLink:  service.Link,
+			WifiName:     shop.Service.WifiName,
+			ServiceLink:  shop.Service.Link,
 			ShopName:     shop.ShopName,
 			AreaKey:      shop.Area.AreaKey,
 			Description:  shop.Description,

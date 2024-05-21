@@ -1,7 +1,10 @@
 package dto
 
 import (
+	"errors"
 	"net/http"
+
+	"gorm.io/gorm"
 )
 
 type ErrorResponse struct {
@@ -11,41 +14,41 @@ type ErrorResponse struct {
 }
 
 func InvalidRequestError(errorMessages []string) *ErrorResponse {
-	errorResponse := new(ErrorResponse)
-
-	errorResponse.Code = http.StatusBadRequest
-	errorResponse.Message = "Invalid request."
-	errorResponse.DetailMessage = errorMessages
-
-	return errorResponse
+	return &ErrorResponse{
+		Code:          http.StatusBadRequest,
+		Message:       "Invalid request.",
+		DetailMessage: errorMessages,
+	}
 }
 
 func InvalidParameterError(errorMessages []string) *ErrorResponse {
-	errorResponse := new(ErrorResponse)
-
-	errorResponse.Code = http.StatusBadRequest
-	errorResponse.Message = "Invalid parameters."
-	errorResponse.DetailMessage = errorMessages
-
-	return errorResponse
+	return &ErrorResponse{
+		Code:          http.StatusBadRequest,
+		Message:       "Invalid parameters.",
+		DetailMessage: errorMessages,
+	}
 }
 
 func NotFoundError(target string) *ErrorResponse {
-	errorResponse := new(ErrorResponse)
-
-	errorResponse.Code = http.StatusBadRequest
-	errorResponse.Message = "Invalid request."
-	errorResponse.DetailMessage = []string{"Not Found " + target + "."}
-
-	return errorResponse
+	return &ErrorResponse{
+		Code:          http.StatusNotFound,
+		Message:       "Record not found.",
+		DetailMessage: []string{target + " is not found."},
+	}
 }
 
 func InternalServerError(err error) *ErrorResponse {
-	errorResponse := new(ErrorResponse)
+	return &ErrorResponse{
+		Code:          http.StatusInternalServerError,
+		Message:       "Internal server error occurred.",
+		DetailMessage: []string{err.Error()},
+	}
+}
 
-	errorResponse.Code = http.StatusInternalServerError
-	errorResponse.Message = "Internal server error occurred."
-	errorResponse.DetailMessage = []string{err.Error()}
+func HandleDBError(err error, target string) *ErrorResponse {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return NotFoundError(target)
+	}
 
-	return errorResponse
+	return InternalServerError(err)
 }
