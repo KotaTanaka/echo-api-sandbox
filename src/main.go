@@ -8,6 +8,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 
 	"github.com/KotaTanaka/echo-api-sandbox/infrastructure"
+	"github.com/KotaTanaka/echo-api-sandbox/registry"
 	"github.com/KotaTanaka/echo-api-sandbox/router"
 )
 
@@ -33,9 +34,13 @@ func main() {
 	}
 	defer infrastructure.CloseDB(db)
 
+	// DI
+	clientRegistry := registry.NewClientRegistry(db)
+	adminRegistry := registry.NewAdminRegistry(db)
+
 	// ルーティング
-	router.ClientRouter(e, db)
-	router.AdminRouter(e, db)
+	router.ClientRouter(e, clientRegistry)
+	router.AdminRouter(e, adminRegistry)
 
 	// リクエスト共通処理
 	e.Use(middleware.Logger())
