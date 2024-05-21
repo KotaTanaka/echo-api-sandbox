@@ -1,6 +1,7 @@
 package adminusecase
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
@@ -38,7 +39,7 @@ func NewShopUsecase(
 func (u *shopUsecase) GetShopList() (*admindto.ShopListingResponse, *dto.ErrorResponse) {
 	shops, err := u.shopRepository.ListShops()
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, "Shops")
 	}
 
 	res := &admindto.ShopListingResponse{
@@ -49,7 +50,7 @@ func (u *shopUsecase) GetShopList() (*admindto.ShopListingResponse, *dto.ErrorRe
 	for i, shop := range shops {
 		reviewAg, err := u.reviewRepository.SelectReviewsCountAndAverageByShopID(int(shop.ID))
 		if err != nil {
-			return nil, dto.InternalServerError(err)
+			return nil, dto.HandleDBError(err, fmt.Sprintf("Reviews(Shop ID:%d)", shop.ID))
 		}
 
 		res.ShopList[i] = admindto.ShopListingResponseElement{
@@ -77,11 +78,11 @@ func (u *shopUsecase) GetShopList() (*admindto.ShopListingResponse, *dto.ErrorRe
 func (u *shopUsecase) GetShopDetail(shopID int) (*admindto.ShopDetailResponse, *dto.ErrorResponse) {
 	shop, err := u.shopRepository.FindShopByID(shopID)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Shop(ID:%d)", shopID))
 	}
 	reviewAg, err := u.reviewRepository.SelectReviewsCountAndAverageByShopID(shopID)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Reviews(Shop ID:%d)", shopID))
 	}
 
 	res := &admindto.ShopDetailResponse{
@@ -142,7 +143,7 @@ func (u *shopUsecase) RegisterShop(body *admindto.RegisterShopRequest) (*dto.Sho
 
 	shop, err := u.shopRepository.CreateShop(shop)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, "Shop")
 	}
 
 	return &dto.ShopIDResponse{
@@ -153,7 +154,7 @@ func (u *shopUsecase) RegisterShop(body *admindto.RegisterShopRequest) (*dto.Sho
 func (u *shopUsecase) UpdateShop(shopID int, body *admindto.UpdateShopRequest) (*dto.ShopIDResponse, *dto.ErrorResponse) {
 	shop, err := u.shopRepository.FindShopByID(shopID)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Shop(ID:%d)", shopID))
 	}
 
 	if body.ShopName != "" {
@@ -189,7 +190,7 @@ func (u *shopUsecase) UpdateShop(shopID int, body *admindto.UpdateShopRequest) (
 
 	shop, err = u.shopRepository.UpdateShop(shop)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Shop(ID:%d)", shopID))
 	}
 
 	return &dto.ShopIDResponse{
@@ -200,12 +201,11 @@ func (u *shopUsecase) UpdateShop(shopID int, body *admindto.UpdateShopRequest) (
 func (u *shopUsecase) DeleteShop(shopID int) (*dto.ShopIDResponse, *dto.ErrorResponse) {
 	shop, err := u.shopRepository.FindShopByID(shopID)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Shop(ID:%d)", shopID))
 	}
 
-	err = u.shopRepository.DeleteShop(shop)
-	if err != nil {
-		return nil, dto.InternalServerError(err)
+	if err = u.shopRepository.DeleteShop(shop); err != nil {
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Shop(ID:%d)", shopID))
 	}
 
 	return &dto.ShopIDResponse{

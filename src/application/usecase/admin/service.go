@@ -1,6 +1,7 @@
 package adminusecase
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
@@ -38,7 +39,7 @@ func NewServiceUsecase(
 func (u *serviceUsecase) GetServiceList() (*admindto.ServiceListingResponse, *dto.ErrorResponse) {
 	services, err := u.serviceRepository.ListServices()
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, "Services")
 	}
 
 	res := &admindto.ServiceListingResponse{
@@ -61,7 +62,7 @@ func (u *serviceUsecase) GetServiceList() (*admindto.ServiceListingResponse, *dt
 func (u *serviceUsecase) GetServiceDetail(serviceID int) (*admindto.ServiceDetailResponse, *dto.ErrorResponse) {
 	service, err := u.serviceRepository.FindServiceByID(serviceID)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Service(ID:%d)", serviceID))
 	}
 
 	shopCount := len(service.Shops)
@@ -79,7 +80,7 @@ func (u *serviceUsecase) GetServiceDetail(serviceID int) (*admindto.ServiceDetai
 	for i, shop := range service.Shops {
 		reviewAg, err := u.reviewRepository.SelectReviewsCountAndAverageByShopID(int(shop.ID))
 		if err != nil {
-			return nil, dto.InternalServerError(err)
+			return nil, dto.HandleDBError(err, fmt.Sprintf("Reviews(Shop ID:%d)", shop.ID))
 		}
 
 		res.ShopList[i] = admindto.ServiceDetailResponseShopListElement{
@@ -110,7 +111,7 @@ func (u *serviceUsecase) RegisterService(body *admindto.RegisterServiceRequest) 
 
 	service, err := u.serviceRepository.CreateService(service)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, "Service")
 	}
 
 	return &dto.ServiceIDResponse{
@@ -121,7 +122,7 @@ func (u *serviceUsecase) RegisterService(body *admindto.RegisterServiceRequest) 
 func (u *serviceUsecase) UpdateService(serviceID int, body *admindto.UpdateServiceRequest) (*dto.ServiceIDResponse, *dto.ErrorResponse) {
 	service, err := u.serviceRepository.FindServiceByID(serviceID)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Service(ID:%d)", serviceID))
 	}
 
 	if body.WifiName != "" {
@@ -134,7 +135,7 @@ func (u *serviceUsecase) UpdateService(serviceID int, body *admindto.UpdateServi
 
 	service, err = u.serviceRepository.UpdateService(service)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Service(ID:%d)", serviceID))
 	}
 
 	return &dto.ServiceIDResponse{
@@ -145,12 +146,11 @@ func (u *serviceUsecase) UpdateService(serviceID int, body *admindto.UpdateServi
 func (u *serviceUsecase) DeleteService(serviceID int) (*dto.ServiceIDResponse, *dto.ErrorResponse) {
 	service, err := u.serviceRepository.FindServiceByID(serviceID)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Service(ID:%d)", serviceID))
 	}
 
-	err = u.serviceRepository.DeleteService(service)
-	if err != nil {
-		return nil, dto.InternalServerError(err)
+	if err = u.serviceRepository.DeleteService(service); err != nil {
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Service(ID:%d)", serviceID))
 	}
 
 	return &dto.ServiceIDResponse{

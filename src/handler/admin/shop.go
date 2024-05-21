@@ -49,7 +49,7 @@ func (h *shopHandler) GetShopDetail(ctx echo.Context) error {
 
 	res, errRes := h.usecase.GetShopDetail(shopID)
 	if errRes != nil {
-		return ctx.JSON(errRes.Code, err)
+		return ctx.JSON(errRes.Code, errRes)
 	}
 
 	return ctx.JSON(http.StatusOK, res)
@@ -99,7 +99,7 @@ func (h *shopHandler) UpdateShop(ctx echo.Context) error {
 
 	res, errRes := h.usecase.UpdateShop(shopID, body)
 	if errRes != nil {
-		return ctx.JSON(errRes.Code, err)
+		return ctx.JSON(errRes.Code, errRes)
 	}
 
 	return ctx.JSON(http.StatusOK, res)
@@ -116,7 +116,7 @@ func (h *shopHandler) DeleteShop(ctx echo.Context) error {
 
 	res, errRes := h.usecase.DeleteShop(shopID)
 	if errRes != nil {
-		return ctx.JSON(errRes.Code, err)
+		return ctx.JSON(errRes.Code, errRes)
 	}
 
 	return ctx.JSON(http.StatusOK, res)

@@ -21,27 +21,35 @@ func NewAreaRepository(db *gorm.DB) AreaRepository {
 }
 
 func (r *areaRepository) CreateArea(area *model.Area) (*model.Area, error) {
-	r.db.Create(&area)
+	if err := r.db.Create(&area).Error; err != nil {
+		return nil, err
+	}
 
 	return area, nil
 }
 
 func (r *areaRepository) ListAreas() ([]*model.Area, error) {
 	areas := []*model.Area{}
-	r.db.Preload("Shops").Find(&areas)
+	if err := r.db.
+		Preload("Shops").
+		Find(&areas).Error; err != nil {
+		return nil, err
+	}
 
 	return areas, nil
 }
 
 func (r *areaRepository) FindAreaByKey(areaKey string) (*model.Area, error) {
 	var area model.Area
-	r.db.Where("area_key = ?", areaKey).First(&area)
+	if err := r.db.
+		Where("area_key = ?", areaKey).
+		First(&area).Error; err != nil {
+		return nil, err
+	}
 
 	return &area, nil
 }
 
 func (r *areaRepository) DeleteArea(area *model.Area) error {
-	r.db.Delete(&area)
-
-	return nil
+	return r.db.Delete(&area).Error
 }

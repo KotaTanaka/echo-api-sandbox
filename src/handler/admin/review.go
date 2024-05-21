@@ -59,7 +59,7 @@ func (h *reviewHandler) UpdateReviewStatus(ctx echo.Context) error {
 
 	res, errRes := h.usecase.UpdateReviewStatus(reviewID, body)
 	if errRes != nil {
-		return ctx.JSON(errRes.Code, err)
+		return ctx.JSON(errRes.Code, errRes)
 	}
 
 	return ctx.JSON(http.StatusOK, res)
@@ -76,7 +76,7 @@ func (h *reviewHandler) DeleteReview(ctx echo.Context) error {
 
 	res, errRes := h.usecase.DeleteReview(reviewID)
 	if errRes != nil {
-		return ctx.JSON(errRes.Code, err)
+		return ctx.JSON(errRes.Code, errRes)
 	}
 
 	return ctx.JSON(http.StatusOK, res)

@@ -23,32 +23,45 @@ func NewShopRepository(db *gorm.DB) ShopRepository {
 
 func (r *shopRepository) ListShops() ([]*model.Shop, error) {
 	shops := []*model.Shop{}
-	r.db.Preload("Area").Preload("Service").Find(&shops)
+	if err := r.db.
+		Preload("Area").
+		Preload("Service").
+		Find(&shops).Error; err != nil {
+		return nil, err
+	}
 
 	return shops, nil
 }
 
 func (r *shopRepository) FindShopByID(shopID int) (*model.Shop, error) {
 	var shop model.Shop
-	r.db.Preload("Area").Preload("Service").Preload("Reviews").First(&shop, shopID)
+	if err := r.db.
+		Preload("Area").
+		Preload("Service").
+		Preload("Reviews").
+		First(&shop, shopID).Error; err != nil {
+		return nil, err
+	}
 
 	return &shop, nil
 }
 
 func (r *shopRepository) CreateShop(shop *model.Shop) (*model.Shop, error) {
-	r.db.Create(&shop)
+	if err := r.db.Create(&shop).Error; err != nil {
+		return nil, err
+	}
 
 	return shop, nil
 }
 
 func (r *shopRepository) UpdateShop(shop *model.Shop) (*model.Shop, error) {
-	r.db.Save(&shop)
+	if err := r.db.Save(&shop).Error; err != nil {
+		return nil, err
+	}
 
 	return shop, nil
 }
 
 func (r *shopRepository) DeleteShop(shop *model.Shop) error {
-	r.db.Delete(&shop)
-
-	return nil
+	return r.db.Delete(&shop).Error
 }

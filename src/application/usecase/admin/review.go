@@ -1,6 +1,8 @@
 package adminusecase
 
 import (
+	"fmt"
+
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
 	admindto "github.com/KotaTanaka/echo-api-sandbox/application/dto/admin"
 	"github.com/KotaTanaka/echo-api-sandbox/domain/repository"
@@ -33,7 +35,7 @@ func NewReviewUsecase(
 func (u *reviewUsecase) GetReviewList() (*admindto.ReviewListingResponse, *dto.ErrorResponse) {
 	reviews, err := u.reviewRepository.ListReviews()
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, "Reviews")
 	}
 
 	res := &admindto.ReviewListingResponse{
@@ -63,7 +65,7 @@ func (u *reviewUsecase) GetReviewList() (*admindto.ReviewListingResponse, *dto.E
 func (u *reviewUsecase) UpdateReviewStatus(reviewID int, body *admindto.UpdateReviewStatusRequest) (*dto.ReviewIDResponse, *dto.ErrorResponse) {
 	review, err := u.reviewRepository.FindReviewByID(reviewID)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Review(ID:%d)", reviewID))
 	}
 
 	if body.Status == "public" {
@@ -76,7 +78,7 @@ func (u *reviewUsecase) UpdateReviewStatus(reviewID int, body *admindto.UpdateRe
 
 	review, err = u.reviewRepository.UpdateReview(review)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Review(ID:%d)", reviewID))
 	}
 
 	return &dto.ReviewIDResponse{
@@ -87,12 +89,11 @@ func (u *reviewUsecase) UpdateReviewStatus(reviewID int, body *admindto.UpdateRe
 func (u *reviewUsecase) DeleteReview(reviewID int) (*dto.ReviewIDResponse, *dto.ErrorResponse) {
 	review, err := u.reviewRepository.FindReviewByID(reviewID)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Review(ID:%d)", reviewID))
 	}
 
-	err = u.reviewRepository.DeleteReview(review)
-	if err != nil {
-		return nil, dto.InternalServerError(err)
+	if err = u.reviewRepository.DeleteReview(review); err != nil {
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Review(ID:%d)", reviewID))
 	}
 
 	return &dto.ReviewIDResponse{

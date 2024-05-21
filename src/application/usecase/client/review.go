@@ -1,6 +1,7 @@
 package clientusecase
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/KotaTanaka/echo-api-sandbox/application/dto"
@@ -40,7 +41,7 @@ func (u *reviewUsecase) GetReviewList(query *clientdto.ReviewListingQuery) (*cli
 
 	reviews, err := u.reviewRepository.ListReviewsByShopID(shopID)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Reviews(Shop ID:%d)", shopID))
 	}
 
 	if len(reviews) == 0 {
@@ -78,7 +79,7 @@ func (u *reviewUsecase) GetReviewList(query *clientdto.ReviewListingQuery) (*cli
 func (u *reviewUsecase) CreateReview(body *clientdto.CreateReviewRequest) (*dto.ReviewIDResponse, *dto.ErrorResponse) {
 	shop, err := u.shopRepository.FindShopByID(int(body.ShopID))
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, fmt.Sprintf("Shop(ID:%d)", body.ShopID))
 	}
 
 	review := &model.Review{
@@ -89,7 +90,7 @@ func (u *reviewUsecase) CreateReview(body *clientdto.CreateReviewRequest) (*dto.
 
 	review, err = u.reviewRepository.CreateReview(review)
 	if err != nil {
-		return nil, dto.InternalServerError(err)
+		return nil, dto.HandleDBError(err, "Review")
 	}
 
 	return &dto.ReviewIDResponse{
